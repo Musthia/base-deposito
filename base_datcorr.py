@@ -42,9 +42,7 @@ class InicioSesion(QMainWindow):
 
         # Configurar icono y fondo
         self.setWindowIcon(QIcon("img/Datcorr.ico"))
-       # self.ui.imagen_fondo.setPixmap(QPixmap("img/fondo_login.png"))
-        #self.ui.imagen_fondo.setScaledContents(True)
-
+       
         # Conectar botón de login
         self.ui.boton_iniciar_sesion.clicked.connect(self.validar_login)        
 

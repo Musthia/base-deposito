@@ -68,6 +68,7 @@ dist/
 *.exe
 *.lnk
 *.spec
+*_rc.py
 
 # =========================
 # 🔐 Variables sensibles

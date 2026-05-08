@@ -1,14 +1,24 @@
+import os
+
+from dotenv import load_dotenv
+
 from sqlalchemy import create_engine
 
 # -----------------------------------
-# CONFIGURACIÓN POSTGRESQL
+# CARGAR VARIABLES ENTORNO
 # -----------------------------------
 
-USUARIO = "postgres"
-PASSWORD = "postgres123"
-HOST = "localhost"
-PUERTO = "5432"
-BASE_DATOS = "datcorr"
+load_dotenv()
+
+# -----------------------------------
+# VARIABLES POSTGRESQL
+# -----------------------------------
+
+USUARIO = os.getenv("DB_USER")
+PASSWORD = os.getenv("DB_PASSWORD")
+HOST = os.getenv("DB_HOST")
+PUERTO = os.getenv("DB_PORT")
+BASE_DATOS = os.getenv("DB_NAME")
 
 # -----------------------------------
 # URL DATABASE

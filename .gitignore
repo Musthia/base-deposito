@@ -52,6 +52,7 @@ copias/
 temp/
 tmp/
 *.tmp
+.COPIAS/
 
 # =========================
 # 🖼️ Imágenes generadas

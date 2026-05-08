@@ -104,8 +104,15 @@ def listar_bases_sin_extension():
 # Ventana Principal
 # ----------------------------
 class VentanaPrincipal(QMainWindow):
-    def __init__(self):
+    def __init__(self,nivel_seguridad=None,
+        nombre_usuario=None,
+        rol=None):
         super().__init__()
+
+        self.nivel_seguridad = nivel_seguridad
+        self.nombre_usuario = nombre_usuario
+        self.rol = rol
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 

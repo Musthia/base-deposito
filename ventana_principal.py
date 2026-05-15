@@ -1,3 +1,5 @@
+from core.session_manager import SessionManager
+
 # =========================
 # UI principal (Qt Designer)
 # =========================
@@ -104,14 +106,58 @@ def listar_bases_sin_extension():
 # Ventana Principal
 # ----------------------------
 class VentanaPrincipal(QMainWindow):
-    def __init__(self,nivel_seguridad=None,
-        nombre_usuario=None,
-        rol=None):
+    def __init__(self):
         super().__init__()
 
-        self.nivel_seguridad = nivel_seguridad
-        self.nombre_usuario = nombre_usuario
-        self.rol = rol
+        # -----------------------------------
+        # USUARIO SESIÓN ACTUAL
+        # -----------------------------------
+
+        self.usuario_actual = (
+            SessionManager.obtener_usuario()
+        )
+
+        # -----------------------------------
+        # DATOS USUARIO
+        # -----------------------------------
+
+        if self.usuario_actual:
+        
+            self.nombre_usuario = (
+                f"{self.usuario_actual.nombre} "
+                f"{self.usuario_actual.apellido}"
+            )
+
+            self.rol = (
+                self.usuario_actual.rol
+            )
+
+            self.nivel_seguridad = (
+                self.usuario_actual.nivel_seguridad
+            )
+
+        else:
+        
+            self.nombre_usuario = None
+
+            self.rol = None
+
+            self.nivel_seguridad = 0
+
+        usuario = SessionManager.obtener_usuario()
+
+        self.usuario_actual = usuario
+
+        self.nombre_usuario = (
+            f"{usuario.nombre} "
+            f"{usuario.apellido}"
+        )
+
+        self.rol = usuario.rol
+
+        self.nivel_seguridad = (
+            usuario.nivel_seguridad
+        )
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)

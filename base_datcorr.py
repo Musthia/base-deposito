@@ -20,6 +20,8 @@ from ui.inicio_sesion_ui import Ui_MainWindow
 # Ventana principal
 from ventana_principal import VentanaPrincipal
 
+from core.session_manager import SessionManager
+
 def configurar_logging():
     nivel = logging.DEBUG  # en producción podés cambiar a INFO
 
@@ -35,17 +37,9 @@ def configurar_logging():
 
 configurar_logging()
 
-def iniciar_aplicacion_principal(
-    nivel_seguridad=None,
-    nombre_usuario=None,
-    rol=None
-):
+def iniciar_aplicacion_principal():
 
-    ventana = VentanaPrincipal(
-        nivel_seguridad,
-        nombre_usuario,
-        rol
-    )
+    ventana = VentanaPrincipal()
 
     ventana.show()
 
@@ -122,6 +116,8 @@ class InicioSesion(QMainWindow):
 
         usuario = resultado["usuario"]
 
+        SessionManager.login(usuario)
+
         nombre_usuario = (
             f"{usuario.nombre} "
             f"{usuario.apellido}"
@@ -156,11 +152,7 @@ class InicioSesion(QMainWindow):
         self.hide()
 
         self.ventana_principal = (
-            iniciar_aplicacion_principal(
-                nivel_seguridad,
-                nombre_usuario,
-                rol
-            )
+            iniciar_aplicacion_principal()
         )
 
 if __name__ == "__main__":

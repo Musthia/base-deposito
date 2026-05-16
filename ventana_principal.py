@@ -79,6 +79,8 @@ import subprocess
 import logging
 import importlib
 
+from core.access_control import (validar_sesion, validar_nivel)
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
@@ -111,17 +113,64 @@ class VentanaPrincipal(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        if not SessionManager.validar_sesion():
+        logging.debug(
+            "Inicializando ventana principal..."
+        )
+
+        # -----------------------------------
+        # VALIDAR SESIÓN
+        # -----------------------------------
+
+        if not validar_sesion():
+        
+            logging.warning(
+                "Intento acceso sin sesión."
+            )
 
             QMessageBox.critical(
                 self,
                 "Sesión inválida",
-                "Debe iniciar sesión."
+                (
+                    "Debe iniciar sesión "
+                    "para acceder al sistema."
+                )
             )
-        
+
             self.close()
-        
+
             return
+
+        # -----------------------------------
+        # VALIDAR NIVEL MÍNIMO
+        # -----------------------------------
+
+        if not validar_nivel(1):
+        
+            logging.warning(
+                "Nivel insuficiente "
+                "para ingresar al sistema."
+            )
+
+            QMessageBox.critical(
+                self,
+                "Acceso denegado",
+                (
+                    "No posee permisos "
+                    "para ingresar "
+                    "al sistema."
+                )
+            )
+
+            SessionManager.logout()
+
+            self.close()
+
+            return
+
+        logging.debug(
+            "Acceso autorizado "
+            "a ventana principal."
+        )
 
         # -----------------------------------
         # USUARIO SESIÓN ACTUAL
@@ -157,21 +206,6 @@ class VentanaPrincipal(QMainWindow):
             self.rol = None
 
             self.nivel_seguridad = 0
-
-        usuario = SessionManager.obtener_usuario()
-
-        self.usuario_actual = usuario
-
-        self.nombre_usuario = (
-            f"{usuario.nombre} "
-            f"{usuario.apellido}"
-        )
-
-        self.rol = usuario.rol
-
-        self.nivel_seguridad = (
-            usuario.nivel_seguridad
-        )
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)

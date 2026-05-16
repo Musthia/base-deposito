@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import logging
 
 class SessionManager:
 
@@ -18,6 +19,29 @@ class SessionManager:
     # -----------------------------------
 
     @classmethod
+    def validar_sesion(cls):
+    
+        if not cls._sesion_activa:
+        
+            logging.warning(
+                "Acceso denegado: "
+                "no existe sesión activa."
+            )
+    
+            return False
+    
+        if not cls._usuario_actual:
+        
+            logging.warning(
+                "Sesión inválida: "
+                "usuario inexistente."
+            )
+    
+            return False
+    
+        return True
+
+    @classmethod
     def login(cls, usuario):
 
         cls._usuario_actual = usuario
@@ -25,6 +49,11 @@ class SessionManager:
         cls._fecha_login = datetime.now()
 
         cls._sesion_activa = True
+
+        logging.debug(
+            f"Sesión iniciada: "
+            f"{usuario.usuario}"
+        )
 
     # -----------------------------------
     # CERRAR SESIÓN
@@ -38,6 +67,10 @@ class SessionManager:
         cls._fecha_login = None
 
         cls._sesion_activa = False
+
+        logging.debug(
+            "Sesión finalizada"
+        )
 
     # -----------------------------------
     # OBTENER USUARIO

@@ -970,6 +970,64 @@ QPushButton:disabled {
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="boton_cerrar_sesion">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;CERRAR SESION&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: #455a50;
+    color: #ecf0f1;
+    border: 1px solid #1a252f;
+ 
+    padding: 6px 12px;
+    font-weight: bold;
+    font-size: 11px;
+}
+QPushButton:hover {
+    background-color: #546e7a;     /* tono más claro al pasar el mouse */
+}
+QPushButton:pressed {
+    background-color: #2e4053;     /* más oscuro al presionar */
+    border: 2px solid #1a252f;
+}
+QPushButton:disabled {
+    background-color: #a7b0b5;
+    color: #dfe4e8;
+    border: 1px solid #95a5a6;
+}</string>
+         </property>
+         <property name="text">
+          <string>CERRAR SESION</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="Line" name="line_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>10</height>
+          </size>
+         </property>
+         <property name="lineWidth">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -1189,8 +1247,6 @@ QPushButton:disabled {
   </action>
  </widget>
  <layoutdefault spacing="2" margin="2"/>
- <resources>
-  <include location="../fondos.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

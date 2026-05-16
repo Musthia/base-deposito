@@ -66,6 +66,8 @@ from ui.styles import (
 
 from utils import obtener_ruta_bases
 
+from PySide6.QtWidgets import QMessageBox
+
 # =========================
 # Librerías estándar
 # =========================
@@ -108,6 +110,18 @@ def listar_bases_sin_extension():
 class VentanaPrincipal(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        if not SessionManager.validar_sesion():
+
+            QMessageBox.critical(
+                self,
+                "Sesión inválida",
+                "Debe iniciar sesión."
+            )
+        
+            self.close()
+        
+            return
 
         # -----------------------------------
         # USUARIO SESIÓN ACTUAL
@@ -174,6 +188,10 @@ class VentanaPrincipal(QMainWindow):
             lambda: self.ui.entry_consultar.setFocus()
         )
 
+        self.ui.boton_cerrar_sesion.clicked.connect(
+            self.cerrar_sesion
+        )
+
         # 🔌 CONEXIÓN DEL BOTÓN
         self.ui.pushButton_carga_datos.clicked.connect(
             self.on_pushButton_carga_datos_clicked
@@ -232,6 +250,52 @@ class VentanaPrincipal(QMainWindow):
         self.ui.tabwidget_resultados_consulta.setTabsClosable(True)
         self.ui.tabwidget_resultados_consulta.tabCloseRequested.connect(
             self.cerrar_pestana_resultado
+        )
+
+    def cerrar_sesion(self):
+
+        respuesta = QMessageBox.question(
+            self,
+            "Cerrar sesión",
+            "¿Desea cerrar la sesión actual?"
+        )
+    
+        if respuesta != QMessageBox.Yes:
+        
+            return
+    
+        logging.debug(
+            "Iniciando cierre de sesión..."
+        )
+    
+        # -----------------------------------
+        # FINALIZAR SESIÓN GLOBAL
+        # -----------------------------------
+    
+        SessionManager.logout()
+    
+        logging.debug(
+            "Sesión finalizada correctamente."
+        )
+    
+        # -----------------------------------
+        # CERRAR VENTANA PRINCIPAL
+        # -----------------------------------
+    
+        self.close()
+    
+        # -----------------------------------
+        # VOLVER A LOGIN
+        # -----------------------------------
+    
+        from base_datcorr import InicioSesion
+    
+        self.login = InicioSesion()
+    
+        self.login.show()
+    
+        logging.debug(
+            "Ventana login restaurada."
         )
 
     def cerrar_pestana_resultado(self, index):

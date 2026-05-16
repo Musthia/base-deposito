@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'AplicacionPrincipal.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.1
+## Created by: Qt User Interface Compiler version 6.10.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,6 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
     QLabel, QLineEdit, QMainWindow, QPushButton,
     QSizePolicy, QTabWidget, QWidget)
-#import fondos_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -359,6 +358,44 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.pushButton_carga_datos, 2, 0, 1, 1)
 
+        self.boton_cerrar_sesion = QPushButton(self.frame)
+        self.boton_cerrar_sesion.setObjectName(u"boton_cerrar_sesion")
+        self.boton_cerrar_sesion.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.boton_cerrar_sesion.setStyleSheet(u"QPushButton {\n"
+"    background-color: #455a50;\n"
+"    color: #ecf0f1;\n"
+"    border: 1px solid #1a252f;\n"
+" \n"
+"    padding: 6px 12px;\n"
+"    font-weight: bold;\n"
+"    font-size: 11px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #546e7a;     /* tono m\u00e1s claro al pasar el mouse */\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #2e4053;     /* m\u00e1s oscuro al presionar */\n"
+"    border: 2px solid #1a252f;\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color: #a7b0b5;\n"
+"    color: #dfe4e8;\n"
+"    border: 1px solid #95a5a6;\n"
+"}")
+
+        self.gridLayout.addWidget(self.boton_cerrar_sesion, 0, 1, 1, 1)
+
+        self.line_4 = QFrame(self.frame)
+        self.line_4.setObjectName(u"line_4")
+        sizePolicy2.setHeightForWidth(self.line_4.sizePolicy().hasHeightForWidth())
+        self.line_4.setSizePolicy(sizePolicy2)
+        self.line_4.setMinimumSize(QSize(0, 10))
+        self.line_4.setLineWidth(100)
+        self.line_4.setFrameShape(QFrame.Shape.HLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.gridLayout.addWidget(self.line_4, 1, 1, 1, 1)
+
 
         self.gridLayout_2.addWidget(self.frame, 7, 5, 2, 1)
 
@@ -456,10 +493,14 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.pushButton_carga_datos.setText(QCoreApplication.translate("MainWindow", u"Carga de Datos", None))
 #if QT_CONFIG(tooltip)
+        self.boton_cerrar_sesion.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">CERRAR SESION</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.boton_cerrar_sesion.setText(QCoreApplication.translate("MainWindow", u"CERRAR SESION", None))
+#if QT_CONFIG(tooltip)
         self.combo_bases.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:700;\">SELECCIONAR BASE <br/>DE DATOS</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
-        self.pushButton_aplicaciones.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">INICIAR SESION <br/>DE <br/>CARGA DE DATOS</p></body></html>", None))
+        self.pushButton_aplicaciones.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">APLICACIONES<br/>ANTERIORES</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButton_aplicaciones.setText(QCoreApplication.translate("MainWindow", u"Aplicaciones", None))
     # retranslateUi

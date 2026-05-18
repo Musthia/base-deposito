@@ -81,10 +81,6 @@ import importlib
 
 from core.access_control import (validar_sesion, validar_nivel)
 
-from services.usuarios_permisos_service import (
-    usuario_tiene_permiso
-)
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
 
@@ -1052,11 +1048,6 @@ class VentanaPrincipal(QMainWindow):
 
     def editar_fila(self, index, base):
 
-        usuario_tiene_permiso(
-            usuario.id,
-            "EDITAR"
-        )
-
         # -----------------------------------
         # VALIDAR ACCESO EDICIÓN
         # -----------------------------------
@@ -1064,41 +1055,40 @@ class VentanaPrincipal(QMainWindow):
         logging.debug(
             "Validando acceso a edición..."
         )
-    
+
         # -----------------------------------
         # VALIDAR SESIÓN
         # -----------------------------------
-    
+
         usuario = SessionManager.obtener_usuario()
-    
+
         if not usuario:
-        
+
             logging.warning(
                 "Edición denegada: sin sesión."
             )
-    
+
             QMessageBox.critical(
                 self,
                 "Sesión inválida",
                 "Debe iniciar sesión."
             )
-    
+
             return
-    
+
         # -----------------------------------
         # VALIDAR PERMISO EDITAR
         # -----------------------------------
-    
-        if not usuario_tiene_permiso(
-            usuario.id,
+
+        if not SessionManager.tiene_permiso(
             "EDITAR"
         ):
-    
+
             logging.warning(
                 f"Usuario '{usuario.usuario}' "
                 f"sin permiso EDITAR."
             )
-    
+
             QMessageBox.warning(
                 self,
                 "Permiso denegado",
@@ -1107,9 +1097,9 @@ class VentanaPrincipal(QMainWindow):
                     "para editar registros."
                 )
             )
-    
+
             return
-    
+
         logging.debug(
             "Acceso autorizado a edición."
         )

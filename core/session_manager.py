@@ -2,6 +2,10 @@ from datetime import datetime
 
 import logging
 
+from services.usuarios_permisos_service import (
+    usuario_tiene_permiso
+)
+
 class SessionManager:
 
     # -----------------------------------
@@ -124,3 +128,26 @@ class SessionManager:
             return None
 
         return cls._usuario_actual.rol
+
+    # -----------------------------------
+    # VALIDAR PERMISO
+    # -----------------------------------
+
+    @classmethod
+    def tiene_permiso(
+        cls,
+        codigo_permiso
+    ):
+
+        if not cls._usuario_actual:
+
+            logging.warning(
+                "Validación permiso sin sesión."
+            )
+
+            return False
+
+        return usuario_tiene_permiso(
+            cls._usuario_actual.id,
+            codigo_permiso
+        )

@@ -1,5 +1,7 @@
 from database.session import SessionLocal
 
+from database.conexion import SessionLocal
+
 from database.modelos import Usuario
 
 from database.crud.crud_usuarios import (
@@ -186,3 +188,107 @@ def cambiar_estado_usuario(
     finally:
 
         session.close()
+
+# -----------------------------------
+# LISTAR USUARIOS
+# -----------------------------------
+
+def listar_usuarios():
+
+    db = SessionLocal()
+
+    try:
+
+        usuarios = (
+            db.query(Usuario)
+            .order_by(
+                Usuario.id.asc()
+            )
+            .all()
+        )
+
+        return usuarios
+
+    finally:
+
+        db.close()
+
+# -----------------------------------
+# OBTENER USUARIO POR ID
+# -----------------------------------
+
+def obtener_usuario_por_id(
+    usuario_id
+):
+
+    db = SessionLocal()
+
+    try:
+
+        usuario = (
+            db.query(Usuario)
+            .filter(
+                Usuario.id == usuario_id
+            )
+            .first()
+        )
+
+        return usuario
+
+    finally:
+
+        db.close()
+
+# -----------------------------------
+# LISTAR USUARIOS ACTIVOS
+# -----------------------------------
+
+def listar_usuarios_activos():
+
+    db = SessionLocal()
+
+    try:
+
+        usuarios = (
+            db.query(Usuario)
+            .filter(
+                Usuario.activo == True
+            )
+            .order_by(
+                Usuario.id.asc()
+            )
+            .all()
+        )
+
+        return usuarios
+
+    finally:
+
+        db.close()
+
+# -----------------------------------
+# LISTAR USUARIOS INACTIVOS
+# -----------------------------------
+
+def listar_usuarios_inactivos():
+
+    db = SessionLocal()
+
+    try:
+
+        usuarios = (
+            db.query(Usuario)
+            .filter(
+                Usuario.activo == False
+            )
+            .order_by(
+                Usuario.id.asc()
+            )
+            .all()
+        )
+
+        return usuarios
+
+    finally:
+
+        db.close()    

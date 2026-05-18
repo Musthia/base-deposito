@@ -35,18 +35,18 @@ def validar_nivel(nivel_requerido):
         SessionManager.obtener_nivel_seguridad()
     )
 
+    logging.debug(
+        f"Validando nivel: "
+        f"actual={nivel_actual} "
+        f"requerido={nivel_requerido}"
+    )
+
     if nivel_actual < nivel_requerido:
 
         logging.warning(
             f"Nivel insuficiente: "
             f"{nivel_actual} < "
             f"{nivel_requerido}"
-        )
-
-        logging.debug(
-            f"Validando nivel: "
-            f"actual={nivel_actual} "
-            f"requerido={nivel_requerido}"
         )
 
         return False

@@ -81,6 +81,9 @@ import importlib
 
 from core.access_control import (validar_sesion, validar_nivel)
 
+from services.usuarios_permisos_service import (
+    usuario_tiene_permiso
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
@@ -807,6 +810,39 @@ class VentanaPrincipal(QMainWindow):
             self.ui.combo_bases.setFocus()
 
     def buscar_en_base(self):
+
+        # -----------------------------------
+        # VALIDAR ACCESO
+        # -----------------------------------
+
+        logging.debug(
+            "Validando acceso a búsqueda..."
+        )
+
+        if not validar_nivel(1):
+        
+            logging.warning(
+                "Acceso denegado "
+                "a búsqueda."
+            )
+
+            QMessageBox.warning(
+                self,
+                "Acceso denegado",
+                (
+                    "No posee permisos "
+                    "para realizar búsquedas."
+                )
+            )
+
+            return
+
+        logging.debug(
+            "Acceso autorizado "
+            "a búsqueda."
+        )
+
+
         criterio = self.ui.entry_consultar.text().strip()
         base = self.ui.combo_bases.currentText().strip()
 
@@ -1016,6 +1052,68 @@ class VentanaPrincipal(QMainWindow):
 
     def editar_fila(self, index, base):
 
+        usuario_tiene_permiso(
+            usuario.id,
+            "EDITAR"
+        )
+
+        # -----------------------------------
+        # VALIDAR ACCESO EDICIÓN
+        # -----------------------------------
+        
+        logging.debug(
+            "Validando acceso a edición..."
+        )
+    
+        # -----------------------------------
+        # VALIDAR SESIÓN
+        # -----------------------------------
+    
+        usuario = SessionManager.obtener_usuario()
+    
+        if not usuario:
+        
+            logging.warning(
+                "Edición denegada: sin sesión."
+            )
+    
+            QMessageBox.critical(
+                self,
+                "Sesión inválida",
+                "Debe iniciar sesión."
+            )
+    
+            return
+    
+        # -----------------------------------
+        # VALIDAR PERMISO EDITAR
+        # -----------------------------------
+    
+        if not usuario_tiene_permiso(
+            usuario.id,
+            "EDITAR"
+        ):
+    
+            logging.warning(
+                f"Usuario '{usuario.usuario}' "
+                f"sin permiso EDITAR."
+            )
+    
+            QMessageBox.warning(
+                self,
+                "Permiso denegado",
+                (
+                    "No posee permisos "
+                    "para editar registros."
+                )
+            )
+    
+            return
+    
+        logging.debug(
+            "Acceso autorizado a edición."
+        )
+
         if base not in self.pestanas_resultados:
             return
 
@@ -1050,7 +1148,7 @@ class VentanaPrincipal(QMainWindow):
 
         # ---------- RUTA DB ----------
         from utils import obtener_ruta_bases
-        import os, logging
+        import os
 
         ruta_db = os.path.join(
             obtener_ruta_bases(),
@@ -1084,6 +1182,21 @@ class VentanaPrincipal(QMainWindow):
         )
 
         self.ventana_edicion.exec()
+
+    def closeEvent(self, event):
+
+        logging.debug(
+            "Cierre aplicación detectado."
+        )
+
+        SessionManager.logout()
+
+        logging.debug(
+            "Sesión invalidada "
+            "por cierre aplicación."
+        )
+
+        event.accept()
 
     def actualizar_fila_treeview(self, base, id_registro, datos_actualizados):
 

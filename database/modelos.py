@@ -4,7 +4,13 @@ from sqlalchemy import (
     String,
     Boolean,
     TIMESTAMP,
-    text
+    text,
+    ForeignKey
+)
+
+from sqlalchemy.orm import (
+    declarative_base,
+    relationship
 )
 
 from sqlalchemy.orm import declarative_base
@@ -78,4 +84,68 @@ class Usuario(Base):
         TIMESTAMP,
         server_default=text("CURRENT_TIMESTAMP"),
         onupdate=text("CURRENT_TIMESTAMP")
+    )
+
+# -----------------------------------
+# TABLA PERMISOS
+# -----------------------------------
+
+class Permiso(Base):
+
+    __tablename__ = "permisos"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    codigo = Column(
+        String(100),
+        unique=True,
+        nullable=False
+    )
+
+    descripcion = Column(
+        String(255),
+        nullable=False
+    )
+
+# -----------------------------------
+# TABLA RELACIÓN
+# USUARIOS ↔ PERMISOS
+# -----------------------------------
+
+class UsuarioPermiso(Base):
+
+    __tablename__ = "usuarios_permisos"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    usuario_id = Column(
+        Integer,
+        ForeignKey("usuarios.id"),
+        nullable=False
+    )
+
+    permiso_id = Column(
+        Integer,
+        ForeignKey("permisos.id"),
+        nullable=False
+    )
+
+    # -----------------------------------
+    # RELACIONES ORM
+    # -----------------------------------
+
+    usuario = relationship(
+        "Usuario"
+    )
+
+    permiso = relationship(
+        "Permiso"
     )

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'AplicacionPrincipal.ui'
+## Form generated from reading UI file 'Aplicacionprincipal.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.10.3
 ##
@@ -396,6 +396,33 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.line_4, 1, 1, 1, 1)
 
+        self.boton_adm_usuar = QPushButton(self.frame)
+        self.boton_adm_usuar.setObjectName(u"boton_adm_usuar")
+        self.boton_adm_usuar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.boton_adm_usuar.setStyleSheet(u"QPushButton {\n"
+"    background-color: #455a50;\n"
+"    color: #ecf0f1;\n"
+"    border: 1px solid #1a252f;\n"
+" \n"
+"    padding: 6px 12px;\n"
+"    font-weight: bold;\n"
+"    font-size: 11px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #546e7a;     /* tono m\u00e1s claro al pasar el mouse */\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #2e4053;     /* m\u00e1s oscuro al presionar */\n"
+"    border: 2px solid #1a252f;\n"
+"}\n"
+"QPushButton:disabled {\n"
+"    background-color: #a7b0b5;\n"
+"    color: #dfe4e8;\n"
+"    border: 1px solid #95a5a6;\n"
+"}")
+
+        self.gridLayout.addWidget(self.boton_adm_usuar, 2, 1, 1, 1)
+
 
         self.gridLayout_2.addWidget(self.frame, 7, 5, 2, 1)
 
@@ -491,11 +518,17 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.pushButton_carga_datos.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">INICIAR SESION <br/>DE <br/>CARGA DE DATOS</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButton_carga_datos.setText(QCoreApplication.translate("MainWindow", u"Carga de Datos", None))
+        self.pushButton_carga_datos.setText(QCoreApplication.translate("MainWindow", u"Carga de \n"
+"Datos", None))
 #if QT_CONFIG(tooltip)
         self.boton_cerrar_sesion.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">CERRAR SESION</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.boton_cerrar_sesion.setText(QCoreApplication.translate("MainWindow", u"CERRAR SESION", None))
+#if QT_CONFIG(tooltip)
+        self.boton_adm_usuar.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">MANEJO<br/>DE<br/>USUARIOS</p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
+        self.boton_adm_usuar.setText(QCoreApplication.translate("MainWindow", u"Administraci\u00f3n \n"
+"Usuarios", None))
 #if QT_CONFIG(tooltip)
         self.combo_bases.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:700;\">SELECCIONAR BASE <br/>DE DATOS</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)

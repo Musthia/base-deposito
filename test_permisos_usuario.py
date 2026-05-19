@@ -108,3 +108,12 @@ for permiso in permisos:
     print(
         f"✔ {permiso}"
     )
+
+print("\nASIGNANDO ADMIN_USUARIOS\n")
+
+resultado = asignar_permiso_usuario(
+    usuario_id=1,
+    codigo_permiso="ADMIN_USUARIOS"
+)
+
+print(resultado)    

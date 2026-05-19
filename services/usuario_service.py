@@ -292,3 +292,91 @@ def listar_usuarios_inactivos():
     finally:
 
         db.close()    
+
+def desactivar_usuario(usuario_id):
+
+    from database.conexion import SessionLocal
+    #from models.usuario import Usuario
+
+    session = SessionLocal()
+
+    try:
+
+        usuario = session.query(
+            Usuario
+        ).filter(
+            Usuario.id == usuario_id
+        ).first()
+
+        if not usuario:
+
+            return {
+                "success": False,
+                "mensaje": "Usuario no encontrado."
+            }
+
+        usuario.activo = False
+
+        session.commit()
+
+        return {
+            "success": True,
+            "mensaje": "Usuario desactivado."
+        }
+
+    except Exception as e:
+
+        session.rollback()
+
+        return {
+            "success": False,
+            "mensaje": str(e)
+        }
+
+    finally:
+
+        session.close()
+
+def activar_usuario(usuario_id):
+
+    from database.conexion import SessionLocal
+    #from models.usuario import Usuario
+
+    session = SessionLocal()
+
+    try:
+
+        usuario = session.query(
+            Usuario
+        ).filter(
+            Usuario.id == usuario_id
+        ).first()
+
+        if not usuario:
+
+            return {
+                "success": False,
+                "mensaje": "Usuario no encontrado."
+            }
+
+        usuario.activo = True
+
+        session.commit()
+
+        return {
+            "success": True,
+            "mensaje": "Usuario activado."
+        }
+
+    except Exception as e:
+
+        session.rollback()
+
+        return {
+            "success": False,
+            "mensaje": str(e)
+        }
+
+    finally:
+
+        session.close()

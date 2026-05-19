@@ -966,7 +966,8 @@ QPushButton:disabled {
 }</string>
          </property>
          <property name="text">
-          <string>Carga de Datos</string>
+          <string>Carga de 
+Datos</string>
          </property>
         </widget>
        </item>
@@ -1025,6 +1026,43 @@ QPushButton:disabled {
          </property>
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="boton_adm_usuar">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;MANEJO&lt;br/&gt;DE&lt;br/&gt;USUARIOS&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background-color: #455a50;
+    color: #ecf0f1;
+    border: 1px solid #1a252f;
+ 
+    padding: 6px 12px;
+    font-weight: bold;
+    font-size: 11px;
+}
+QPushButton:hover {
+    background-color: #546e7a;     /* tono más claro al pasar el mouse */
+}
+QPushButton:pressed {
+    background-color: #2e4053;     /* más oscuro al presionar */
+    border: 2px solid #1a252f;
+}
+QPushButton:disabled {
+    background-color: #a7b0b5;
+    color: #dfe4e8;
+    border: 1px solid #95a5a6;
+}</string>
+         </property>
+         <property name="text">
+          <string>Administración 
+Usuarios</string>
          </property>
         </widget>
        </item>

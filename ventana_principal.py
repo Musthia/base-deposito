@@ -81,6 +81,14 @@ import importlib
 
 from core.access_control import (validar_sesion, validar_nivel)
 
+from ventanas.ventana_usuarios import (
+    VentanaUsuarios
+)
+
+from core.seguridad import (
+    validar_permiso
+)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
 
@@ -230,6 +238,10 @@ class VentanaPrincipal(QMainWindow):
             self.on_pushButton_carga_datos_clicked
         )
 
+        self.ui.boton_adm_usuar.clicked.connect(
+            self.abrir_administracion_usuarios
+        )
+
         self.colores_columnas = {
             "n_lote": QColor(180, 0, 255, 140),
             #"cuit": QColor(255, 200, 200, 140),
@@ -284,6 +296,32 @@ class VentanaPrincipal(QMainWindow):
         self.ui.tabwidget_resultados_consulta.tabCloseRequested.connect(
             self.cerrar_pestana_resultado
         )
+
+    def abrir_administracion_usuarios(self):
+
+        # -----------------------------------
+        # VALIDAR PERMISO
+        # -----------------------------------
+    
+        if not validar_permiso(
+            self,
+            "ADMIN_USUARIOS",
+            (
+                "No posee permisos "
+                "para administrar usuarios."
+            )
+        ):
+            return
+    
+        logging.debug(
+            "Abriendo administración usuarios..."
+        )
+    
+        self.ventana_usuarios = (
+            VentanaUsuarios()
+        )
+    
+        self.ventana_usuarios.show()
 
     def cerrar_sesion(self):
 

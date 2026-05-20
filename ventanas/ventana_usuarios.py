@@ -84,14 +84,16 @@ class VentanaUsuarios(QWidget):
             f"{self.usuario_seleccionado.usuario}"
         )
 
-        QMessageBox.information(
-            self,
-            "Editar",
-            (
-                "Próximamente:\n"
-                "editor usuario."
-            )
+        from ventanas.ventana_editar_usuario import (
+            VentanaEditarUsuario
         )
+        
+        dialogo = VentanaEditarUsuario(
+            self.usuario_seleccionado,
+            self
+        )
+        
+        dialogo.exec()
 
     def abrir_permisos_usuario(self):
 

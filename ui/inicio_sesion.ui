@@ -11,10 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>INICIO DE SESION</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: qlineargradient(spread:pad, x1:0.795, y1:0.529727, x2:1, y2:0.528, stop:0 rgba(29, 0, 4, 255), stop:1 rgba(255, 255, 255, 255));</string>
+   <string notr="true">image: url(:/fondo/fondo_login.png);
+background-image: url(:/fondo/fondo_login.png);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="boton_iniciar_sesion">
@@ -1653,6 +1654,8 @@
   <tabstop>entry_contrasena</tabstop>
   <tabstop>boton_iniciar_sesion</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../img/fondo_ini_ses.qrc"/>
+ </resources>
  <connections/>
 </ui>

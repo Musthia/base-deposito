@@ -62,7 +62,7 @@ class Ui_VentanaUsuarios(object):
     # setupUi
 
     def retranslateUi(self, VentanaUsuarios):
-        VentanaUsuarios.setWindowTitle(QCoreApplication.translate("VentanaUsuarios", u"Form", None))
+        VentanaUsuarios.setWindowTitle(QCoreApplication.translate("VentanaUsuarios", u"Manejo De Usuarios", None))
         self.pushButton_actualizar_usuarios.setText(QCoreApplication.translate("VentanaUsuarios", u"Actualizar Usuario", None))
         self.pushButton_activar_usuario.setText(QCoreApplication.translate("VentanaUsuarios", u"Activar Usuario", None))
         self.pushButton_desactivar_usuario.setText(QCoreApplication.translate("VentanaUsuarios", u"Desactivar Usuario", None))

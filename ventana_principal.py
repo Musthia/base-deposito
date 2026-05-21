@@ -64,7 +64,10 @@ from ui.styles import (
     style_combobox_dark,
 )
 
-from utils import obtener_ruta_bases
+#from utils import obtener_ruta_bases
+from utils.rutas import (
+    obtener_ruta_bases
+)
 
 from PySide6.QtWidgets import QMessageBox
 
@@ -551,7 +554,10 @@ class VentanaPrincipal(QMainWindow):
 
     def consultar_base_seleccionada(self):
         from PySide6.QtWidgets import QMessageBox
-        from utils import obtener_ruta_bases
+        #from utils import obtener_ruta_bases
+        from utils.rutas import (
+            obtener_ruta_bases
+        )
 
         base = self.ui.combo_bases.currentText().strip()
 
@@ -808,7 +814,10 @@ class VentanaPrincipal(QMainWindow):
 
     def cargar_bases_en_combo(self):
         from PySide6.QtWidgets import QMessageBox
-        from utils import obtener_ruta_bases
+        #from utils import obtener_ruta_bases
+        from utils.rutas import (
+            obtener_ruta_bases
+        )
 
         self.ui.combo_bases.blockSignals(True)
         self.ui.combo_bases.clear()
@@ -1175,7 +1184,10 @@ class VentanaPrincipal(QMainWindow):
         ]
 
         # ---------- RUTA DB ----------
-        from utils import obtener_ruta_bases
+        #from utils import obtener_ruta_bases
+        from utils.rutas import (
+            obtener_ruta_bases
+        )
         import os
 
         ruta_db = os.path.join(

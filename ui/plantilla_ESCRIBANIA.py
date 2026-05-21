@@ -46,7 +46,10 @@ from PySide6.QtUiTools import QUiLoader
 # Proyecto / Modelo
 # =========================
 from model.datcorr_dao_escribania import DatcorrDAO
-from utils import obtener_ruta_bases
+#from utils import obtener_ruta_bases
+from utils.rutas import (
+    obtener_ruta_bases
+)
 
 # =========================
 # Estilos

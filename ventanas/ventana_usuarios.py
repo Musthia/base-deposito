@@ -92,6 +92,10 @@ class VentanaUsuarios(QWidget):
             self.usuario_seleccionado,
             self
         )
+
+        dialogo.usuario_actualizado.connect(
+            self.cargar_usuarios
+        )
         
         dialogo.exec()
 

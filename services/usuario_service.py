@@ -8,6 +8,92 @@ from database.crud.crud_usuarios import (
     generar_hash_password
 )
 
+import logging
+
+from sqlalchemy.orm import Session
+
+from database.conexion import SessionLocal
+
+from database.modelos import Usuario
+
+from utils.hash import hash_password
+
+
+def actualizar_usuario(
+    usuario_id,
+    nombre,
+    apellido,
+    usuario,
+    rol,
+    nivel_seguridad,
+    activo,
+    password=None
+):
+
+    db: Session = SessionLocal()
+
+    try:
+
+        usuario_db = (
+            db.query(Usuario)
+            .filter(
+                Usuario.id == usuario_id
+            )
+            .first()
+        )
+
+        if not usuario_db:
+
+            return {
+                "success": False,
+                "mensaje": "Usuario no encontrado."
+            }
+
+        usuario_db.nombre = nombre
+        usuario_db.apellido = apellido
+        usuario_db.usuario = usuario
+        usuario_db.rol = rol
+        usuario_db.nivel_seguridad = nivel_seguridad
+        usuario_db.activo = activo
+
+        # -----------------------------------
+        # ACTUALIZAR PASSWORD OPCIONAL
+        # -----------------------------------
+
+        if password:
+
+            usuario_db.password_hash = (
+                hash_password(password)
+            )
+
+        db.commit()
+
+        logging.debug(
+            f"Usuario actualizado: {usuario}"
+        )
+
+        return {
+            "success": True,
+            "mensaje": "Usuario actualizado."
+        }
+
+    except Exception as e:
+
+        db.rollback()
+
+        logging.exception(
+            "Error actualizando usuario"
+        )
+
+        return {
+            "success": False,
+            "mensaje": str(e)
+        }
+
+    finally:
+
+        db.close()
+
 # -----------------------------------
 # ACTUALIZAR USUARIO
 # -----------------------------------

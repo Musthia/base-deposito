@@ -9,7 +9,10 @@ from PySide6.QtWidgets import (
 from ui.styles import style_combobox_dark
 from ui.styles import style_pushbutton_dark
 
-from utils import obtener_ruta_bases
+#from utils import obtener_ruta_bases
+from utils.rutas import (
+    obtener_ruta_bases
+)
 
 
 class SelectorBasesDialog(QDialog):

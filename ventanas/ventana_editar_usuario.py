@@ -10,6 +10,11 @@ from ui.editar_usuario_ui import (
     Ui_EditarUsuario
 )
 
+from PySide6.QtCore import Signal
+
+from services.usuarios_service import (
+    actualizar_usuario
+)
 
 class VentanaEditarUsuario(QDialog):
 
@@ -44,11 +49,21 @@ class VentanaEditarUsuario(QDialog):
         self.cargar_datos_usuario()
 
         #self.cargar_datos()
+
+        usuario_actualizado = Signal()
         
 
         # -----------------------------------
         # CONEXIONES
         # -----------------------------------
+
+        self.ui.pushButton_cancelar.clicked.connect(
+            self.reject
+        )
+
+        self.ui.pushButton_guardar.clicked.connect(
+            self.guardar_usuario
+        )
 
         self.ui.pushButton_cancelar.clicked.connect(
             self.reject
@@ -70,6 +85,116 @@ class VentanaEditarUsuario(QDialog):
             "Operador",
             "Consulta"
         ])
+
+    def guardar_usuario(self):
+
+        nombre = (
+            self.ui.lineEdit_nombre.text()
+        )
+
+        apellido = (
+            self.ui.lineEdit_apellido.text()
+        )
+
+        usuario = (
+            self.ui.lineEdit_usuario.text()
+        )
+
+        rol = (
+            self.ui.comboBox_rol.currentText()
+        )
+
+        nivel = (
+            self.ui.spinBox_nivel.value()
+        )
+
+        activo = (
+            self.ui.checkBox_activo.isChecked()
+        )
+
+        password = (
+            self.ui.lineEdit_password.text()
+        )
+
+        # -----------------------------------
+        # VALIDACIONES
+        # -----------------------------------
+
+        if not nombre.strip():
+
+            QMessageBox.warning(
+                self,
+                "Validación",
+                "Ingrese nombre."
+            )
+
+            return
+
+        if not usuario.strip():
+
+            QMessageBox.warning(
+                self,
+                "Validación",
+                "Ingrese usuario."
+            )
+
+            return
+
+        # -----------------------------------
+        # ACTUALIZAR
+        # -----------------------------------
+
+        resultado = actualizar_usuario(
+
+            usuario_id=self.usuario.id,
+
+            nombre=nombre,
+
+            apellido=apellido,
+
+            usuario=usuario,
+
+            rol=rol,
+
+            nivel_seguridad=nivel,
+
+            activo=activo,
+
+            password=(
+                password
+                if password.strip()
+                else None
+            )
+        )
+
+        # -----------------------------------
+        # RESPUESTA
+        # -----------------------------------
+
+        if resultado["success"]:
+
+            logging.debug(
+                f"Usuario actualizado: "
+                f"{usuario}"
+            )
+
+            QMessageBox.information(
+                self,
+                "Usuario",
+                resultado["mensaje"]
+            )
+
+            self.usuario_actualizado.emit()
+
+            self.accept()
+
+        else:
+
+            QMessageBox.critical(
+                self,
+                "Error",
+                resultado["mensaje"]
+            )
 
     # -----------------------------------
     # CARGAR DATOS

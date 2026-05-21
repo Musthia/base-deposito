@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,14 +13,19 @@
     <height>203</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::FocusPolicy::WheelFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>INICIO DE SESION</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">image: url(:/fondo/fondo_login.png);
-background-image: url(:/fondo/fondo_login.png);</string>
+   <string notr="true">background-color: rgb(81, 101, 166);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <widget class="QPushButton" name="boton_iniciar_sesion">
     <property name="geometry">
      <rect>
@@ -40,23 +48,12 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Text">
@@ -78,43 +75,21 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -147,23 +122,12 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Text">
@@ -185,43 +149,21 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -245,63 +187,30 @@ background-image: url(:/fondo/fondo_login.png);</string>
       </inactive>
       <disabled>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>0</red>
+          <green>127</green>
+          <blue>190</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -349,7 +258,8 @@ background-image: url(:/fondo/fondo_login.png);</string>
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: qlineargradient(spread:pad, x1:0.795, y1:0.529727, x2:1, y2:0.528, stop:0 rgba(29, 0, 4, 255), stop:1 rgba(255, 255, 255, 255));</string>
+     <string notr="true">
+background-color: rgb(0, 127, 190);</string>
     </property>
     <property name="text">
      <string>Iniciar Sesión: D A T C O R R </string>
@@ -359,6 +269,9 @@ background-image: url(:/fondo/fondo_login.png);</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_contrasena">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -380,63 +293,30 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -460,63 +340,30 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -531,63 +378,30 @@ background-image: url(:/fondo/fondo_login.png);</string>
       </inactive>
       <disabled>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -614,7 +428,7 @@ background-image: url(:/fondo/fondo_login.png);</string>
      <cursorShape>ArrowCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: qlineargradient(spread:pad, x1:0.795, y1:0.529727, x2:1, y2:0.528, stop:0 rgba(29, 0, 4, 255), stop:1 rgba(255, 255, 255, 255));</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>Contraseña</string>
@@ -650,9 +464,9 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -677,18 +491,18 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -724,9 +538,9 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -751,18 +565,18 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -789,27 +603,27 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -839,8 +653,11 @@ background-image: url(:/fondo/fondo_login.png);</string>
       <bold>true</bold>
      </font>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::TabFocus</enum>
+    </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(217, 217, 217);</string>
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
      <string/>
@@ -850,6 +667,9 @@ background-image: url(:/fondo/fondo_login.png);</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_usuario">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -871,23 +691,12 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Text">
@@ -900,43 +709,21 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -960,23 +747,12 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Text">
@@ -989,43 +765,21 @@ background-image: url(:/fondo/fondo_login.png);</string>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -1040,63 +794,30 @@ background-image: url(:/fondo/fondo_login.png);</string>
       </inactive>
       <disabled>
        <colorrole role="Button">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Base">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
-        <brush brushstyle="LinearGradientPattern">
-         <gradient startx="0.795000000000000" starty="0.529727000000000" endx="1.000000000000000" endy="0.528000000000000" type="LinearGradient" spread="PadSpread" coordinatemode="ObjectBoundingMode">
-          <gradientstop position="0.000000000000000">
-           <color alpha="255">
-            <red>29</red>
-            <green>0</green>
-            <blue>4</blue>
-           </color>
-          </gradientstop>
-          <gradientstop position="1.000000000000000">
-           <color alpha="255">
-            <red>255</red>
-            <green>255</green>
-            <blue>255</blue>
-           </color>
-          </gradientstop>
-         </gradient>
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>81</red>
+          <green>101</green>
+          <blue>166</blue>
+         </color>
         </brush>
        </colorrole>
        <colorrole role="Highlight">
@@ -1123,7 +844,7 @@ background-image: url(:/fondo/fondo_login.png);</string>
      <cursorShape>ArrowCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: qlineargradient(spread:pad, x1:0.795, y1:0.529727, x2:1, y2:0.528, stop:0 rgba(29, 0, 4, 255), stop:1 rgba(255, 255, 255, 255));</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>Usuario</string>
@@ -1156,9 +877,9 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -1228,18 +949,18 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -1320,9 +1041,9 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -1392,18 +1113,18 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -1484,9 +1205,9 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Button">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -1556,18 +1277,18 @@ background-image: url(:/fondo/fondo_login.png);</string>
        <colorrole role="Base">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
        <colorrole role="Window">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>217</red>
-          <green>217</green>
-          <blue>217</blue>
+          <red>255</red>
+          <green>255</green>
+          <blue>255</blue>
          </color>
         </brush>
        </colorrole>
@@ -1643,8 +1364,11 @@ background-image: url(:/fondo/fondo_login.png);</string>
       <bold>true</bold>
      </font>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::StrongFocus</enum>
+    </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(217, 217, 217);</string>
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
     </property>
    </widget>
   </widget>
@@ -1657,5 +1381,38 @@ background-image: url(:/fondo/fondo_login.png);</string>
  <resources>
   <include location="../img/fondo_ini_ses.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>entry_usuario</sender>
+   <signal>returnPressed()</signal>
+   <receiver>entry_contrasena</receiver>
+   <slot>selectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>214</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>entry_contrasena</sender>
+   <signal>returnPressed()</signal>
+   <receiver>boton_iniciar_sesion</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>260</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -25,11 +25,13 @@ from services.usuario_service import (
 
 import logging
 
-class VentanaUsuarios(QWidget):
+from PySide6.QtWidgets import QDialog
 
-    def __init__(self):
+class VentanaUsuarios(QDialog):
 
-        super().__init__()
+    def __init__(self, parent=None):
+
+        super().__init__(parent)
 
         self.ui = Ui_VentanaUsuarios()
 
@@ -102,28 +104,29 @@ class VentanaUsuarios(QWidget):
     def abrir_permisos_usuario(self):
 
         if not self.usuario_seleccionado:
-        
+
             QMessageBox.warning(
                 self,
                 "Selección",
                 "Seleccione un usuario."
             )
-    
+
             return
-    
+
         logging.debug(
             f"Administrar permisos: "
             f"{self.usuario_seleccionado.usuario}"
         )
-    
-        QMessageBox.information(
-            self,
-            "Permisos",
-            (
-                "Próximamente:\n"
-                "administrador permisos."
-            )
+
+        from ventanas.ventana_permisos_usuario import (
+            VentanaPermisosUsuario
         )
+
+        dialogo = VentanaPermisosUsuario(
+            self.usuario_seleccionado
+        )
+
+        dialogo.exec()
     
     def configurar_tabla(self):
 

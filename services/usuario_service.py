@@ -64,7 +64,7 @@ def actualizar_usuario(
 
         if password:
 
-            usuario_db.password = (
+            usuario_db.password_hash = (
                 hash_password(password)
             )
 
@@ -110,11 +110,13 @@ def cambiar_password(
 
     try:
 
-        usuario = session.query(
-            Usuario
-        ).filter(
-            Usuario.id == usuario_id
-        ).first()
+        usuario = (
+            session.query(Usuario)
+            .filter(
+                Usuario.id == usuario_id
+            )
+            .first()
+        )
 
         if not usuario:
 
@@ -123,12 +125,8 @@ def cambiar_password(
                 "mensaje": "Usuario no encontrado."
             }
 
-        # -----------------------------------
-        # NUEVO HASH
-        # -----------------------------------
-
         usuario.password_hash = (
-            generar_hash_password(
+            hash_password(
                 nueva_password
             )
         )

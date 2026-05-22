@@ -16,6 +16,10 @@ from services.usuario_service import (
     actualizar_usuario
 )
 
+from services.usuario_service import (
+    cambiar_password
+)
+
 class VentanaEditarUsuario(QDialog):
 
     usuario_actualizado = Signal()
@@ -70,6 +74,43 @@ class VentanaEditarUsuario(QDialog):
         self.ui.pushButton_cancelar.clicked.connect(
             self.reject
         )
+
+        self.ui.pushButton_reset_pass.clicked.connect(
+            self.reset_password
+        )
+
+    def reset_password(self):
+
+        nueva_password = "Temp1234"
+
+        resultado = cambiar_password(
+            self.usuario.id,
+            nueva_password
+        )
+
+        if resultado["success"]:
+
+            logging.debug(
+                f"Password reseteada: "
+                f"{self.usuario.usuario}"
+            )
+
+            QMessageBox.information(
+                self,
+                "Reset Password",
+                (
+                    "Nueva contraseña temporal:\n\n"
+                    f"{nueva_password}"
+                )
+            )
+
+        else:
+
+            QMessageBox.critical(
+                self,
+                "Error",
+                resultado["mensaje"]
+            )
 
     # -----------------------------------
     # CONFIGURAR UI
@@ -161,7 +202,10 @@ class VentanaEditarUsuario(QDialog):
         
             activo=self.ui.checkBox_activo.isChecked(),
         
-            password=self.ui.lineEdit_password.text()
+            password=(
+                self.ui.lineEdit_password.text().strip()
+                or None
+            )
         )
 
         # -----------------------------------

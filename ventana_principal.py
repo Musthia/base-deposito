@@ -320,11 +320,11 @@ class VentanaPrincipal(QMainWindow):
             "Abriendo administración usuarios..."
         )
     
-        self.ventana_usuarios = (
-            VentanaUsuarios()
+        dialogo = VentanaUsuarios(
+            parent=self
         )
     
-        self.ventana_usuarios.show()
+        dialogo.exec()
 
     def cerrar_sesion(self):
 

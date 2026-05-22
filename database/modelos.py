@@ -13,7 +13,15 @@ from sqlalchemy.orm import (
     relationship
 )
 
+from sqlalchemy.orm import relationship
+
 from sqlalchemy.orm import declarative_base
+
+permisos = relationship(
+    "UsuarioPermiso",
+    back_populates="usuario",
+    cascade="all, delete-orphan"
+)
 
 # -----------------------------------
 # BASE ORM
@@ -86,6 +94,12 @@ class Usuario(Base):
         onupdate=text("CURRENT_TIMESTAMP")
     )
 
+    usuario_permisos = relationship(
+    "UsuarioPermiso",
+    back_populates="usuario",
+    cascade="all, delete-orphan"
+)
+
 # -----------------------------------
 # TABLA PERMISOS
 # -----------------------------------
@@ -143,7 +157,8 @@ class UsuarioPermiso(Base):
     # -----------------------------------
 
     usuario = relationship(
-        "Usuario"
+        "Usuario",
+        back_populates="usuario_permisos"
     )
 
     permiso = relationship(

@@ -220,3 +220,73 @@ def listar_permisos_usuario(
     finally:
 
         db.close()
+
+import logging
+
+from sqlalchemy.orm import joinedload
+
+from database.conexion import SessionLocal
+
+from database.modelos import (
+    Usuario,
+    Permiso
+)
+
+def obtener_permisos_usuario(usuario_id):
+
+    logging.debug(
+        f"Obteniendo permisos usuario ID: "
+        f"{usuario_id}"
+    )
+
+    session = SessionLocal()
+
+    try:
+
+        usuario = (
+            session.query(Usuario)
+            .options(
+                joinedload(
+                    Usuario.usuario_permisos
+                ).joinedload(
+                    UsuarioPermiso.permiso
+                )
+            )
+            .filter(
+                Usuario.id == usuario_id
+            )
+            .first()
+        )
+
+        if not usuario:
+
+            logging.warning(
+                "Usuario no encontrado."
+            )
+
+            return []
+
+        permisos = [
+            relacion.permiso
+            for relacion
+            in usuario.usuario_permisos
+        ]
+
+        logging.debug(
+            f"Permisos encontrados: "
+            f"{len(permisos)}"
+        )
+
+        return permisos
+
+    except Exception:
+
+        logging.exception(
+            "Error obteniendo permisos usuario"
+        )
+
+        return []
+
+    finally:
+
+        session.close()

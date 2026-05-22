@@ -12,12 +12,14 @@ from ui.editar_usuario_ui import (
 
 from PySide6.QtCore import Signal
 
-from services.usuarios_service import (
+from services.usuario_service import (
     actualizar_usuario
 )
 
 class VentanaEditarUsuario(QDialog):
 
+    usuario_actualizado = Signal()
+    
     def __init__(
         self,
         usuario,
@@ -145,26 +147,21 @@ class VentanaEditarUsuario(QDialog):
         # -----------------------------------
 
         resultado = actualizar_usuario(
-
             usuario_id=self.usuario.id,
-
-            nombre=nombre,
-
-            apellido=apellido,
-
-            usuario=usuario,
-
-            rol=rol,
-
-            nivel_seguridad=nivel,
-
-            activo=activo,
-
-            password=(
-                password
-                if password.strip()
-                else None
-            )
+        
+            nombre=self.ui.lineEdit_nombre.text(),
+        
+            apellido=self.ui.lineEdit_apellido.text(),
+        
+            usuario=self.ui.lineEdit_usuario.text(),
+        
+            rol=self.ui.comboBox_rol.currentText(),
+        
+            nivel_seguridad=self.ui.spinBox_nivel.value(),
+        
+            activo=self.ui.checkBox_activo.isChecked(),
+        
+            password=self.ui.lineEdit_password.text()
         )
 
         # -----------------------------------

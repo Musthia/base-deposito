@@ -61,3 +61,35 @@ def obtener_descripcion_nivel(
         return "Operador"
 
     return "Consulta"
+
+from database.conexion import SessionLocal
+
+from database.modelos import Permiso
+
+# -----------------------------------
+# LISTAR PERMISOS
+# -----------------------------------
+
+def listar_permisos():
+
+    db = SessionLocal()
+
+    try:
+
+        permisos = (
+            db.query(Permiso)
+            .order_by(Permiso.codigo)
+            .all()
+        )
+
+        return permisos
+
+    except Exception:
+
+        db.rollback()
+
+        raise
+
+    finally:
+
+        db.close()

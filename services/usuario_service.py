@@ -18,6 +18,9 @@ from database.modelos import Usuario
 
 from utils.hash import hash_password
 
+# -----------------------------------
+# ACTUALIZAR USUARIO
+# -----------------------------------
 
 def actualizar_usuario(
     usuario_id,
@@ -30,12 +33,15 @@ def actualizar_usuario(
     password=None
 ):
 
-    db: Session = SessionLocal()
+    from database.conexion import SessionLocal
+    from database.modelos import Usuario
+
+    session = SessionLocal()
 
     try:
 
         usuario_db = (
-            db.query(Usuario)
+            session.query(Usuario)
             .filter(
                 Usuario.id == usuario_id
             )
@@ -56,17 +62,13 @@ def actualizar_usuario(
         usuario_db.nivel_seguridad = nivel_seguridad
         usuario_db.activo = activo
 
-        # -----------------------------------
-        # ACTUALIZAR PASSWORD OPCIONAL
-        # -----------------------------------
-
         if password:
 
-            usuario_db.password_hash = (
+            usuario_db.password = (
                 hash_password(password)
             )
 
-        db.commit()
+        session.commit()
 
         logging.debug(
             f"Usuario actualizado: {usuario}"
@@ -79,80 +81,11 @@ def actualizar_usuario(
 
     except Exception as e:
 
-        db.rollback()
+        session.rollback()
 
         logging.exception(
             "Error actualizando usuario"
         )
-
-        return {
-            "success": False,
-            "mensaje": str(e)
-        }
-
-    finally:
-
-        db.close()
-
-# -----------------------------------
-# ACTUALIZAR USUARIO
-# -----------------------------------
-
-def actualizar_usuario(
-    usuario_id,
-    nombre=None,
-    apellido=None,
-    rol=None,
-    nivel_seguridad=None
-):
-
-    session = SessionLocal()
-
-    try:
-
-        usuario = session.query(
-            Usuario
-        ).filter(
-            Usuario.id == usuario_id
-        ).first()
-
-        if not usuario:
-
-            return {
-                "success": False,
-                "mensaje": "Usuario no encontrado."
-            }
-
-        # -----------------------------------
-        # ACTUALIZAR CAMPOS
-        # -----------------------------------
-
-        if nombre:
-            usuario.nombre = nombre
-
-        if apellido:
-            usuario.apellido = apellido
-
-        if rol:
-            usuario.rol = rol
-
-        if nivel_seguridad is not None:
-            usuario.nivel_seguridad = nivel_seguridad
-
-        # -----------------------------------
-        # GUARDAR
-        # -----------------------------------
-
-        session.commit()
-
-        return {
-            "success": True,
-            "mensaje": "Usuario actualizado."
-        }
-
-    except Exception as e:
-
-        session.rollback()
 
         return {
             "success": False,

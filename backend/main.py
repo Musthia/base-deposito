@@ -4,6 +4,11 @@ from backend.routers.auth_router import (
     router as auth_router
 )
 
+from backend.routers.test_router import (
+    router as test_router
+)
+
+
 # -----------------------------------
 # APP
 # -----------------------------------
@@ -20,6 +25,9 @@ app = FastAPI(
 app.include_router(
     auth_router
 )
+
+app.include_router(test_router)
+
 
 # -----------------------------------
 # ROOT

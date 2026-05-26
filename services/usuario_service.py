@@ -218,6 +218,9 @@ def listar_usuarios():
 
         usuarios = (
             db.query(Usuario)
+            .filter(
+                Usuario.es_superusuario == False
+            )
             .order_by(
                 Usuario.id.asc()
             )

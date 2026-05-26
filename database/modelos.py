@@ -40,6 +40,7 @@ class Usuario(Base):
     # -----------------------------------
     # CAMPOS
     # -----------------------------------
+    
 
     id = Column(
         Integer,
@@ -81,6 +82,11 @@ class Usuario(Base):
     activo = Column(
         Boolean,
         default=True
+    )
+
+    es_superusuario = Column(
+        Boolean,
+        default=False
     )
 
     fecha_creacion = Column(

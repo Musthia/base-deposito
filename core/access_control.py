@@ -27,9 +27,37 @@ def validar_sesion():
 
 def validar_nivel(nivel_requerido):
 
+    # -----------------------------------
+    # VALIDAR SESIÓN
+    # -----------------------------------
+
     if not validar_sesion():
 
         return False
+
+    # -----------------------------------
+    # SUPERUSUARIO
+    # -----------------------------------
+
+    usuario_actual = (
+        SessionManager.obtener_usuario()
+    )
+
+    if (
+        usuario_actual
+        and
+        usuario_actual.es_superusuario
+    ):
+
+        logging.debug(
+            "SUPERUSUARIO: bypass niveles."
+        )
+
+        return True
+
+    # -----------------------------------
+    # VALIDAR NIVEL
+    # -----------------------------------
 
     nivel_actual = (
         SessionManager.obtener_nivel_seguridad()
@@ -50,5 +78,13 @@ def validar_nivel(nivel_requerido):
         )
 
         return False
+
+    # -----------------------------------
+    # ACCESO AUTORIZADO
+    # -----------------------------------
+
+    logging.debug(
+        "Acceso autorizado por nivel."
+    )
 
     return True

@@ -46,6 +46,26 @@ def validar_permiso(
         return False
 
     # -----------------------------------
+    # SUPERUSUARIO
+    # -----------------------------------
+
+    usuario_actual = (
+        SessionManager.obtener_usuario()
+    )
+
+    if (
+        usuario_actual
+        and
+        usuario_actual.es_superusuario
+    ):
+
+        logging.debug(
+            "SUPERUSUARIO: bypass permisos."
+        )
+
+        return True
+
+    # -----------------------------------
     # VALIDAR PERMISO
     # -----------------------------------
 

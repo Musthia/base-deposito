@@ -23,6 +23,11 @@ class SessionManager:
     # -----------------------------------
 
     @classmethod
+    def obtener_usuario(cls):
+    
+        return cls.usuario_actual
+    
+    @classmethod
     def validar_sesion(cls):
     
         if not cls._sesion_activa:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Aplicacionprincipal.ui'
+## Form generated from reading UI file 'AplicacionPrincipal.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.10.3
 ##
@@ -459,33 +459,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.line_3, 8, 0, 1, 2)
 
-        self.pushButton_aplicaciones = QPushButton(self.centralwidget)
-        self.pushButton_aplicaciones.setObjectName(u"pushButton_aplicaciones")
-        self.pushButton_aplicaciones.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.pushButton_aplicaciones.setStyleSheet(u"QPushButton {\n"
-"    background-color: #455a50;\n"
-"    color: #ecf0f1;\n"
-"    border: 1px solid #1a252f;\n"
-" \n"
-"    padding: 6px 12px;\n"
-"    font-weight: bold;\n"
-"    font-size: 11px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: #546e7a;     /* tono m\u00e1s claro al pasar el mouse */\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: #2e4053;     /* m\u00e1s oscuro al presionar */\n"
-"    border: 2px solid #1a252f;\n"
-"}\n"
-"QPushButton:disabled {\n"
-"    background-color: #a7b0b5;\n"
-"    color: #dfe4e8;\n"
-"    border: 1px solid #95a5a6;\n"
-"}")
-
-        self.gridLayout_2.addWidget(self.pushButton_aplicaciones, 8, 2, 1, 1)
-
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -532,9 +505,5 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.combo_bases.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:700;\">SELECCIONAR BASE <br/>DE DATOS</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-#if QT_CONFIG(tooltip)
-        self.pushButton_aplicaciones.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">APLICACIONES<br/>ANTERIORES</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.pushButton_aplicaciones.setText(QCoreApplication.translate("MainWindow", u"Aplicaciones", None))
     # retranslateUi
 

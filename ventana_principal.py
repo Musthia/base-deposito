@@ -291,9 +291,9 @@ class VentanaPrincipal(QMainWindow):
         self.ruta_aplicaciones = os.path.join(os.getcwd(), "aplicaciones")
         self.launcher_data = self.cargar_launcher_data()
 
-        self.ui.pushButton_aplicaciones.clicked.connect(
-            self.mostrar_launcher
-        )
+        #self.ui.pushButton_aplicaciones.clicked.connect(
+        #    self.mostrar_launcher
+        #)
 
         self.ui.tabwidget_resultados_consulta.setTabsClosable(True)
         self.ui.tabwidget_resultados_consulta.tabCloseRequested.connect(

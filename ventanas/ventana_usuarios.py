@@ -27,6 +27,10 @@ import logging
 
 from PySide6.QtWidgets import QDialog
 
+from ventanas.ventana_alta_usuario import (
+    VentanaAltaUsuario
+)
+
 class VentanaUsuarios(QDialog):
 
     def __init__(self, parent=None):
@@ -68,6 +72,30 @@ class VentanaUsuarios(QDialog):
         self.ui.pushButton_permiso_usuario.clicked.connect(
             self.abrir_permisos_usuario
         )
+
+        self.ui.pushButton_nuevo_usuario.clicked.connect(
+            self.abrir_alta_usuario
+        )
+
+    def abrir_alta_usuario(self):
+
+        logging.debug(
+            "Abriendo alta usuario..."
+        )
+    
+        dialogo = VentanaAltaUsuario(
+            parent=self
+        )
+    
+        # -----------------------------------
+        # REFRESCAR TABLA
+        # -----------------------------------
+    
+        dialogo.usuario_creado.connect(
+            self.cargar_usuarios
+        )
+    
+        dialogo.exec()
 
     def editar_usuario_seleccionado(self):
 

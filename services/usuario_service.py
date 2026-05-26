@@ -18,6 +18,10 @@ from database.modelos import Usuario
 
 from utils.hash import hash_password
 
+from config.app_config import (
+    MODO_DESARROLLO
+)
+
 # -----------------------------------
 # ACTUALIZAR USUARIO
 # -----------------------------------
@@ -96,7 +100,6 @@ def actualizar_usuario(
 
         session.close()
 
-
 # -----------------------------------
 # CAMBIAR PASSWORD
 # -----------------------------------
@@ -105,7 +108,6 @@ def cambiar_password(
     usuario_id,
     nueva_password
 ):
-
     session = SessionLocal()
 
     try:
@@ -216,16 +218,24 @@ def listar_usuarios():
 
     try:
 
-        usuarios = (
+        query = (
             db.query(Usuario)
-            .filter(
-                Usuario.es_superusuario == False
-            )
             .order_by(
                 Usuario.id.asc()
             )
-            .all()
         )
+
+        # -----------------------------------
+        # PRODUCCIÓN
+        # -----------------------------------
+
+        if not MODO_DESARROLLO:
+
+            query = query.filter(
+                Usuario.es_superusuario == False
+            )
+
+        usuarios = query.all()
 
         return usuarios
 
@@ -391,6 +401,109 @@ def activar_usuario(usuario_id):
     except Exception as e:
 
         session.rollback()
+
+        return {
+            "success": False,
+            "mensaje": str(e)
+        }
+
+    finally:
+
+        session.close()
+
+def crear_usuario(
+    nombre,
+    apellido,
+    usuario,
+    password,
+    rol,
+    nivel_seguridad,
+    activo=True
+):
+
+    from database.conexion import (
+        SessionLocal
+    )
+
+    from database.modelos import (
+        Usuario
+    )
+
+    session = SessionLocal()
+
+    try:
+
+        # -----------------------------------
+        # VALIDAR EXISTE
+        # -----------------------------------
+
+        existe = (
+            session.query(Usuario)
+            .filter(
+                Usuario.usuario == usuario
+            )
+            .first()
+        )
+
+        if existe:
+
+            return {
+                "success": False,
+                "mensaje": (
+                    "El usuario ya existe."
+                )
+            }
+
+        # -----------------------------------
+        # CREAR USUARIO
+        # -----------------------------------
+
+        nuevo_usuario = Usuario(
+
+            nombre=nombre,
+
+            apellido=apellido,
+
+            usuario=usuario,
+
+            password_hash=(
+                hash_password(password)
+            ),
+
+            rol=rol,
+
+            nivel_seguridad=(
+                nivel_seguridad
+            ),
+
+            activo=activo,
+
+            es_superusuario=False
+        )
+
+        session.add(nuevo_usuario)
+
+        session.commit()
+
+        logging.debug(
+            f"Usuario creado: "
+            f"{usuario}"
+        )
+
+        return {
+            "success": True,
+            "mensaje": (
+                "Usuario creado."
+            )
+        }
+
+    except Exception as e:
+
+        session.rollback()
+
+        logging.exception(
+            "Error creando usuario"
+        )
 
         return {
             "success": False,

@@ -20,6 +20,10 @@ from services.usuario_service import (
     cambiar_password
 )
 
+from config.app_config import (
+    MODO_DESARROLLO
+)
+
 class VentanaEditarUsuario(QDialog):
 
     usuario_actualizado = Signal()
@@ -52,12 +56,7 @@ class VentanaEditarUsuario(QDialog):
         # CARGAR DATOS
         # -----------------------------------
 
-        self.cargar_datos_usuario()
-
-        #self.cargar_datos()
-
-        usuario_actualizado = Signal()
-        
+        self.cargar_datos_usuario()        
 
         # -----------------------------------
         # CONEXIONES
@@ -130,6 +129,31 @@ class VentanaEditarUsuario(QDialog):
         ])
 
     def guardar_usuario(self):
+
+        # -----------------------------------
+        # PROTEGER SUPERUSUARIO
+        # -----------------------------------
+
+        if (
+            self.usuario.es_superusuario
+            and
+            not MODO_DESARROLLO
+        ):
+
+            QMessageBox.warning(
+                self,
+                "Protegido",
+                (
+                    "No puede modificar "
+                    "un superusuario."
+                )
+            )
+
+            return
+
+        # -----------------------------------
+        # CAPTURAR DATOS
+        # -----------------------------------
 
         nombre = (
             self.ui.lineEdit_nombre.text()

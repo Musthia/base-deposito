@@ -28,5 +28,10 @@ def protegido(
 
     return {
         "success": True,
-        "usuario": usuario
+        "usuario": usuario.usuario,
+        "rol": usuario.rol,
+        "nivel": usuario.nivel_seguridad,
+        "superusuario": (
+            usuario.es_superusuario
+        )
     }

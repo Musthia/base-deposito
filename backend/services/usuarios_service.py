@@ -15,18 +15,91 @@ from backend.core.logger import logger
 # -----------------------------------
 
 def listar_usuarios_web(
-    db: Session
+
+    db: Session,
+
+    page: int = 1,
+
+    limit: int = 20,
+
+    incluir_inactivos: bool = False
 ):
 
     logger.info(
         "LISTANDO USUARIOS WEB"
     )
-
-    return (
-        db.query(Usuario)
+    
+    query = db.query(Usuario)
+    
+    # -----------------------------
+    # FILTRAR ACTIVOS
+    # -----------------------------
+    
+    if not incluir_inactivos:
+    
+        query = query.filter(
+            Usuario.activo == True
+        )
+    
+    # -----------------------------
+    # TOTAL
+    # -----------------------------
+    
+    total = query.count()
+    
+    # -----------------------------
+    # PAGINAS
+    # -----------------------------
+    
+    pages = (
+    
+        total + limit - 1
+    
+    ) // limit
+    
+    # -----------------------------
+    # OFFSET
+    # -----------------------------
+    
+    offset = (
+    
+        page - 1
+    
+    ) * limit
+    
+    # -----------------------------
+    # PAGINACION
+    # -----------------------------
+    
+    usuarios = (
+    
+        query
+    
+        .offset(offset)
+    
+        .limit(limit)
+    
         .all()
     )
-
+    
+    logger.info(
+        f"Usuarios encontrados: "
+        f"{len(usuarios)}"
+    )
+    
+    return {
+    
+        "usuarios": usuarios,
+    
+        "total": total,
+    
+        "pages": pages,
+    
+        "page": page,
+    
+        "limit": limit
+    }
+    
 # -----------------------------------
 # CREAR USUARIO
 # -----------------------------------
@@ -398,6 +471,169 @@ def actualizar_usuario_web(
         logger.error(
             f"Error UPDATE usuario: "
             f"{str(e)}"
+        )
+
+        return {
+
+            "success": False,
+
+            "mensaje": (
+                "Error interno."
+            )
+        }
+
+# -----------------------------------
+# DESACTIVAR USUARIO
+# -----------------------------------
+
+def desactivar_usuario_web(
+
+    db: Session,
+
+    usuario_id: int
+):
+
+    logger.info(
+        f"Desactivando usuario "
+        f"ID={usuario_id}"
+    )
+
+    try:
+
+        # -----------------------------
+        # BUSCAR USUARIO
+        # -----------------------------
+
+        usuario = (
+
+            db.query(Usuario)
+
+            .filter(
+                Usuario.id == usuario_id
+            )
+
+            .first()
+        )
+
+        # -----------------------------
+        # NO EXISTE
+        # -----------------------------
+
+        if not usuario:
+
+            logger.warning(
+                f"Usuario inexistente "
+                f"ID={usuario_id}"
+            )
+
+            return {
+
+                "success": False,
+
+                "mensaje": (
+                    "Usuario no existe."
+                )
+            }
+
+        # -----------------------------
+        # YA DESACTIVADO
+        # -----------------------------
+
+        if not usuario.activo:
+
+            logger.warning(
+                f"Usuario ya "
+                f"desactivado "
+                f"ID={usuario_id}"
+            )
+
+            return {
+
+                "success": False,
+
+                "mensaje": (
+                    "Usuario ya "
+                    "desactivado."
+                )
+            }
+
+        # -----------------------------
+        # PROTEGER SUPERUSUARIO
+        # -----------------------------
+
+        if usuario.es_superusuario:
+
+            logger.warning(
+                "Intento desactivar "
+                "superusuario"
+            )
+
+            return {
+
+                "success": False,
+
+                "mensaje": (
+                    "No se puede "
+                    "desactivar "
+                    "superusuario."
+                )
+            }
+
+        # -----------------------------
+        # SOFT DELETE
+        # -----------------------------
+
+        usuario.activo = False
+
+        db.commit()
+
+        logger.info(
+            f"Usuario desactivado "
+            f"ID={usuario_id}"
+        )
+
+        return {
+
+            "success": True,
+
+            "mensaje": (
+                "Usuario desactivado."
+            )
+        }
+
+    # -----------------------------
+    # INTEGRITY ERROR
+    # -----------------------------
+
+    except IntegrityError as e:
+
+        db.rollback()
+
+        logger.error(
+            f"IntegrityError "
+            f"desactivar usuario: {e}"
+        )
+
+        return {
+
+            "success": False,
+
+            "mensaje": (
+                "Error integridad DB."
+            )
+        }
+
+    # -----------------------------
+    # ERROR GENERAL
+    # -----------------------------
+
+    except Exception as e:
+
+        db.rollback()
+
+        logger.exception(
+            f"Error desactivar "
+            f"usuario: {e}"
         )
 
         return {

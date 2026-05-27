@@ -51,11 +51,23 @@ class UsuarioCreateResponse(BaseModel):
 # RESPONSE LISTADO
 # -----------------------------------
 
-class UsuariosListadoResponse(BaseModel):
+class UsuariosListadoResponse(
+    BaseModel
+):
 
     success: bool
+
     total: int
-    usuarios: List[UsuarioResponse]
+
+    page: int
+
+    limit: int
+
+    pages: int
+
+    usuarios: List[
+        UsuarioResponse
+    ]
 
 # -----------------------------------
 # UPDATE USUARIO

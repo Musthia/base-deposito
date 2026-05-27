@@ -18,7 +18,8 @@ from backend.schemas.usuario_schema import (
 from backend.services.usuarios_service import (
     listar_usuarios_web,
     crear_usuario_web,
-    actualizar_usuario_web
+    actualizar_usuario_web,
+    desactivar_usuario_web
 )
 
 from backend.security.jwt_bearer import (
@@ -71,21 +72,37 @@ router = APIRouter(
 
 def listar_usuarios(
 
-    db: Session = Depends(get_db),
+    page: int = 1,
 
-    usuario_actual=Depends(
+    limit: int = 20,
+
+    usuario_actual = Depends(
         requiere_permiso(
             "ADMIN_USUARIOS"
         )
-    )
+    ),
 
+    db: Session = Depends(
+        get_db
+    )
 ):
 
     logger.debug(
         "API WEB: listar usuarios"
     )
 
-    usuarios_db = listar_usuarios_web(db)
+    resultado = listar_usuarios_web(
+
+        db=db,
+
+        page=page,
+
+        limit=limit
+    )
+
+    usuarios_db = resultado[
+        "usuarios"
+    ]
 
     usuarios_response = []
 
@@ -125,9 +142,15 @@ def listar_usuarios(
     return UsuariosListadoResponse(
 
         success=True,
-
-        total=len(usuarios_response),
-
+    
+        total=resultado["total"],
+    
+        page=resultado["page"],
+    
+        limit=resultado["limit"],
+    
+        pages=resultado["pages"],
+    
         usuarios=usuarios_response
     )
 
@@ -302,3 +325,80 @@ def actualizar_usuario(
             resultado["mensaje"]
         )
     )
+
+# -----------------------------------
+# DESACTIVAR USUARIO
+# -----------------------------------
+
+@router.delete(
+
+    "/{usuario_id}"
+)
+
+def desactivar_usuario(
+
+    usuario_id: int,
+
+    usuario_actual=Depends(
+        obtener_usuario_actual
+    ),
+
+    db: Session = Depends(
+        get_db
+    )
+):
+
+    # -----------------------------
+    # VALIDAR PERMISOS
+    # -----------------------------
+
+    if (
+
+        not usuario_actual.es_superusuario
+
+        and
+
+        usuario_actual.nivel_seguridad < 10
+    ):
+
+        raise HTTPException(
+
+            status_code=403,
+
+            detail=(
+                "Sin permisos "
+                "para desactivar usuarios."
+            )
+        )
+
+    # -----------------------------
+    # DESACTIVAR
+    # -----------------------------
+
+    resultado = desactivar_usuario_web(
+
+        db=db,
+
+        usuario_id=usuario_id
+    )
+
+    # -----------------------------
+    # ERROR
+    # -----------------------------
+
+    if not resultado["success"]:
+
+        raise HTTPException(
+
+            status_code=400,
+
+            detail=(
+                resultado["mensaje"]
+            )
+        )
+
+    # -----------------------------
+    # OK
+    # -----------------------------
+
+    return resultado

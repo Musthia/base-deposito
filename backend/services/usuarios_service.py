@@ -14,6 +14,10 @@ from sqlalchemy import or_
 
 from typing import Optional
 
+from backend.services.auditoria_service import (
+    registrar_auditoria
+)
+
 # -----------------------------------
 # LISTAR USUARIOS
 # -----------------------------------
@@ -151,41 +155,41 @@ def listar_usuarios_web(
     # -----------------------------
     # VALIDAR COLUMNA
     # -----------------------------
-    
+
     if sort_by not in COLUMNAS_ORDEN_PERMITIDAS:
-    
+
         logger.warning(
             f"Columna inválida ORDER BY: {sort_by}"
         )
-    
+
         sort_by = "id"
-    
+
     # -----------------------------
     # OBTENER COLUMNA SEGURA
     # -----------------------------
-    
+
     columna = (
         COLUMNAS_ORDEN_PERMITIDAS[
             sort_by
         ]
     )
-    
+
     # -----------------------------
     # ASC / DESC
     # -----------------------------
-    
+
     if order == "desc":
-    
+
         query = query.order_by(
             columna.desc()
         )
-    
+
     else:
-    
+
         query = query.order_by(
             columna.asc()
         )
-    
+
     logger.info(
         f"Ordenando por {sort_by} {order}"
     )
@@ -348,6 +352,28 @@ def crear_usuario_web(
 
         db.refresh(nuevo_usuario)
 
+        # -----------------------------
+        # AUDITORIA
+        # -----------------------------
+    
+        registrar_auditoria(
+        
+            db=db,
+    
+            usuario=datos.usuario,
+    
+            accion="CREATE",
+    
+            tabla="usuarios",
+    
+            registro_id=nuevo_usuario.id,
+    
+            detalle=(
+                f"Usuario creado: "
+                f"{datos.usuario}"
+            )
+        )
+
         logger.info(
             f"Usuario creado ID="
             f"{nuevo_usuario.id}"
@@ -463,6 +489,26 @@ def actualizar_usuario_web(
                     "Usuario no encontrado."
                 )
             }
+        # -------------------------
+        # ESTADO ANTERIOR
+        # -------------------------
+        
+        before_data = {
+        
+            "nombre": usuario_db.nombre,
+        
+            "apellido": usuario_db.apellido,
+        
+            "usuario": usuario_db.usuario,
+        
+            "rol": usuario_db.rol,
+        
+            "nivel_seguridad": (
+                usuario_db.nivel_seguridad
+            ),
+        
+            "activo": usuario_db.activo
+        } 
 
         # -------------------------
         # VALIDAR DUPLICADO
@@ -502,77 +548,98 @@ def actualizar_usuario_web(
                 }
 
         # -------------------------
-        # ACTUALIZAR CAMPOS
+        # UPDATE PARCIAL DINAMICO
         # -------------------------
 
-        if datos.nombre is not None:
+        update_data = datos.dict(
+            exclude_unset=True
+        )
 
-            usuario_db.nombre = (
-                datos.nombre
-            )
+        logger.warning(update_data)
 
-        if datos.apellido is not None:
-
-            usuario_db.apellido = (
-                datos.apellido
-            )
-
-        if datos.usuario is not None:
-
-            usuario_db.usuario = (
-                datos.usuario
-            )
-
-        if datos.rol is not None:
-
-            usuario_db.rol = (
-                datos.rol
-            )
-
-        if (
-            datos.nivel_seguridad
-            is not None
+        for campo, valor in (
+            update_data.items()
         ):
 
-            usuario_db.nivel_seguridad = (
-                datos.nivel_seguridad
-            )
+            # ---------------------
+            # PASSWORD
+            # ---------------------
 
-        if datos.activo is not None:
+            if campo == "password":
+            
+                if len(valor) < 4:
+                
+                    return {
+                    
+                        "success": False,
 
-            usuario_db.activo = (
-                datos.activo
-            )
+                        "mensaje": (
+                            "Password demasiado corta."
+                        )
+                    }
 
-        # -------------------------
-        # PASSWORD OPCIONAL
-        # -------------------------
-
-        if datos.password:
-
-            if len(datos.password) < 4:
-
-                return {
-
-                    "success": False,
-
-                    "mensaje": (
-                        "Password demasiado corta."
-                    )
-                }
-
-            usuario_db.password_hash = (
-
-                hash_password(
-                    datos.password
+                usuario_db.password_hash = (
+                    hash_password(valor)
                 )
-            )
+
+            else:
+            
+                setattr(
+                    usuario_db,
+                    campo,
+                    valor
+                )
 
         # -------------------------
         # COMMIT
         # -------------------------
 
         db.commit()
+
+        # -------------------------
+        # ESTADO NUEVO
+        # -------------------------
+
+        after_data = {
+
+            "nombre": usuario_db.nombre,
+
+            "apellido": usuario_db.apellido,
+
+            "usuario": usuario_db.usuario,
+
+            "rol": usuario_db.rol,
+
+            "nivel_seguridad": (
+                usuario_db.nivel_seguridad
+            ),
+
+            "activo": usuario_db.activo
+        }
+
+        # -------------------------
+        # AUDITORIA
+        # -------------------------
+
+        registrar_auditoria(
+
+            db=db,
+
+            usuario=usuario_db.usuario,
+
+            accion="UPDATE",
+
+            tabla="usuarios",
+
+            registro_id=usuario_db.id,
+
+            detalle=(
+
+                f"ANTES: {before_data} | "
+
+                f"DESPUES: {after_data}"
+            )
+        )
 
         logger.info(
             f"Usuario actualizado "
@@ -640,7 +707,9 @@ def desactivar_usuario_web(
 
     db: Session,
 
-    usuario_id: int
+    usuario_id: int,
+
+    usuario_actual: str
 ):
 
     logger.info(
@@ -676,6 +745,28 @@ def desactivar_usuario_web(
                 f"ID={usuario_id}"
             )
 
+            # -----------------------------
+            # AUDITORIA
+            # -----------------------------
+
+            registrar_auditoria(
+
+                db=db,
+
+                usuario=usuario_actual,
+
+                accion="DELETE_LOGICO_ERROR",
+
+                tabla="usuarios",
+
+                registro_id=usuario_id,
+
+                detalle=(
+                    "Intento eliminar "
+                    "usuario inexistente"
+                )
+            )
+
             return {
 
                 "success": False,
@@ -695,6 +786,28 @@ def desactivar_usuario_web(
                 f"Usuario ya "
                 f"desactivado "
                 f"ID={usuario_id}"
+            )
+
+            # -----------------------------
+            # AUDITORIA
+            # -----------------------------
+
+            registrar_auditoria(
+
+                db=db,
+
+                usuario=usuario_actual,
+
+                accion="DELETE_LOGICO_ERROR",
+
+                tabla="usuarios",
+
+                registro_id=usuario.id,
+
+                detalle=(
+                    "Intento desactivar "
+                    "usuario ya desactivado"
+                )
             )
 
             return {
@@ -718,6 +831,28 @@ def desactivar_usuario_web(
                 "superusuario"
             )
 
+            # -----------------------------
+            # AUDITORIA
+            # -----------------------------
+
+            registrar_auditoria(
+
+                db=db,
+
+                usuario=usuario_actual,
+
+                accion="DELETE_LOGICO_ERROR",
+
+                tabla="usuarios",
+
+                registro_id=usuario.id,
+
+                detalle=(
+                    "Intento desactivar "
+                    "superusuario"
+                )
+            )
+
             return {
 
                 "success": False,
@@ -730,12 +865,70 @@ def desactivar_usuario_web(
             }
 
         # -----------------------------
+        # BEFORE DATA
+        # -----------------------------
+
+        before_data = {
+
+            "nombre": usuario.nombre,
+
+            "apellido": usuario.apellido,
+
+            "usuario": usuario.usuario,
+
+            "rol": usuario.rol,
+
+            "activo": usuario.activo
+        }
+
+        # -----------------------------
         # SOFT DELETE
         # -----------------------------
 
         usuario.activo = False
 
         db.commit()
+
+        # -----------------------------
+        # AFTER DATA
+        # -----------------------------
+
+        after_data = {
+
+            "nombre": usuario.nombre,
+
+            "apellido": usuario.apellido,
+
+            "usuario": usuario.usuario,
+
+            "rol": usuario.rol,
+
+            "activo": usuario.activo
+        }
+
+        # -----------------------------
+        # AUDITORIA
+        # -----------------------------
+
+        registrar_auditoria(
+
+            db=db,
+
+            usuario=usuario_actual,
+
+            accion="DELETE_LOGICO",
+
+            tabla="usuarios",
+
+            registro_id=usuario.id,
+
+            detalle=(
+
+                f"ANTES: {before_data} | "
+
+                f"DESPUES: {after_data}"
+            )
+        )
 
         logger.info(
             f"Usuario desactivado "
@@ -764,6 +957,21 @@ def desactivar_usuario_web(
             f"desactivar usuario: {e}"
         )
 
+        registrar_auditoria(
+
+            db=db,
+
+            usuario=usuario_actual,
+
+            accion="DELETE_LOGICO_ERROR",
+
+            tabla="usuarios",
+
+            registro_id=usuario_id,
+
+            detalle=f"IntegrityError: {str(e)}"
+        )
+
         return {
 
             "success": False,
@@ -784,6 +992,21 @@ def desactivar_usuario_web(
         logger.exception(
             f"Error desactivar "
             f"usuario: {e}"
+        )
+
+        registrar_auditoria(
+
+            db=db,
+
+            usuario=usuario_actual,
+
+            accion="DELETE_LOGICO_ERROR",
+
+            tabla="usuarios",
+
+            registro_id=usuario_id,
+
+            detalle=f"Exception: {str(e)}"
         )
 
         return {

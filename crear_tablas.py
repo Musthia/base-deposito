@@ -1,12 +1,20 @@
-from database.conexion import engine
+from database.conexion import (
+    engine
+)
+
 from database.modelos import Base
 
-# -----------------------------------
-# CREAR TODAS LAS TABLAS
-# -----------------------------------
+print("\nMODELOS REGISTRADOS:\n")
+
+for tabla in Base.metadata.tables:
+    print(tabla)
 
 print("\nCreando tablas PostgreSQL...\n")
 
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(
+    bind=engine
+)
 
-print("Tablas creadas correctamente.")
+print(
+    "Tablas creadas correctamente."
+)

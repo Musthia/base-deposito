@@ -22,6 +22,8 @@ from jose import (
     JWTError
 )
 
+import uuid
+
 security = HTTPBearer()
 
 SECRET_KEY = (
@@ -41,26 +43,61 @@ def crear_token(data):
 
     to_encode = data.copy()
 
+    # -----------------------------------
+    # EXPIRACION
+    # -----------------------------------
+
     expire = (
+
         datetime.utcnow()
+
         +
+
         timedelta(
             minutes=ACCESS_TOKEN_EXPIRE_MINUTES
         )
     )
 
+    # -----------------------------------
+    # JWT ID (JTI)
+    # -----------------------------------
+
+    jti = str(uuid.uuid4())
+
+    # -----------------------------------
+    # PAYLOAD
+    # -----------------------------------
+
     to_encode.update({
-        "exp": expire
+
+        "exp": expire,
+
+        "jti": jti
     })
 
+    # -----------------------------------
+    # GENERAR TOKEN
+    # -----------------------------------
+
     encoded_jwt = jwt.encode(
+
         to_encode,
+
         SECRET_KEY,
+
         algorithm=ALGORITHM
     )
 
-    return encoded_jwt
+    # -----------------------------------
+    # RETORNO ENTERPRISE
+    # -----------------------------------
 
+    return {
+
+        "access_token": encoded_jwt,
+
+        "jti": jti
+    }
 # -----------------------------------
 # VERIFICAR TOKEN
 # -----------------------------------

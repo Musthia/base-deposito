@@ -52,25 +52,51 @@ def login_usuario(
                 "mensaje": "Password incorrecta."
             }
 
+        # -----------------------------------
+        # GENERAR TOKEN
+        # -----------------------------------
+        
+        resultado_token = crear_token({
+        
+            "sub": usuario_db.usuario,
+        
+            "nivel": (
+                usuario_db.nivel_seguridad
+            ),
+        
+            "superusuario": (
+                usuario_db.es_superusuario
+            )
+        })
+        
+        # -----------------------------------
+        # RETURN
+        # -----------------------------------
+        
         return {
+        
             "success": True,
+        
             "mensaje": "Login correcto.",
+        
             "usuario": usuario_db.usuario,
+        
+            "usuario_id": usuario_db.id,
+        
             "nivel": usuario_db.nivel_seguridad,
+        
             "superusuario": (
                 usuario_db.es_superusuario
             ),
-            "token": crear_token({
-                "sub": usuario_db.usuario,
-                "nivel": (
-                    usuario_db.nivel_seguridad
-                ),
-                "superusuario": (
-                    usuario_db.es_superusuario
-                )
-            })
+        
+            "token": resultado_token[
+                "access_token"
+            ],
+        
+            "jti": resultado_token[
+                "jti"
+            ]
         }
-
     finally:
 
         session.close()

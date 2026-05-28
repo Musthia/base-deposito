@@ -12,6 +12,17 @@ from backend.routers.usuarios_router import (
     router as usuarios_router
 )
 
+from backend.core.exceptions import (
+    DatcorrException
+)
+
+from backend.core.handlers import (
+
+    datcorr_exception_handler,
+
+    generic_exception_handler
+)
+
 # -----------------------------------
 # APP
 # -----------------------------------
@@ -19,6 +30,24 @@ from backend.routers.usuarios_router import (
 app = FastAPI(
     title="DatCorr API",
     version="1.0.0"
+)
+
+# -----------------------------------
+# HANDLERS GLOBALES
+# -----------------------------------
+
+app.add_exception_handler(
+
+    DatcorrException,
+
+    datcorr_exception_handler
+)
+
+app.add_exception_handler(
+
+    Exception,
+
+    generic_exception_handler
 )
 
 # -----------------------------------

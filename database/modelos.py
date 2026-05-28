@@ -15,19 +15,17 @@ from sqlalchemy.orm import (
 
 from sqlalchemy.orm import relationship
 
-from sqlalchemy.orm import declarative_base
+from database.modelos_auditoria import (
+    Auditoria
+)
+
+from database.conexion import Base
 
 permisos = relationship(
     "UsuarioPermiso",
     back_populates="usuario",
     cascade="all, delete-orphan"
 )
-
-# -----------------------------------
-# BASE ORM
-# -----------------------------------
-
-Base = declarative_base()
 
 # -----------------------------------
 # TABLA USUARIOS

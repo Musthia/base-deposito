@@ -41,23 +41,15 @@ from database.conexion import (
     SessionLocal
 )
 
+from backend.core.exceptions import (
+    DatcorrException
+)
+
 from typing import Optional
 
 # -----------------------------------
 # DB SESSION
 # -----------------------------------
-
-def get_db():
-
-    db = SessionLocal()
-
-    try:
-
-        yield db
-
-    finally:
-
-        db.close()
 
 router = APIRouter(
     prefix="/usuarios",
@@ -103,6 +95,7 @@ def listar_usuarios(
         get_db
     )
 ):
+
 
     logger.debug(
         "API WEB: listar usuarios"
@@ -263,7 +256,7 @@ def crear_usuario(
 # ACTUALIZAR USUARIO
 # -----------------------------------
 
-@router.put(
+@router.patch(
 
     "/{usuario_id}",
 
@@ -403,10 +396,12 @@ def desactivar_usuario(
     # -----------------------------
 
     resultado = desactivar_usuario_web(
-
+        
         db=db,
-
-        usuario_id=usuario_id
+    
+        usuario_id=usuario_id,
+    
+        usuario_actual=usuario_actual.usuario
     )
 
     # -----------------------------

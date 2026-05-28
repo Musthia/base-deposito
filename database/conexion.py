@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 import os
 
+from sqlalchemy.orm import declarative_base
+
 # -----------------------------------
 # CARGAR VARIABLES ENTORNO
 # -----------------------------------
@@ -53,3 +55,9 @@ SessionLocal = sessionmaker(
     autoflush=False,
     bind=engine
 )
+
+# -----------------------------------
+# BASE ORM
+# -----------------------------------
+
+Base = declarative_base()

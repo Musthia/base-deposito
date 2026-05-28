@@ -3,7 +3,8 @@ from backend.core.logger import logger
 from fastapi import (
     APIRouter,
     Depends,
-    HTTPException
+    HTTPException,
+    Query
 )
 
 from backend.schemas.usuario_schema import (
@@ -39,6 +40,8 @@ from backend.dependencies import (
 from database.conexion import (
     SessionLocal
 )
+
+from typing import Optional
 
 # -----------------------------------
 # DB SESSION
@@ -76,10 +79,24 @@ def listar_usuarios(
 
     limit: int = 20,
 
+    search: str = "",
+
+    rol: str = "",
+
+    activo: Optional[bool] = None,
+
     usuario_actual = Depends(
         requiere_permiso(
             "ADMIN_USUARIOS"
         )
+    ),
+
+    sort_by: str = Query(
+        "id"
+    ),
+
+    order: str = Query(
+        "asc"
     ),
 
     db: Session = Depends(
@@ -97,7 +114,17 @@ def listar_usuarios(
 
         page=page,
 
-        limit=limit
+        limit=limit,
+
+        search=search,
+
+        rol=rol,
+
+        activo=activo,
+
+        sort_by=sort_by,
+
+        order=order
     )
 
     usuarios_db = resultado[
@@ -142,15 +169,15 @@ def listar_usuarios(
     return UsuariosListadoResponse(
 
         success=True,
-    
+
         total=resultado["total"],
-    
+
         page=resultado["page"],
-    
+
         limit=resultado["limit"],
-    
+
         pages=resultado["pages"],
-    
+
         usuarios=usuarios_response
     )
 

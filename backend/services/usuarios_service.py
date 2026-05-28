@@ -10,6 +10,10 @@ from utils.hash import hash_password
 
 from backend.core.logger import logger
 
+from sqlalchemy import or_
+
+from typing import Optional
+
 # -----------------------------------
 # LISTAR USUARIOS
 # -----------------------------------
@@ -22,84 +26,230 @@ def listar_usuarios_web(
 
     limit: int = 20,
 
-    incluir_inactivos: bool = False
+    search: str = "",
+
+    rol: str = "",
+
+    activo: Optional[bool] = None,
+
+    incluir_inactivos: bool = False,
+
+    sort_by: str = "id",
+
+    order: str = "asc"
 ):
 
     logger.info(
         "LISTANDO USUARIOS WEB"
     )
-    
+
     query = db.query(Usuario)
-    
+
     # -----------------------------
     # FILTRAR ACTIVOS
     # -----------------------------
-    
+
     if not incluir_inactivos:
-    
+
         query = query.filter(
             Usuario.activo == True
         )
+
+    # -----------------------------
+    # BUSQUEDA TEXTO
+    # -----------------------------
+
+    if search:
+
+        texto = f"%{search}%"
+
+        query = query.filter(
+
+            or_(
+
+                Usuario.nombre.ilike(
+                    texto
+                ),
+
+                Usuario.apellido.ilike(
+                    texto
+                ),
+
+                Usuario.usuario.ilike(
+                    texto
+                )
+            )
+        )
+
+        logger.info(
+            f"Busqueda usuarios: "
+            f"{search}"
+        )
+
+    # -----------------------------
+    # FILTRO ROL
+    # -----------------------------
+    if rol:
     
+        query = query.filter(
+            Usuario.rol == rol
+        )
+        logger.info(
+            f"Filtro rol: {rol}"
+        )
+
+    # -----------------------------
+    # FILTRO ACTIVO
+    # -----------------------------
+    if activo is not None:
+    
+        query = query.filter(
+            Usuario.activo == activo
+        )
+        logger.info(
+            f"Filtro activo: {activo}"
+        )
+
+    COLUMNAS_ORDEN_PERMITIDAS = {
+
+        "id": Usuario.id,
+
+        "nombre": Usuario.nombre,
+
+        "apellido": Usuario.apellido,
+
+        "usuario": Usuario.usuario,
+
+        "rol": Usuario.rol,
+
+        "nivel_seguridad": Usuario.nivel_seguridad,
+
+        "activo": Usuario.activo
+    }
+
+    # -----------------------------
+    # ORDENAMIENTO
+    # -----------------------------
+
+    columnas_ordenables = {
+
+        "id": Usuario.id,
+
+        "nombre": Usuario.nombre,
+
+        "apellido": Usuario.apellido,
+
+        "usuario": Usuario.usuario,
+
+        "rol": Usuario.rol,
+
+        "nivel_seguridad": (
+            Usuario.nivel_seguridad
+        )
+    }
+
+    # -----------------------------
+    # VALIDAR COLUMNA
+    # -----------------------------
+    
+    if sort_by not in COLUMNAS_ORDEN_PERMITIDAS:
+    
+        logger.warning(
+            f"Columna inválida ORDER BY: {sort_by}"
+        )
+    
+        sort_by = "id"
+    
+    # -----------------------------
+    # OBTENER COLUMNA SEGURA
+    # -----------------------------
+    
+    columna = (
+        COLUMNAS_ORDEN_PERMITIDAS[
+            sort_by
+        ]
+    )
+    
+    # -----------------------------
+    # ASC / DESC
+    # -----------------------------
+    
+    if order == "desc":
+    
+        query = query.order_by(
+            columna.desc()
+        )
+    
+    else:
+    
+        query = query.order_by(
+            columna.asc()
+        )
+    
+    logger.info(
+        f"Ordenando por {sort_by} {order}"
+    )
+    
+
     # -----------------------------
     # TOTAL
     # -----------------------------
-    
+
     total = query.count()
-    
+
     # -----------------------------
     # PAGINAS
     # -----------------------------
-    
+
     pages = (
-    
+
         total + limit - 1
-    
+
     ) // limit
-    
+
     # -----------------------------
     # OFFSET
     # -----------------------------
-    
+
     offset = (
-    
+
         page - 1
-    
+
     ) * limit
-    
+
     # -----------------------------
     # PAGINACION
     # -----------------------------
-    
+
     usuarios = (
-    
+
         query
-    
+
         .offset(offset)
-    
+
         .limit(limit)
-    
+
         .all()
     )
-    
+
     logger.info(
         f"Usuarios encontrados: "
         f"{len(usuarios)}"
     )
-    
+
     return {
-    
+
         "usuarios": usuarios,
-    
+
         "total": total,
-    
+
         "pages": pages,
-    
+
         "page": page,
-    
+
         "limit": limit
     }
-    
+
 # -----------------------------------
 # CREAR USUARIO
 # -----------------------------------

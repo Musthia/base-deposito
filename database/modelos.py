@@ -21,6 +21,10 @@ from database.modelos_auditoria import (
 
 from database.conexion import Base
 
+from database.modelos_refresh import (
+    RefreshToken
+)
+
 permisos = relationship(
     "UsuarioPermiso",
     back_populates="usuario",

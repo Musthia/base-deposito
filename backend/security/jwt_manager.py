@@ -34,6 +34,7 @@ ALGORITHM = "HS256"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
+REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 # -----------------------------------
 # CREAR TOKEN
@@ -162,3 +163,46 @@ def obtener_usuario_actual(
 
             detail="Token inválido."
         )
+def crear_refresh_token(data):
+
+    to_encode = data.copy()
+
+    expire = (
+
+        datetime.utcnow()
+
+        +
+
+        timedelta(
+            days=REFRESH_TOKEN_EXPIRE_DAYS
+        )
+    )
+
+    jti = str(uuid.uuid4())
+
+    to_encode.update({
+
+        "exp": expire,
+
+        "jti": jti,
+
+        "type": "refresh"
+    })
+
+    encoded_jwt = jwt.encode(
+
+        to_encode,
+
+        SECRET_KEY,
+
+        algorithm=ALGORITHM
+    )
+
+    return {
+
+        "refresh_token": encoded_jwt,
+
+        "jti": jti,
+
+        "expires_at": expire
+    }

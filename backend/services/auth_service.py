@@ -19,6 +19,11 @@ from backend.security.jwt_manager import (
     verificar_refresh_token
 )
 
+from database.modelos import (
+    Usuario,
+    RefreshToken
+)
+
 from sqlalchemy.orm import Session
 
 def login_usuario(
@@ -154,25 +159,9 @@ def login_usuario(
                 "jti"
             ],
 
-            "refresh_token": (
-                resultado_refresh[
-                    "refresh_token"
-                ]
-            ),
-            "refresh_token": (
-                crear_refresh_token({
-                
-                    "sub": usuario_db.usuario,
-
-                    "nivel": (
-                        usuario_db.nivel_seguridad
-                    ),
-
-                    "superusuario": (
-                        usuario_db.es_superusuario
-                    )
-                })
-            )
+            "refresh_token": resultado_refresh[
+                "refresh_token"
+            ]
         }
 
     finally:
@@ -184,7 +173,7 @@ def refresh_access_token(
     db: Session,
 
     refresh_token: str
-):
+    ):
 
     try:
 
@@ -206,7 +195,6 @@ def refresh_access_token(
                     "Refresh token inválido."
                 )
             }
-
         # -----------------------------------
         # OBTENER USUARIO
         # -----------------------------------
@@ -234,13 +222,32 @@ def refresh_access_token(
                     "Usuario inexistente."
                 )
             }
+        # -----------------------------------
+        # REVOCAR TOKEN ANTERIOR
+        # -----------------------------------
+
+        token_db = (
+        
+            db.query(RefreshToken)
+
+            .filter(
+                RefreshToken.refresh_token
+                == refresh_token
+            )
+
+            .first()
+        )
+
+        if token_db:
+        
+            token_db.revoked = True
 
         # -----------------------------------
-        # GENERAR NUEVO ACCESS TOKEN
+        # NUEVO ACCESS TOKEN
         # -----------------------------------
 
-        resultado = crear_token({
-
+        nuevo_access = crear_token({
+        
             "sub": usuario_db.usuario,
 
             "nivel": (
@@ -252,19 +259,75 @@ def refresh_access_token(
             )
         })
 
-        return {
+        # -----------------------------------
+        # NUEVO REFRESH TOKEN
+        # -----------------------------------
 
+        nuevo_refresh = crear_refresh_token({
+        
+            "sub": usuario_db.usuario,
+
+            "nivel": (
+                usuario_db.nivel_seguridad
+            ),
+
+            "superusuario": (
+                usuario_db.es_superusuario
+            )
+        })
+
+        # -----------------------------------
+        # GUARDAR NUEVO REFRESH
+        # -----------------------------------
+
+        refresh_db = RefreshToken(
+        
+            usuario_id=usuario_db.id,
+
+            token_jti=nuevo_refresh[
+                "jti"
+            ],
+
+            refresh_token=nuevo_refresh[
+                "refresh_token"
+            ],
+
+            revoked=False,
+
+            ip_address=None,
+
+            user_agent=None,
+
+            expires_at=nuevo_refresh[
+                "expires_at"
+            ]
+        )
+
+        db.add(refresh_db)
+
+        db.commit()
+
+        # -----------------------------------
+        # RETURN
+        # -----------------------------------
+
+        return {
+        
             "success": True,
 
-            "access_token": resultado[
+            "access_token": nuevo_access[
                 "access_token"
+            ],
+
+            "refresh_token": nuevo_refresh[
+                "refresh_token"
             ]
         }
 
     except Exception as e:
-
+        
         return {
-
+            
             "success": False,
 
             "mensaje": str(e)

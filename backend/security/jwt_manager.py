@@ -96,8 +96,8 @@ def crear_token(data):
     return {
 
         "access_token": encoded_jwt,
-
-        "jti": jti
+        "jti": jti,
+        "expires_at": expire
     }
 # -----------------------------------
 # VERIFICAR TOKEN
@@ -210,26 +210,20 @@ def crear_refresh_token(data):
 def verificar_refresh_token(token):
 
     try:
-
         payload = jwt.decode(
-
             token,
-
             SECRET_KEY,
-
             algorithms=[ALGORITHM]
         )
 
-        # -------------------------
-        # VALIDAR TIPO
-        # -------------------------
+        print("DEBUG PAYLOAD:", payload)
 
         if payload.get("type") != "refresh":
-
+            print("TOKEN NO ES REFRESH")
             return None
 
         return payload
 
-    except JWTError:
-
+    except JWTError as e:
+        print("JWT ERROR:", str(e))
         return None

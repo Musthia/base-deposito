@@ -167,5 +167,9 @@ def login(
 
         usuario=resultado["usuario"],
 
-        token=token
+        token=resultado["token"],
+
+        refresh_token=resultado[
+            "refresh_token"
+        ]
     )

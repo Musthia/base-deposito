@@ -27,6 +27,8 @@ class LoginResponse(BaseModel):
 
     token: Optional[str] = None
 
+    refresh_token: Optional[str] = None
+
 # -----------------------------------
 # REFRESH RESPONSE
 # -----------------------------------

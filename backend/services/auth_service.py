@@ -26,6 +26,19 @@ from database.modelos import (
 
 from sqlalchemy.orm import Session
 
+from backend.core.logger import logger
+
+from backend.services.auditoria_service import (
+    registrar_auditoria
+)
+
+from backend.services.blacklist_service import (
+
+    blacklist_token,
+
+    token_esta_revocado
+)
+
 def login_usuario(
     usuario,
     password
@@ -238,9 +251,85 @@ def refresh_access_token(
             .first()
         )
 
+        # -----------------------------------
+        # TOKEN NO EXISTE
+        # -----------------------------------
+
+        if not token_db:
+        
+            return {
+            
+                "success": False,
+
+                "mensaje": (
+                    "Refresh token inexistente."
+                )
+            }
+
+        # -----------------------------------
+        # REUSE DETECTION
+        # -----------------------------------
+
+        if token_db.revoked:
+
+            logger.critical(
+
+                f"REUSE DETECTADO | "
+                f"usuario_id={token_db.usuario_id} | "
+                f"jti={token_db.token_jti}"
+            )
+
+            registrar_auditoria(
+
+                db=db,
+
+                usuario=usuario_db.usuario,
+
+                accion="TOKEN_REUSE_DETECTED",
+
+                tabla="auth",
+
+                registro_id=usuario_db.id,
+
+                endpoint="/usuarios/refresh",
+
+                detalle=(
+                    "Intento reutilización "
+                    "refresh token revocado"
+                ),
+
+                token_jti=token_db.token_jti
+            )
+        
+            # -----------------------------------
+            # REVOCAR TODAS LAS SESIONES
+            # -----------------------------------
+
+            db.query(RefreshToken).filter(
+            
+                RefreshToken.usuario_id
+                == token_db.usuario_id
+
+            ).update({
+            
+                "revoked": True
+            })
+
+            db.commit()
+
+            return {
+            
+                "success": False,
+
+                "mensaje": (
+                    "Reuse detection activado."
+                )
+            }
+
         if token_db:
         
             token_db.revoked = True
+        
 
         # -----------------------------------
         # NUEVO ACCESS TOKEN
@@ -382,6 +471,18 @@ def logout_usuario(
         # -----------------------------------
 
         if token_db.revoked:
+            registrar_auditoria(
+
+            db=db,
+
+            usuario="desconocido",
+
+            accion="LOGOUT_FAILED",
+
+            tabla="auth",
+
+            detalle="Intento logout con refresh inválido"
+        )
 
             return {
 
@@ -395,10 +496,44 @@ def logout_usuario(
         # -----------------------------------
         # REVOCAR TOKEN
         # -----------------------------------
-
+        
         token_db.revoked = True
-
+        
         db.commit()
+        
+        # -----------------------------------
+        # OBTENER USUARIO
+        # -----------------------------------
+        
+        usuario_db = (
+        
+            db.query(Usuario)
+        
+            .filter(
+                Usuario.id == token_db.usuario_id
+            )
+        
+            .first()
+        )
+        
+        # -----------------------------------
+        # AUDITORIA
+        # -----------------------------------
+        
+        registrar_auditoria(
+        
+            db=db,
+        
+            usuario=usuario_db.usuario,
+        
+            accion="LOGOUT_SUCCESS",
+        
+            tabla="auth",
+        
+            registro_id=usuario_db.id,
+        
+            detalle="Logout exitoso"
+        )
 
         # -----------------------------------
         # RETURN

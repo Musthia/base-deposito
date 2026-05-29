@@ -42,6 +42,26 @@ from backend.services.auth_service import (
     refresh_access_token
 )
 
+from jose import jwt
+
+from backend.services.blacklist_service import (
+    blacklist_token
+)
+
+from backend.security.jwt_manager import (
+    SECRET_KEY,
+    ALGORITHM
+)
+
+from fastapi.security import (
+
+    HTTPBearer,
+
+    HTTPAuthorizationCredentials
+)
+
+security = HTTPBearer()
+
 router = APIRouter(
 
     prefix="/auth",
@@ -193,6 +213,8 @@ def logout(
 
     datos: LogoutRequest,
 
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+
     db: Session = Depends(get_db)
 ):
 
@@ -214,6 +236,42 @@ def logout(
             status_code=401,
 
             detail=resultado["mensaje"]
+        )
+
+    # -----------------------------------
+    # ACCESS TOKEN
+    # -----------------------------------
+
+    access_token = credentials.credentials
+
+    payload = jwt.decode(
+
+        access_token,
+
+        SECRET_KEY,
+
+        algorithms=[ALGORITHM]
+    )
+
+    jti = payload.get("jti")
+
+    usuario = payload.get("sub")
+
+    # -----------------------------------
+    # BLACKLIST ACCESS TOKEN
+    # -----------------------------------
+
+    if jti:
+
+        blacklist_token(
+
+            db=db,
+
+            jti=jti,
+
+            usuario=usuario,
+
+            motivo="logout"
         )
 
     # -----------------------------------

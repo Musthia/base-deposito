@@ -24,6 +24,21 @@ from jose import (
 
 import uuid
 
+#from database.database import SessionLocal
+from backend.database.conexion import (
+    SessionLocal
+)
+
+from database.modelos_blacklist import (
+    TokenBlacklist
+)
+
+from backend.services.blacklist_service import (
+    token_esta_revocado
+)
+
+from sqlalchemy.orm import Session
+
 security = HTTPBearer()
 
 SECRET_KEY = (
@@ -105,19 +120,47 @@ def crear_token(data):
 
 def verificar_token(token):
 
+    db: Session = SessionLocal()
+
     try:
 
         payload = jwt.decode(
+
             token,
+
             SECRET_KEY,
+
             algorithms=[ALGORITHM]
         )
+
+        # -----------------------------------
+        # OBTENER JTI
+        # -----------------------------------
+
+        jti = payload.get("jti")
+
+        # -----------------------------------
+        # TOKEN EN BLACKLIST
+        # -----------------------------------
+
+        if jti and token_esta_revocado(
+
+            db=db,
+
+            jti=jti
+        ):
+
+            return None
 
         return payload
 
     except JWTError:
 
         return None
+
+    finally:
+
+        db.close()
 
 # -----------------------------------
 # OBTENER USUARIO ACTUAL

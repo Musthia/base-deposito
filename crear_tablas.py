@@ -4,6 +4,10 @@ from database.conexion import (
 
 from database.modelos import Base
 
+from database.modelos_blacklist import (
+    TokenBlacklist
+)
+
 print("\nMODELOS REGISTRADOS:\n")
 
 for tabla in Base.metadata.tables:

@@ -2,7 +2,6 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-
 # -----------------------------------
 # REQUEST LOGIN
 # -----------------------------------
@@ -27,3 +26,25 @@ class LoginResponse(BaseModel):
     mensaje: Optional[str] = None
 
     token: Optional[str] = None
+
+# -----------------------------------
+# REFRESH RESPONSE
+# -----------------------------------
+
+class RefreshResponse(BaseModel):
+
+    success: bool
+
+    access_token: str
+
+    refresh_token: str
+
+    token_type: str = "bearer"
+
+# -----------------------------------
+# REFRESH REQUEST
+# -----------------------------------
+
+class RefreshRequest(BaseModel):
+
+    refresh_token: str

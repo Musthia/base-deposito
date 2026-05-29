@@ -4,6 +4,7 @@ from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
+    Request,
     Query
 )
 
@@ -46,6 +47,21 @@ from backend.core.exceptions import (
 )
 
 from typing import Optional
+
+from backend.schemas.auth_schema import (
+    LoginRequest,
+    LoginResponse,
+    RefreshResponse
+)
+
+from backend.schemas.auth_schema import (
+    RefreshRequest,
+    RefreshResponse
+)
+
+from backend.services.auth_service import (
+    refresh_access_token
+)
 
 # -----------------------------------
 # DB SESSION
@@ -424,3 +440,50 @@ def desactivar_usuario(
     # -----------------------------
 
     return resultado
+
+@router.post(
+
+    "/refresh",
+
+    response_model=RefreshResponse
+)
+
+def refresh_token(
+
+    datos: RefreshRequest,
+
+    db: Session = Depends(get_db)
+):
+
+    resultado = refresh_access_token(
+
+        db=db,
+
+        refresh_token=datos.refresh_token
+    )
+
+    # -------------------------
+    # ERROR
+    # -------------------------
+
+    if not resultado["success"]:
+
+        raise HTTPException(
+
+            status_code=401,
+
+            detail=resultado["mensaje"]
+        )
+
+    # -------------------------
+    # OK
+    # -------------------------
+
+    return RefreshResponse(
+
+        success=True,
+
+        access_token=resultado[
+            "access_token"
+        ]
+    )

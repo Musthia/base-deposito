@@ -26,6 +26,18 @@ from backend.services.auditoria_service import (
     registrar_auditoria
 )
 
+from backend.schemas.refresh_schema import (
+
+    RefreshRequest,
+
+    RefreshResponse
+)
+
+from backend.services.auth_service import (
+
+    refresh_access_token
+)
+
 router = APIRouter(
 
     prefix="/auth",

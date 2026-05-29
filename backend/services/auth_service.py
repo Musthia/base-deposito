@@ -15,6 +15,12 @@ from database.modelos_refresh import (
     RefreshToken
 )
 
+from backend.security.jwt_manager import (
+    verificar_refresh_token
+)
+
+from sqlalchemy.orm import Session
+
 def login_usuario(
     usuario,
     password
@@ -152,9 +158,114 @@ def login_usuario(
                 resultado_refresh[
                     "refresh_token"
                 ]
+            ),
+            "refresh_token": (
+                crear_refresh_token({
+                
+                    "sub": usuario_db.usuario,
+
+                    "nivel": (
+                        usuario_db.nivel_seguridad
+                    ),
+
+                    "superusuario": (
+                        usuario_db.es_superusuario
+                    )
+                })
             )
         }
 
     finally:
 
         session.close()
+
+def refresh_access_token(
+
+    db: Session,
+
+    refresh_token: str
+):
+
+    try:
+
+        # -----------------------------------
+        # VALIDAR REFRESH TOKEN
+        # -----------------------------------
+
+        payload = verificar_refresh_token(
+            refresh_token
+        )
+
+        if not payload:
+
+            return {
+
+                "success": False,
+
+                "mensaje": (
+                    "Refresh token inválido."
+                )
+            }
+
+        # -----------------------------------
+        # OBTENER USUARIO
+        # -----------------------------------
+
+        usuario = payload.get("sub")
+
+        usuario_db = (
+
+            db.query(Usuario)
+
+            .filter(
+                Usuario.usuario == usuario
+            )
+
+            .first()
+        )
+
+        if not usuario_db:
+
+            return {
+
+                "success": False,
+
+                "mensaje": (
+                    "Usuario inexistente."
+                )
+            }
+
+        # -----------------------------------
+        # GENERAR NUEVO ACCESS TOKEN
+        # -----------------------------------
+
+        resultado = crear_token({
+
+            "sub": usuario_db.usuario,
+
+            "nivel": (
+                usuario_db.nivel_seguridad
+            ),
+
+            "superusuario": (
+                usuario_db.es_superusuario
+            )
+        })
+
+        return {
+
+            "success": True,
+
+            "access_token": resultado[
+                "access_token"
+            ]
+        }
+
+    except Exception as e:
+
+        return {
+
+            "success": False,
+
+            "mensaje": str(e)
+        }

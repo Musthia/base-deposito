@@ -206,3 +206,30 @@ def crear_refresh_token(data):
 
         "expires_at": expire
     }
+
+def verificar_refresh_token(token):
+
+    try:
+
+        payload = jwt.decode(
+
+            token,
+
+            SECRET_KEY,
+
+            algorithms=[ALGORITHM]
+        )
+
+        # -------------------------
+        # VALIDAR TIPO
+        # -------------------------
+
+        if payload.get("type") != "refresh":
+
+            return None
+
+        return payload
+
+    except JWTError:
+
+        return None

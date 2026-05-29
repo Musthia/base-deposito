@@ -15,11 +15,15 @@ from backend.database.conexion import (
 from backend.schemas.auth_schema import (
 
     LoginRequest,
-    LoginResponse
+    LoginResponse,
+
+    LogoutRequest,
+    LogoutResponse
 )
 
 from backend.services.auth_service import (
-    login_usuario
+    login_usuario,
+    logout_usuario
 )
 
 from backend.services.auditoria_service import (
@@ -172,4 +176,53 @@ def login(
         refresh_token=resultado[
             "refresh_token"
         ]
+    )
+
+# -----------------------------------
+# LOGOUT
+# -----------------------------------
+
+@router.post(
+
+    "/logout",
+
+    response_model=LogoutResponse
+)
+
+def logout(
+
+    datos: LogoutRequest,
+
+    db: Session = Depends(get_db)
+):
+
+    resultado = logout_usuario(
+
+        db=db,
+
+        refresh_token=datos.refresh_token
+    )
+
+    # -----------------------------------
+    # ERROR
+    # -----------------------------------
+
+    if not resultado["success"]:
+
+        raise HTTPException(
+
+            status_code=401,
+
+            detail=resultado["mensaje"]
+        )
+
+    # -----------------------------------
+    # OK
+    # -----------------------------------
+
+    return LogoutResponse(
+
+        success=True,
+
+        mensaje=resultado["mensaje"]
     )

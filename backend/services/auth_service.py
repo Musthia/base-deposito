@@ -332,3 +332,92 @@ def refresh_access_token(
 
             "mensaje": str(e)
         }
+
+# -----------------------------------
+# LOGOUT USUARIO
+# -----------------------------------
+
+def logout_usuario(
+
+    db: Session,
+
+    refresh_token: str
+):
+
+    try:
+
+        # -----------------------------------
+        # BUSCAR TOKEN
+        # -----------------------------------
+
+        token_db = (
+
+            db.query(RefreshToken)
+
+            .filter(
+                RefreshToken.refresh_token
+                == refresh_token
+            )
+
+            .first()
+        )
+
+        # -----------------------------------
+        # TOKEN NO EXISTE
+        # -----------------------------------
+
+        if not token_db:
+
+            return {
+
+                "success": False,
+
+                "mensaje": (
+                    "Refresh token inexistente."
+                )
+            }
+
+        # -----------------------------------
+        # YA REVOCADO
+        # -----------------------------------
+
+        if token_db.revoked:
+
+            return {
+
+                "success": False,
+
+                "mensaje": (
+                    "Refresh token ya revocado."
+                )
+            }
+
+        # -----------------------------------
+        # REVOCAR TOKEN
+        # -----------------------------------
+
+        token_db.revoked = True
+
+        db.commit()
+
+        # -----------------------------------
+        # RETURN
+        # -----------------------------------
+
+        return {
+
+            "success": True,
+
+            "mensaje": (
+                "Logout correcto."
+            )
+        }
+
+    except Exception as e:
+
+        return {
+
+            "success": False,
+
+            "mensaje": str(e)
+        }

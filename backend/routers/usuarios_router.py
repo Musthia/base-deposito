@@ -448,13 +448,6 @@ def desactivar_usuario(
     response_model=RefreshResponse
 )
 
-@router.post(
-
-    "/refresh",
-
-    response_model=RefreshResponse
-)
-
 def refresh_token(
 
     datos: RefreshRequest,

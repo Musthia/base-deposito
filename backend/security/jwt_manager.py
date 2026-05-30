@@ -39,6 +39,14 @@ from backend.services.blacklist_service import (
 
 from sqlalchemy.orm import Session
 
+from backend.database.conexion import get_db
+
+from database.modelos_blacklist import (
+    TokenBlacklist
+)
+
+from database.modelos import Usuario
+
 security = HTTPBearer()
 
 SECRET_KEY = (
@@ -139,6 +147,41 @@ def verificar_token(token):
 
         jti = payload.get("jti")
 
+        usuario = payload.get("sub")
+
+        usuario_db = (
+        
+            db.query(Usuario)
+
+            .filter(
+                Usuario.usuario == usuario
+            )
+
+            .first()
+        )
+
+        if not usuario_db:
+
+            registrar_auditoria(
+            
+                db=db,
+        
+                usuario=usuario,
+        
+                accion="USER_NOT_FOUND",
+        
+                tabla="auth",
+        
+                detalle="JWT válido pero usuario inexistente"
+            )
+        
+            raise HTTPException(
+            
+                status_code=401,
+        
+                detail="Usuario inexistente."
+            )
+
         # -----------------------------------
         # TOKEN EN BLACKLIST
         # -----------------------------------
@@ -154,6 +197,28 @@ def verificar_token(token):
 
         return payload
 
+        usuario = payload.get("sub")
+
+        usuario_db = (
+        
+            db.query(Usuario)
+
+            .filter(
+                Usuario.usuario == usuario
+            )
+
+            .first()
+        )
+
+        if not usuario_db:
+        
+            raise HTTPException(
+            
+                status_code=401,
+
+                detail="Usuario inexistente."
+            )
+
     except JWTError:
 
         return None
@@ -168,9 +233,11 @@ def verificar_token(token):
 
 def obtener_usuario_actual(
 
-    credenciales: (
-        HTTPAuthorizationCredentials
-    ) = Depends(security)
+    credenciales:
+    HTTPAuthorizationCredentials
+    = Depends(security),
+
+    db: Session = Depends(get_db)
 ):
 
     token = credenciales.credentials
@@ -186,6 +253,43 @@ def obtener_usuario_actual(
             algorithms=[ALGORITHM]
         )
 
+        jti = payload.get("jti")
+
+        token_revocado = (
+
+            db.query(TokenBlacklist)
+
+            .filter(
+                TokenBlacklist.token_jti == jti
+            )
+
+            .first()
+        )
+
+        if token_revocado:
+
+            registrar_auditoria(
+            
+                db=db,
+        
+                usuario=payload.get("sub"),
+        
+                accion="TOKEN_REVOKED",
+        
+                tabla="auth",
+        
+                detalle="Intento acceso con token blacklisteado",
+        
+                token_jti=jti
+            )
+        
+            raise HTTPException(
+            
+                status_code=401,
+        
+                detail="Token revocado."
+            )
+
         return {
 
             "usuario": payload.get("sub"),
@@ -200,12 +304,31 @@ def obtener_usuario_actual(
 
     except JWTError:
 
+        try:
+
+            registrar_auditoria(
+
+                db=db,
+
+                usuario="desconocido",
+
+                accion="TOKEN_INVALID",
+
+                tabla="auth",
+
+                detalle="Intento acceso con JWT inválido"
+            )
+
+        except Exception:
+            pass
+
         raise HTTPException(
 
             status_code=401,
 
             detail="Token inválido."
         )
+
 def crear_refresh_token(data):
 
     to_encode = data.copy()

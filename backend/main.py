@@ -1,27 +1,17 @@
 from fastapi import FastAPI
 
-from backend.routers.auth_router import (
-    router as auth_router
-)
+from backend.routers.auth_router import router as auth_router
+from backend.routers.admin_router import router as admin_router
+from backend.routers.usuarios_router import router as usuarios_router
 
-from backend.routers.admin_router import (
-    router as admin_router
-)
-
-from backend.routers.usuarios_router import (
-    router as usuarios_router
-)
-
-from backend.core.exceptions import (
-    DatcorrException
-)
-
+from backend.core.exceptions import DatcorrException
 from backend.core.handlers import (
-
     datcorr_exception_handler,
-
     generic_exception_handler
 )
+
+from backend.middleware.jwt_middleware import JWTMiddleware
+
 
 # -----------------------------------
 # APP
@@ -33,20 +23,22 @@ app = FastAPI(
 )
 
 # -----------------------------------
+# MIDDLEWARE GLOBAL JWT (FASE 6E)
+# -----------------------------------
+
+app.add_middleware(JWTMiddleware)
+
+# -----------------------------------
 # HANDLERS GLOBALES
 # -----------------------------------
 
 app.add_exception_handler(
-
     DatcorrException,
-
     datcorr_exception_handler
 )
 
 app.add_exception_handler(
-
     Exception,
-
     generic_exception_handler
 )
 
@@ -54,14 +46,9 @@ app.add_exception_handler(
 # ROUTERS
 # -----------------------------------
 
-app.include_router(
-    auth_router
-)
-
+app.include_router(auth_router)
 app.include_router(admin_router)
-
 app.include_router(usuarios_router)
-
 
 # -----------------------------------
 # ROOT

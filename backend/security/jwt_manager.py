@@ -1,58 +1,21 @@
-from datetime import (
-    datetime,
-    timedelta
-)
-
-from jose import jwt
-
-from jose import JWTError
-
-from fastapi import (
-    HTTPException,
-    Depends
-)
-
-from fastapi.security import (
-    HTTPBearer,
-    HTTPAuthorizationCredentials
-)
-
-from jose import (
-    jwt,
-    JWTError
-)
-
-import uuid
-
-#from database.database import SessionLocal
-from backend.database.conexion import (
-    SessionLocal
-)
-
-from database.modelos_blacklist import (
-    TokenBlacklist
-)
-
-from backend.services.blacklist_service import (
-    token_esta_revocado
-)
-
+from jose import jwt, JWTError
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from backend.database.conexion import get_db
+from database.modelos_blacklist import TokenBlacklist
+from backend.services.auditoria_service import registrar_auditoria
 
-from database.modelos_blacklist import (
-    TokenBlacklist
-)
+from datetime import datetime, timezone, timedelta
 
-from database.modelos import Usuario
+import uuid
+
+datetime.now(timezone.utc)
 
 security = HTTPBearer()
 
-SECRET_KEY = (
-    "DATCORR_SECRET_KEY"
-)
-
+SECRET_KEY = "DATCORR_SECRET_KEY"
 ALGORITHM = "HS256"
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -71,15 +34,8 @@ def crear_token(data):
     # EXPIRACION
     # -----------------------------------
 
-    expire = (
-
-        datetime.utcnow()
-
-        +
-
-        timedelta(
-            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-        )
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
     # -----------------------------------
@@ -95,7 +51,6 @@ def crear_token(data):
     to_encode.update({
 
         "exp": expire,
-
         "jti": jti
     })
 
@@ -104,11 +59,8 @@ def crear_token(data):
     # -----------------------------------
 
     encoded_jwt = jwt.encode(
-
         to_encode,
-
         SECRET_KEY,
-
         algorithm=ALGORITHM
     )
 
@@ -122,6 +74,7 @@ def crear_token(data):
         "jti": jti,
         "expires_at": expire
     }
+    
 # -----------------------------------
 # VERIFICAR TOKEN
 # -----------------------------------
@@ -232,100 +185,77 @@ def verificar_token(token):
 # -----------------------------------
 
 def obtener_usuario_actual(
-
-    credenciales:
-    HTTPAuthorizationCredentials
-    = Depends(security),
-
+    credenciales: HTTPAuthorizationCredentials = Depends(security),
     db: Session = Depends(get_db)
 ):
-
     token = credenciales.credentials
 
     try:
-
+        # -----------------------------------
+        # DECODIFICAR JWT
+        # -----------------------------------
         payload = jwt.decode(
-
             token,
-
             SECRET_KEY,
-
             algorithms=[ALGORITHM]
         )
 
         jti = payload.get("jti")
+        usuario = payload.get("sub")
 
+        # -----------------------------------
+        # VERIFICAR BLACKLIST (CENTRALIZADO)
+        # -----------------------------------
         token_revocado = (
-
             db.query(TokenBlacklist)
-
-            .filter(
-                TokenBlacklist.token_jti == jti
-            )
-
+            .filter(TokenBlacklist.token_jti == jti)
             .first()
         )
 
         if token_revocado:
 
             registrar_auditoria(
-            
                 db=db,
-        
-                usuario=payload.get("sub"),
-        
-                accion="TOKEN_REVOKED",
-        
+                usuario=usuario,
+                accion="TOKEN_REVOKED_ACCESS",
                 tabla="auth",
-        
-                detalle="Intento acceso con token blacklisteado",
-        
+                detalle="Acceso bloqueado: token en blacklist",
                 token_jti=jti
             )
-        
+
             raise HTTPException(
-            
                 status_code=401,
-        
                 detail="Token revocado."
             )
 
+        # -----------------------------------
+        # OK - USUARIO AUTENTICADO
+        # -----------------------------------
         return {
-
-            "usuario": payload.get("sub"),
-
+            "usuario": usuario,
             "nivel": payload.get("nivel"),
-
-            "superusuario": payload.get(
-                "superusuario",
-                False
-            )
+            "superusuario": payload.get("superusuario", False),
+            "jti": jti
         }
 
-    except JWTError:
+    except JWTError as e:
 
+        # -----------------------------------
+        # LOG DE TOKEN INVALIDO
+        # -----------------------------------
         try:
-
             registrar_auditoria(
-
                 db=db,
-
                 usuario="desconocido",
-
                 accion="TOKEN_INVALID",
-
                 tabla="auth",
-
-                detalle="Intento acceso con JWT inválido"
+                detalle=f"JWT inválido: {str(e)}"
             )
-
         except Exception:
             pass
 
         raise HTTPException(
-
             status_code=401,
-
             detail="Token inválido."
         )
 

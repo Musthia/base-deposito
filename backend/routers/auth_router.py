@@ -217,6 +217,7 @@ def logout(
 
     db: Session = Depends(get_db)
 ):
+    print("PASO 1")
 
     resultado = logout_usuario(
 

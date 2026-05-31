@@ -12,6 +12,8 @@ from backend.core.handlers import (
 
 from backend.middleware.jwt_middleware import JWTMiddleware
 
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # -----------------------------------
 # APP
@@ -20,6 +22,22 @@ from backend.middleware.jwt_middleware import JWTMiddleware
 app = FastAPI(
     title="DatCorr API",
     version="1.0.0"
+)
+
+# -----------------------------------
+# CORS
+# -----------------------------------
+
+origins = [
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # -----------------------------------

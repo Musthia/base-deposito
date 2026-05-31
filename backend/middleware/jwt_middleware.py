@@ -24,7 +24,8 @@ class JWTMiddleware(BaseHTTPMiddleware):
             "/docs",
             "/openapi.json",
             "/auth/login",
-            "/auth/refresh",
+            #"/auth/refresh",
+            "/usuarios/refresh",
         ]
 
         if request.url.path in public_paths:

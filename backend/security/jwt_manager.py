@@ -11,6 +11,12 @@ from datetime import datetime, timezone, timedelta
 
 import uuid
 
+from backend.database.conexion import SessionLocal
+
+from database.modelos import Usuario
+
+from backend.services.blacklist_service import token_esta_revocado
+
 datetime.now(timezone.utc)
 
 security = HTTPBearer()

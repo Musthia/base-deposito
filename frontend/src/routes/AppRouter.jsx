@@ -53,11 +53,6 @@ export default function AppRouter() {
                     }
                 />
 
-                <Route
-                    path="/usuarios"
-                    element={<UsuariosPage />}
-                />
-
             </Routes>
 
         </BrowserRouter>

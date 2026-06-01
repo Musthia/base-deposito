@@ -2,21 +2,15 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-
-    const [user, setUser] = useState(() => {
-        const data = localStorage.getItem("user");
-        return data ? JSON.parse(data) : null;
-    });
+export function AuthProvider({ children }) {
+    const [user, setUser] = useState(null);
 
     const login = (data) => {
         setUser(data);
-        localStorage.setItem("user", JSON.stringify(data));
     };
 
     const logout = () => {
         setUser(null);
-        localStorage.removeItem("user");
     };
 
     return (
@@ -24,6 +18,8 @@ export const AuthProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+    return useContext(AuthContext);
+}

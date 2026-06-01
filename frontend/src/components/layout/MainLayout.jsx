@@ -1,56 +1,22 @@
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import { Outlet } from "react-router-dom";
 
-export default function MainLayout({
-    children
-}) {
+export const MainLayout = () => {
 
     return (
+        <div style={{ display: "flex" }}>
 
-        <div style={styles.container}>
+            <aside style={{ width: "200px" }}>
+                <h3>Menú</h3>
+                <p>Usuarios</p>
+                <p>Reportes</p>
+            </aside>
 
-            <Sidebar />
-
-            <div style={styles.content}>
-
-                <Header />
-
-                <main style={styles.main}>
-
-                    {children}
-
-                </main>
-
-            </div>
+            <main style={{ flex: 1 }}>
+                <Outlet />
+            </main>
 
         </div>
     );
-}
-
-const styles = {
-
-    container: {
-
-        display: "flex",
-
-        height: "100vh"
-    },
-
-    content: {
-
-        flex: 1,
-
-        display: "flex",
-
-        flexDirection: "column"
-    },
-
-    main: {
-
-        flex: 1,
-
-        padding: "20px",
-
-        overflow: "auto"
-    }
 };
+
+export default MainLayout;

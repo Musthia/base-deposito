@@ -1,13 +1,14 @@
-export default function Dashboard() {
+export const Dashboard = () => {
 
     return (
+        <div>
+            <h1>Panel Principal</h1>
 
-        <>
-            <h1>Dashboard</h1>
+            <h2>Gestión de Usuarios</h2>
 
-            <p>
-                Bienvenido a DatCorr
-            </p>
-        </>
+            {/* AQUÍ conectaremos la tabla después */}
+        </div>
     );
-}
+};
+
+export default Dashboard;

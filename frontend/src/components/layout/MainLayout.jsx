@@ -1,22 +1,24 @@
 import { Outlet } from "react-router-dom";
+import Sidebar from "./Sidebar";
 
-export const MainLayout = () => {
+export default function MainLayout() {
 
     return (
         <div style={{ display: "flex" }}>
 
-            <aside style={{ width: "200px" }}>
-                <h3>Menú</h3>
-                <p>Usuarios</p>
-                <p>Reportes</p>
-            </aside>
+            <Sidebar />
 
-            <main style={{ flex: 1 }}>
+            <main style={{
+                flex: 1,
+                padding: "20px",
+                background: "#f4f4f4",
+                minHeight: "100vh"
+            }}>
+
                 <Outlet />
+
             </main>
 
         </div>
     );
-};
-
-export default MainLayout;
+}

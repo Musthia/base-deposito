@@ -12,48 +12,71 @@ from backend.services.auditoria_service import registrar_auditoria
 from backend.core.logger import logger
 
 
+
 class JWTMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
 
-        # -----------------------------------
-        # RUTAS PÚBLICAS
-        # -----------------------------------
+        path = request.url.path.rstrip("/")
 
-        public_paths = [
+        # ===================================
+        # 1. PERMITIR PREFLIGHT CORS (CRÍTICO)
+        # ===================================
+
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
+        # ===================================
+        # 2. RUTAS PÚBLICAS
+        # ===================================
+
+        public_paths = {
             "/docs",
             "/openapi.json",
             "/auth/login",
-            #"/auth/refresh",
-            "/usuarios/refresh",
-        ]
+            "/auth/refresh",
+        }
 
         if request.url.path in public_paths:
             return await call_next(request)
 
-        # -----------------------------------
-        # EXTRAER TOKEN
-        # -----------------------------------
+        # ===================================
+        # 3. EXTRAER TOKEN (SEGURIDAD ROBUSTA)
+        # ===================================
 
         auth_header = request.headers.get("Authorization")
 
         if not auth_header:
-            logger.warning("JWT AUSENTE")
-
-            return JSONResponse(
-                status_code=401,
-                content={"detail": "Token requerido"}
-            )
+            # No hay token → dejar pasar o bloquear según política
+            request.state.user = None
+            return await call_next(request)
 
         try:
-            scheme, token = auth_header.split()
+            # ===================================
+            # 4. VALIDAR FORMATO BEARER
+            # ===================================
+
+            parts = auth_header.split()
+
+            if len(parts) != 2:
+                logger.warning("JWT FORMATO INVÁLIDO")
+                return JSONResponse(
+                    status_code=401,
+                    content={"detail": "Token inválido"}
+                )
+
+            scheme, token = parts
 
             if scheme.lower() != "bearer":
-                raise JWTError("Esquema inválido")
+                logger.warning("ESQUEMA JWT INVÁLIDO")
+                return JSONResponse(
+                    status_code=401,
+                    content={"detail": "Esquema inválido"}
+                )
 
-            # -----------------------------------
-            # DECODIFICAR JWT
-            # -----------------------------------
+            # ===================================
+            # 5. DECODIFICAR JWT
+            # ===================================
 
             payload = jwt.decode(
                 token,
@@ -64,22 +87,22 @@ class JWTMiddleware(BaseHTTPMiddleware):
             jti = payload.get("jti")
             usuario = payload.get("sub")
 
-            # -----------------------------------
-            # CONEXIÓN DB (IMPORTANTE)
-            # -----------------------------------
+            # ===================================
+            # 6. DB SESSION SEGURA
+            # ===================================
 
             db = SessionLocal()
 
             try:
 
-                # -----------------------------------
-                # BLACKLIST GLOBAL CHECK
-                # -----------------------------------
+                # ===================================
+                # 7. BLACKLIST GLOBAL CHECK
+                # ===================================
 
                 if jti and token_esta_revocado(db, jti):
 
                     logger.critical(
-                        f"JWT BLOQUEADO GLOBAL | usuario={usuario} | jti={jti}"
+                        f"JWT BLOQUEADO | usuario={usuario} | jti={jti}"
                     )
 
                     registrar_auditoria(
@@ -87,7 +110,7 @@ class JWTMiddleware(BaseHTTPMiddleware):
                         usuario=usuario,
                         accion="TOKEN_REVOKED_GLOBAL",
                         tabla="auth",
-                        detalle="Acceso con token revocado (middleware)"
+                        detalle="Intento de acceso con token revocado"
                     )
 
                     return JSONResponse(
@@ -95,9 +118,9 @@ class JWTMiddleware(BaseHTTPMiddleware):
                         content={"detail": "Token revocado globalmente"}
                     )
 
-                # -----------------------------------
-                # INYECTAR USUARIO EN REQUEST
-                # -----------------------------------
+                # ===================================
+                # 8. INYECTAR USUARIO EN REQUEST
+                # ===================================
 
                 request.state.user = {
                     "usuario": usuario,
@@ -109,27 +132,32 @@ class JWTMiddleware(BaseHTTPMiddleware):
             finally:
                 db.close()
 
-        except JWTError:
+        # ===================================
+        # 9. TOKEN INVÁLIDO
+        # ===================================
 
-            logger.warning("JWT MALFORMADO")
+        except JWTError:
+            logger.warning("JWT MALFORMADO O EXPIRADO")
 
             return JSONResponse(
                 status_code=401,
-                content={"detail": "Token inválido"}
+                content={"detail": "Token inválido o expirado"}
             )
 
-        except Exception as e:
+        # ===================================
+        # 10. ERROR INESPERADO
+        # ===================================
 
-            logger.error(f"ERROR MIDDLEWARE JWT: {e}")
+        except Exception as e:
+            logger.error(f"ERROR JWT MIDDLEWARE: {e}")
 
             return JSONResponse(
                 status_code=500,
-                content={"detail": "Error interno de seguridad"}
+                content={"detail": "Error interno de autenticación"}
             )
 
-        # -----------------------------------
-        # CONTINUAR REQUEST
-        # -----------------------------------
+        # ===================================
+        # 11. CONTINUAR REQUEST
+        # ===================================
 
-        response = await call_next(request)
-        return response
+        return await call_next(request)

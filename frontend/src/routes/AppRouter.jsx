@@ -2,12 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
-import Usuarios from "../pages/Usuarios";
-
 import UsuariosPage from "../pages/usuarios/UsuariosPage";
 
 import PrivateRoute from "../auth/PrivateRoute";
-
 import MainLayout from "../components/layout/MainLayout";
 
 export default function AppRouter() {
@@ -18,43 +15,28 @@ export default function AppRouter() {
 
             <Routes>
 
-                <Route
-                    path="/"
-                    element={<Login />}
-                />
+                {/* PUBLICO */}
+                <Route path="/" element={<Login />} />
 
+                {/* PRIVADO + LAYOUT */}
                 <Route
-                    path="/dashboard"
                     element={
                         <PrivateRoute>
-
-                            <MainLayout>
-
-                                <Dashboard />
-
-                            </MainLayout>
-
+                            <MainLayout />
                         </PrivateRoute>
                     }
-                />
-
-                <Route
-                    path="/usuarios"
-                    element={
-                        <PrivateRoute>
-
-                            <MainLayout>
-
-                                <Usuarios />
-
-                            </MainLayout>
-
-                        </PrivateRoute>
-                    }
-                />
+                >
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/usuarios" element={<UsuariosPage />} />
+                    <Route
+                        path="/reportes"
+                        element={<div>Reportes en construcción</div>}
+                    />
+                                    </Route>
 
             </Routes>
 
         </BrowserRouter>
+
     );
 }

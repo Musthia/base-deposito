@@ -1,20 +1,15 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "./authStore";
 
-
-
 export default function PrivateRoute({ children }) {
-
-    console.log("USER AUTH:", user);
 
     const token = useAuthStore((s) => s.accessToken);
 
+    console.log("TOKEN:", token);
+
     if (!token) {
-        return <Navigate to="/" />;
+        return <Navigate to="/" replace />;
     }
 
     return children;
-
-    
 }
-

@@ -1,14 +1,8 @@
-export const Dashboard = () => {
-
+export default function Dashboard() {
     return (
         <div>
-            <h1>Panel Principal</h1>
-
-            <h2>Gestión de Usuarios</h2>
-
-            {/* AQUÍ conectaremos la tabla después */}
+            <h1>Dashboard ERP</h1>
+            <p>Sistema activo</p>
         </div>
     );
-};
-
-export default Dashboard;
+}

@@ -1,77 +1,62 @@
-import { useEffect } from "react";
-import { useState } from "react";
-
-import UsuarioTable from "./UsuariosTable";
-
-import {
-    listarUsuarios,
-    eliminarUsuario
-}
-from "../../services/usuariosService";
+import { useEffect, useState } from "react";
+import api from "../../api/axiosClient";
 
 export default function UsuariosPage() {
 
-    const [usuarios, setUsuarios] =
-        useState([]);
+    const [usuarios, setUsuarios] = useState([]);
 
-    const cargarUsuarios = async () => {
-
+    const cargar = async () => {
         try {
 
-            const data =
-                await listarUsuarios();
+            const res = await api.get("/usuarios?page=1&limit=20");
 
-            setUsuarios(
-                data.items || []
-            );
+            const data = res.data;
 
-        } catch (error) {
+            console.log("RAW RESPONSE:", data);
 
-            console.error(error);
+            // 🔥 AQUÍ ESTÁ LA CLAVE
+            const lista = Array.isArray(data.usuarios)
+                ? data.usuarios
+                : [];
+
+            setUsuarios(lista);
+
+        } catch (err) {
+            console.error("ERROR USUARIOS:", err);
         }
     };
 
     useEffect(() => {
-
-        cargarUsuarios();
-
+        cargar();
     }, []);
 
-    const handleEliminar =
-        async (id) => {
-
-            if (
-                !window.confirm(
-                    "Eliminar usuario?"
-                )
-            )
-                return;
-
-            await eliminarUsuario(id);
-
-            cargarUsuarios();
-        };
-
     return (
-
         <div>
+            <h2>Usuarios ERP</h2>
 
-            <h1>
-                Usuarios
-            </h1>
+            <table border="1" width="100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Nivel</th>
+                    </tr>
+                </thead>
 
-            <UsuarioTable
-
-                usuarios={usuarios}
-
-                onEditar={(u) =>
-                    console.log(u)
-                }
-
-                onEliminar={
-                    handleEliminar
-                }
-            />
+                <tbody>
+                    {usuarios.map((u) => (
+                        <tr key={u.id}>
+                            <td>{u.id}</td>
+                            <td>{u.nombre}</td>
+                            <td>{u.usuario}</td>
+                            <td>{u.rol}</td>
+                            <td>{u.nivel_seguridad}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
 
         </div>
     );

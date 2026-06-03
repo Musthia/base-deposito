@@ -1,31 +1,36 @@
 import { useEffect, useState } from "react";
-import { getUsuarios } from "../api/usuarios.api";
-import { useAuth } from "../auth/useAuth";
+import api from "../api/axiosClient";
 
-export const useUsuarios = (filters) => {
-
-    const { user } = useAuth();
+export function useUsuarios() {
 
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const fetchUsuarios = async () => {
 
         try {
-
             setLoading(true);
 
-            const res = await getUsuarios(
-                user?.access_token,
-                filters
-            );
+            const res = await api.get("/usuarios", {
+                params: {
+                    page: 1,
+                    limit: 20
+                }
+            });
 
-            setData(res.data);
+            console.log("USUARIOS RAW:", res.data);
+
+            const list =
+                res.data?.items ||
+                res.data?.data ||
+                res.data ||
+                [];
+
+            setData(list);
 
         } catch (err) {
-
-            console.error(err);
-
+            console.error("ERROR USUARIOS:", err);
+            setData([]);
         } finally {
             setLoading(false);
         }
@@ -33,11 +38,11 @@ export const useUsuarios = (filters) => {
 
     useEffect(() => {
         fetchUsuarios();
-    }, [filters]);
+    }, []);
 
     return {
         data,
         loading,
         refresh: fetchUsuarios
     };
-};
+}

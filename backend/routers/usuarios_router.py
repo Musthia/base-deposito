@@ -63,6 +63,11 @@ from backend.services.auth_service import (
     refresh_access_token
 )
 
+from backend.security.permissions import (
+    requiere_permiso,
+    requiere_nivel   # 👈 FALTABA ESTO
+)
+
 # -----------------------------------
 # DB SESSION
 # -----------------------------------
@@ -94,9 +99,7 @@ def listar_usuarios(
     activo: Optional[bool] = None,
 
     usuario_actual = Depends(
-        requiere_permiso(
-            "ADMIN_USUARIOS"
-        )
+        requiere_nivel(5)
     ),
 
     sort_by: str = Query(

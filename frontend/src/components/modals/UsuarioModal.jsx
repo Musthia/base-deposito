@@ -1,8 +1,7 @@
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
+    Drawer,
+    Box,
+    Typography,
     Button,
     TextField
 } from "@mui/material";
@@ -10,6 +9,8 @@ import {
 import { useState, useEffect } from "react";
 
 import { crearUsuario } from "../../services/usuariosService";
+
+
 
 export default function UsuarioModal({
     open,
@@ -83,22 +84,13 @@ export default function UsuarioModal({
 
     return (
 
-        <Dialog
-            open={open}
-            onClose={onClose}
-            maxWidth="sm"
-            fullWidth
-        >
+        <Drawer anchor="right" open={open} onClose={onClose}>
 
-            <DialogTitle>
-
-                {usuario
-                    ? "Editar Usuario"
-                    : "Nuevo Usuario"}
-
-            </DialogTitle>
-
-            <DialogContent>
+            <Box sx={{ width: 400, padding: 2 }}>
+            
+                <Typography variant="h6">
+                    {usuario ? "Editar Usuario" : "Nuevo Usuario"}
+                </Typography>
 
                 <TextField
                     margin="dense"
@@ -155,24 +147,16 @@ export default function UsuarioModal({
                     onChange={handleChange}
                 />
 
-            </DialogContent>
+            <Button onClick={handleSave}>
+                Guardar
+            </Button>
 
-            <DialogActions>
+            <Button onClick={onClose}>
+                Cancelar
+            </Button>
 
-                <Button onClick={onClose}>
-                    Cancelar
-                </Button>
+        </Box>
 
-                <Button
-                    variant="contained"
-                    onClick={handleSave}
-                >
-                    Guardar
-                </Button>
-
-            </DialogActions>
-
-        </Dialog>
-
-    );
-}
+    </Drawer>
+        );
+    }

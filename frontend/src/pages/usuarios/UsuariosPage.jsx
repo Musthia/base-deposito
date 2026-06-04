@@ -12,10 +12,11 @@ export default function UsuariosPage() {
 
     const permissions = usePermissions();
 
+
     if (!permissions.canViewUsers) {
         return <div>Sin permisos</div>;
     }
-    
+
     
     const {
             rows,
@@ -25,7 +26,8 @@ export default function UsuariosPage() {
         } = useUsuariosGrid();
 
         const [openModal, setOpenModal] = useState(false);
-        
+
+        const [selectedUser, setSelectedUser] = useState(null);      
 
     
         const columns = [
@@ -44,7 +46,9 @@ export default function UsuariosPage() {
         ];
 
         const handleGuardar = async () => {
-           await fetchData(pagination.page, pagination.pageSize);
+           await fetchData(
+            pagination.page, 
+            pagination.pageSize);
 
         };
         
@@ -56,16 +60,25 @@ export default function UsuariosPage() {
             {permissions.canCreateUser && (
                 <Button
                     variant="contained"
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                        setSelectedUser(null);   // 👈 IMPORTANTE
+                        setOpenModal(true);
+                    }}    
                 >
                     Nuevo Usuario
                 </Button>
             )}
 
+            
+
             <DataGrid
                 rows={rows}
                 columns={columns}
                 loading={loading}
+                onRowClick={(params) => {
+                    setSelectedUser(params.row);
+                    setOpenModal(true);
+                }}
                 pagination
                 pageSizeOptions={[10, 20, 50]}
                 paginationModel={{
@@ -78,13 +91,18 @@ export default function UsuariosPage() {
                     fetchData(model.page, model.pageSize);
                 }}
             />
+            
 
             <UsuarioModal
                 open={openModal}
-                onClose={() => setOpenModal(false)}
+                onClose={() => {
+                    setOpenModal(false);
+                    setSelectedUser(null);
+                }}
+                usuario={selectedUser}   // 👈 CRÍTICO
                 onSave={handleGuardar}
             />
-
+            
            
 
         </div>

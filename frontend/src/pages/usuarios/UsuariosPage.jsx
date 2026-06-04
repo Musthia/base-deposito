@@ -1,28 +1,50 @@
 import { DataGrid } from "@mui/x-data-grid";
 import { useUsuariosGrid } from "../../hooks/useUsuariosGrid";
 
+import UsuarioModal from "../../components/modals/UsuarioModal";
+import { useState } from "react";
+
+import { Button } from "@mui/material";
+
 export default function UsuariosPage() {
 
+    
     const {
-        rows,
-        loading,
-        pagination,
-        fetchData
-    } = useUsuariosGrid();
+            rows,
+            loading,
+            pagination,
+            fetchData
+        } = useUsuariosGrid();
 
-    const columns = [
-        { field: "id", headerName: "ID", width: 80 },
-        { field: "usuario", headerName: "Usuario", flex: 1 },
-        { field: "nombre", headerName: "Nombre", flex: 1 },
-        { field: "apellido", headerName: "Apellido", flex: 1 },
-        { field: "rol", headerName: "Rol", width: 150 },
-        { field: "nivel", headerName: "Nivel", width: 120 }
-    ];
+        const [openModal, setOpenModal] = useState(false);
+        
 
+    
+        const columns = [
+            { field: "id", headerName: "ID", width: 80 },
+            { field: "usuario", headerName: "Usuario", flex: 1 },
+            { field: "nombre", headerName: "Nombre", flex: 1 },
+            { field: "apellido", headerName: "Apellido", flex: 1 },
+            { field: "rol", headerName: "Rol", width: 150 },
+            { field: "nivel_seguridad", headerName: "Nivel", width: 120 }
+        ];
+
+        const handleGuardar = async () => {
+           await fetchData(pagination.page, pagination.pageSize);
+
+        };
+        
     return (
-        <div style={{ height: 600, width: "100%" }}>
+        <div style={{ padding: 20 }}>
 
-            <h2>Usuarios ERP</h2>
+            <h2>ERP Usuarios</h2>
+
+            <Button
+                variant="contained"
+                onClick={() => setOpenModal(true)}
+            >
+                Nuevo Usuario
+            </Button>
 
             <DataGrid
                 rows={rows}
@@ -40,6 +62,14 @@ export default function UsuariosPage() {
                     fetchData(model.page, model.pageSize);
                 }}
             />
+
+            <UsuarioModal
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                onSave={handleGuardar}
+            />
+
+           
 
         </div>
     );

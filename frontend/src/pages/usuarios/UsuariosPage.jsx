@@ -6,8 +6,16 @@ import { useState } from "react";
 
 import { Button } from "@mui/material";
 
+import { usePermissions } from "../../auth/usePermissions";
+
 export default function UsuariosPage() {
 
+    const permissions = usePermissions();
+
+    if (!permissions.canViewUsers) {
+        return <div>Sin permisos</div>;
+    }
+    
     
     const {
             rows,
@@ -25,8 +33,14 @@ export default function UsuariosPage() {
             { field: "usuario", headerName: "Usuario", flex: 1 },
             { field: "nombre", headerName: "Nombre", flex: 1 },
             { field: "apellido", headerName: "Apellido", flex: 1 },
-            { field: "rol", headerName: "Rol", width: 150 },
-            { field: "nivel_seguridad", headerName: "Nivel", width: 120 }
+
+            ...(permissions.showRolColumn
+                ? [{ field: "rol", headerName: "Rol", width: 150 }]
+                : []),
+
+            ...(permissions.showNivelColumn
+                ? [{ field: "nivel_seguridad", headerName: "Nivel", width: 120 }]
+                : [])
         ];
 
         const handleGuardar = async () => {
@@ -39,12 +53,14 @@ export default function UsuariosPage() {
 
             <h2>ERP Usuarios</h2>
 
-            <Button
-                variant="contained"
-                onClick={() => setOpenModal(true)}
-            >
-                Nuevo Usuario
-            </Button>
+            {permissions.canCreateUser && (
+                <Button
+                    variant="contained"
+                    onClick={() => setOpenModal(true)}
+                >
+                    Nuevo Usuario
+                </Button>
+            )}
 
             <DataGrid
                 rows={rows}

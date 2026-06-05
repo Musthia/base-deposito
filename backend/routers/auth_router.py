@@ -164,21 +164,21 @@ def login(
     registrar_auditoria(
 
         db=db,
-
-        usuario=resultado["usuario"],
-
+    
+        usuario=resultado["usuario"]["usuario"],
+    
         accion="LOGIN_SUCCESS",
-
+    
         tabla="auth",
-
-        registro_id=resultado["usuario_id"],
-
+    
+        registro_id=resultado["usuario"]["id"],
+    
         detalle="Login exitoso",
-
+    
         ip_address=ip_address,
-
+    
         user_agent=user_agent,
-
+    
         token_jti=jti
     )
 

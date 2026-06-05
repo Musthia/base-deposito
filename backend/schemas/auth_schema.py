@@ -12,6 +12,25 @@ class LoginRequest(BaseModel):
 
     password: str
 
+# -----------------------------------
+# USUARIO LOGIN RESPONSE
+# -----------------------------------
+
+class UsuarioLoginResponse(BaseModel):
+
+    id: int
+
+    usuario: str
+
+    nombre: str
+
+    apellido: str
+
+    rol: str
+
+    nivel_seguridad: int
+
+    es_superusuario: bool
 
 # -----------------------------------
 # RESPONSE LOGIN
@@ -21,14 +40,13 @@ class LoginResponse(BaseModel):
 
     success: bool
 
-    usuario: Optional[str] = None
+    usuario: Optional[UsuarioLoginResponse] = None
 
     mensaje: Optional[str] = None
 
     token: Optional[str] = None
 
     refresh_token: Optional[str] = None
-
 # -----------------------------------
 # REFRESH RESPONSE
 # -----------------------------------

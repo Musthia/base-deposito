@@ -4,6 +4,9 @@ from core.session_manager import (
     SessionManager
 )
 
+print(SessionManager)
+print(dir(SessionManager))
+
 # -----------------------------------
 # VALIDAR SESIÓN
 # -----------------------------------
@@ -32,26 +35,21 @@ def validar_nivel(nivel_requerido):
     # -----------------------------------
 
     if not validar_sesion():
-
         return False
 
     # -----------------------------------
-    # SUPERUSUARIO
+    # USUARIO ACTUAL (DICT)
     # -----------------------------------
 
-    usuario_actual = (
-        SessionManager.obtener_usuario()
-    )
+    usuario_actual = SessionManager.obtener_usuario()
 
-    if (
-        usuario_actual
-        and
-        usuario_actual.es_superusuario
-    ):
+    # -----------------------------------
+    # SUPERUSUARIO (FIX API)
+    # -----------------------------------
 
-        logging.debug(
-            "SUPERUSUARIO: bypass niveles."
-        )
+    if usuario_actual and usuario_actual.get("es_superusuario", False):
+
+        logging.debug("SUPERUSUARIO: bypass niveles.")
 
         return True
 
@@ -59,22 +57,16 @@ def validar_nivel(nivel_requerido):
     # VALIDAR NIVEL
     # -----------------------------------
 
-    nivel_actual = (
-        SessionManager.obtener_nivel_seguridad()
-    )
+    nivel_actual = SessionManager.obtener_nivel_seguridad()
 
     logging.debug(
-        f"Validando nivel: "
-        f"actual={nivel_actual} "
-        f"requerido={nivel_requerido}"
+        f"Validando nivel: actual={nivel_actual} requerido={nivel_requerido}"
     )
 
     if nivel_actual < nivel_requerido:
 
         logging.warning(
-            f"Nivel insuficiente: "
-            f"{nivel_actual} < "
-            f"{nivel_requerido}"
+            f"Nivel insuficiente: {nivel_actual} < {nivel_requerido}"
         )
 
         return False
@@ -83,8 +75,6 @@ def validar_nivel(nivel_requerido):
     # ACCESO AUTORIZADO
     # -----------------------------------
 
-    logging.debug(
-        "Acceso autorizado por nivel."
-    )
+    logging.debug("Acceso autorizado por nivel.")
 
     return True

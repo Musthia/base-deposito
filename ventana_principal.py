@@ -92,6 +92,8 @@ from core.seguridad import (
     validar_permiso
 )
 
+from utils.user_helpers import get_usuario_attr
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
 
@@ -196,17 +198,18 @@ class VentanaPrincipal(QMainWindow):
 
         if self.usuario_actual:
         
-            self.nombre_usuario = (
-                f"{self.usuario_actual.nombre} "
-                f"{self.usuario_actual.apellido}"
-            )
+            nombre = get_usuario_attr(self.usuario_actual, "nombre")
+            apellido = get_usuario_attr(self.usuario_actual, "apellido")
+            rol = get_usuario_attr(self.usuario_actual, "rol")
 
-            self.rol = (
-                self.usuario_actual.rol
-            )
+            """ self.label_usuario.setText(
+                f"{nombre} {apellido} - {rol}"
+            ) """
+            
 
-            self.nivel_seguridad = (
-                self.usuario_actual.nivel_seguridad
+            nivel_seguridad = get_usuario_attr(
+                self.usuario_actual,
+                "nivel_seguridad"
             )
 
         else:

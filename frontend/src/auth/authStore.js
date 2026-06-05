@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { decodeToken } from "./jwt";
+import { parseJwt } from "./jwtUtils";
 
 const access = localStorage.getItem("access_token");
 

@@ -1,5 +1,5 @@
 Listado de rutas de carpetas
-El número de serie del volumen es 0000000F 5404:A2D1
+El número de serie del volumen es 000000A8 5404:A2D1
 C:.
 ¦   .env
 ¦   .gitignore
@@ -194,6 +194,7 @@ C:.
 +---frontend
 ¦   ¦   .gitignore
 ¦   ¦   eslint.config.js
+¦   ¦   estructura_database.txt
 ¦   ¦   index.html
 ¦   ¦   package-lock.json
 ¦   ¦   package.json
@@ -252,9 +253,15 @@ C:.
 ¦   ¦   ¦       
 ¦   ¦   +---.vite
 ¦   ¦   ¦   +---deps
+¦   ¦   ¦           @mui_material.js
+¦   ¦   ¦           @mui_material.js.map
+¦   ¦   ¦           @mui_x-data-grid.js
+¦   ¦   ¦           @mui_x-data-grid.js.map
 ¦   ¦   ¦           axios.js
 ¦   ¦   ¦           axios.js.map
 ¦   ¦   ¦           chunk-B-1-B7_t.js
+¦   ¦   ¦           jwt-decode.js
+¦   ¦   ¦           jwt-decode.js.map
 ¦   ¦   ¦           package.json
 ¦   ¦   ¦           react-dom.js
 ¦   ¦   ¦           react-dom.js.map
@@ -268,6 +275,8 @@ C:.
 ¦   ¦   ¦           react_jsx-dev-runtime.js.map
 ¦   ¦   ¦           react_jsx-runtime.js
 ¦   ¦   ¦           react_jsx-runtime.js.map
+¦   ¦   ¦           ToggleButton-C3a2B2EP.js
+¦   ¦   ¦           ToggleButton-C3a2B2EP.js.map
 ¦   ¦   ¦           zustand.js
 ¦   ¦   ¦           zustand.js.map
 ¦   ¦   ¦           _metadata.json
@@ -58827,6 +58836,48 @@ C:.
 ¦   ¦       icons.svg
 ¦   ¦       
 ¦   +---src
+¦   ¦   ¦   App.jsx
+¦   ¦   ¦   main.jsx
+¦   ¦   ¦   
+¦   ¦   +---api
+¦   ¦   ¦       api.js
+¦   ¦   ¦       axiosClient.js
+¦   ¦   ¦       
+¦   ¦   +---auth
+¦   ¦   ¦       authStore.js
+¦   ¦   ¦       jwt.js
+¦   ¦   ¦       jwtUtils.js
+¦   ¦   ¦       PrivateRoute.jsx
+¦   ¦   ¦       usePermissions.js
+¦   ¦   ¦       
+¦   ¦   +---components
+¦   ¦   ¦   +---modals
+¦   ¦   ¦   ¦       UsuarioModal.jsx
+¦   ¦   ¦   ¦       
+¦   ¦   ¦   +---modalss
+¦   ¦   +---hooks
+¦   ¦   ¦       useUsuarios.js
+¦   ¦   ¦       useUsuariosGrid.js
+¦   ¦   ¦       
+¦   ¦   +---layouts
+¦   ¦   ¦       MainLayout.jsx
+¦   ¦   ¦       Sidebar.jsx
+¦   ¦   ¦       
+¦   ¦   +---pages
+¦   ¦   ¦   ¦   Dashboard.jsx
+¦   ¦   ¦   ¦   Login.jsx
+¦   ¦   ¦   ¦   
+¦   ¦   ¦   +---usuarios
+¦   ¦   ¦           UsuariosPage copy.jsx
+¦   ¦   ¦           UsuariosPage.jsx
+¦   ¦   ¦           
+¦   ¦   +---router
+¦   ¦   ¦       AppRouter.jsx
+¦   ¦   ¦       
+¦   ¦   +---services
+¦   ¦           usuariosService.js
+¦   ¦           
+¦   +---src_old
 ¦       ¦   App.css
 ¦       ¦   App.jsx
 ¦       ¦   index.css
@@ -58874,20 +58925,16 @@ C:.
 ¦       ¦       +---componets
 ¦       ¦       ¦       UsuariosTable.jsx
 ¦       ¦       ¦       
-¦       ¦       +---hooks
-¦       ¦       +---modals
 ¦       ¦       +---pages
 ¦       ¦       ¦       UsuariosPage.jsx
 ¦       ¦       ¦       
 ¦       ¦       +---services
-¦       ¦       ¦       usuariosService.js
-¦       ¦       ¦       
-¦       ¦       +---store
+¦       ¦               usuariosService.js
+¦       ¦               
 ¦       +---pages
 ¦       ¦   ¦   Dashboard.jsx
 ¦       ¦   ¦   Login.jsx
 ¦       ¦   ¦   Usuarios.jsx
-¦       ¦   ¦   UsuariosPage.jsx
 ¦       ¦   ¦   
 ¦       ¦   +---usuarios
 ¦       ¦           UsuariosPage.jsx

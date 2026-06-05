@@ -56,12 +56,24 @@ def login_usuario(
             .first()
         )
 
+        logger.debug(
+            f"LOGIN usuario={usuario}"
+        )
+
+        logger.debug(
+            f"USUARIO_DB={usuario_db}"
+        )
+
         if not usuario_db:
 
             return {
                 "success": False,
                 "mensaje": "Usuario incorrecto."
             }
+
+        logger.debug(
+            f"ACTIVO={usuario_db.activo}"
+        )
 
         if not usuario_db.activo:
 
@@ -73,6 +85,10 @@ def login_usuario(
         password_ok = verificar_password(
             password,
             usuario_db.password_hash
+        )
+
+        logger.debug(
+            f"PASSWORD_OK={password_ok}"
         )
 
         if not password_ok:

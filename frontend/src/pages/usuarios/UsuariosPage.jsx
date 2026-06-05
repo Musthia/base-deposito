@@ -8,7 +8,19 @@ import { Button } from "@mui/material";
 
 import { usePermissions } from "../../auth/usePermissions";
 
+import { useAuthStore } from "../../auth/authStore";
+
+
+
+
+
 export default function UsuariosPage() {
+
+    const user = useAuthStore(
+    s => s.user
+);
+
+console.log("USER:", user);
 
     const permissions = usePermissions();
 

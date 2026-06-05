@@ -165,32 +165,22 @@ def login_usuario(
         # -----------------------------------
 
         return {
-        
             "success": True,
-
             "mensaje": "Login correcto.",
-
-            "usuario": usuario_db.usuario,
-
-            "usuario_id": usuario_db.id,
-
-            "nivel": usuario_db.nivel_seguridad,
-
-            "superusuario": (
-                usuario_db.es_superusuario
-            ),
-
-            "token": resultado_token[
-                "access_token"
-            ],
-
-            "jti": resultado_token[
-                "jti"
-            ],
-
-            "refresh_token": resultado_refresh[
-                "refresh_token"
-            ]
+            
+            "usuario": {
+                "id": usuario_db.id,
+                "usuario": usuario_db.usuario,
+                "nombre": usuario_db.nombre,
+                "apellido": usuario_db.apellido,
+                "rol": usuario_db.rol,
+                "nivel_seguridad": usuario_db.nivel_seguridad,
+                "es_superusuario": usuario_db.es_superusuario
+            },
+        
+            "token": resultado_token["access_token"],
+            "refresh_token": resultado_refresh["refresh_token"],
+            "jti": resultado_token["jti"]
         }
 
     finally:

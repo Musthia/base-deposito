@@ -1,159 +1,155 @@
-# inicio_sesion.py
-
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication
 from PySide6.QtGui import QIcon
-import sqlite3
-import os
 import sys
 import logging
-from services.auth_service import (
-    autenticar_usuario
-)
 
 from services.permisos_service import (
     obtener_descripcion_nivel
 )
 
-# UI
 from ui.inicio_sesion_ui import Ui_MainWindow
-
-# Ventana principal
 from ventana_principal import VentanaPrincipal
 
 from core.session_manager import SessionManager
+from core.api_client import ApiClient
+
+
+# -----------------------------------
+# LOGGING
+# -----------------------------------
 
 def configurar_logging():
-    nivel = logging.DEBUG  # en producción podés cambiar a INFO
-
     logging.basicConfig(
-        level=nivel,
+        level=logging.DEBUG,
         format="%(asctime)s [%(levelname)s] %(message)s",
-        handlers=[
-            logging.StreamHandler(sys.stdout),
-        ]
+        handlers=[logging.StreamHandler(sys.stdout)],
     )
-
     logging.debug("Logging inicializado")
+
 
 configurar_logging()
 
+
 def iniciar_aplicacion_principal():
-
     ventana = VentanaPrincipal()
-
     ventana.show()
-
     return ventana
 
+
+# ===================================
+# LOGIN WINDOW
+# ===================================
+
 class InicioSesion(QMainWindow):
+
     def __init__(self):
         super().__init__()
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ventana_principal = None  # ← Referencia guardada
 
-        # Configurar icono y fondo
+        self.ventana_principal = None
+
+        # 🔵 API CLIENTE GLOBAL
+        self.api = ApiClient("http://127.0.0.1:8000")
+
         self.setWindowIcon(QIcon("img/Datcorr.ico"))
-       
-        # Conectar botón de login
-        self.ui.boton_iniciar_sesion.clicked.connect(self.validar_login)        
+
+        self.ui.boton_iniciar_sesion.clicked.connect(
+            self.validar_login
+        )
+
+    # ===================================
+    # LOGIN
+    # ===================================
 
     def validar_login(self):
 
         self.ui.entry_usuario.setFocus()
-
-        usuario_input = (
-            self.ui.entry_usuario.text().strip()
-        )
-
-        password_input = (
-            self.ui.entry_contrasena.text()
-        )
-
+    
+        usuario_input = self.ui.entry_usuario.text().strip()
+        password_input = self.ui.entry_contrasena.text()
+    
         # -----------------------------------
-        # LOGIN MAESTRO TEMPORAL
+        # LOGIN VIA API
         # -----------------------------------
-
-        if (
-            usuario_input == "base"
-            and password_input == "base"
-        ):
-
-            self.hide()
-
-            self.ventana_principal = (
-                iniciar_aplicacion_principal()
-            )
-
-            return
-
+    
+        resultado = self.api.post("/auth/login", {
+            "usuario": usuario_input,
+            "password": password_input
+        })
+    
         # -----------------------------------
-        # AUTENTICAR POSTGRESQL
+        # VALIDACIÓN ERROR
         # -----------------------------------
-
-        resultado = autenticar_usuario(
-            usuario_input,
-            password_input
-        )
-
-        # -----------------------------------
-        # LOGIN INCORRECTO
-        # -----------------------------------
-
-        if not resultado["success"]:
-
+    
+        if not resultado or not resultado.get("success"):
+        
+            mensaje = resultado.get("mensaje", "Error de conexión")
+    
             QMessageBox.critical(
                 self,
                 "Error Login",
-                resultado["mensaje"]
+                mensaje
             )
-
             return
-
+    
         # -----------------------------------
-        # USUARIO AUTENTICADO
+        # USUARIO API (SIEMPRE DICT)
         # -----------------------------------
-
-        usuario = resultado["usuario"]
-
-        SessionManager.login(usuario)
-
-        nombre_usuario = (
-            f"{usuario.nombre} "
-            f"{usuario.apellido}"
+    
+        usuario_api = resultado.get("usuario", {})
+    
+        # -----------------------------------
+        # GUARDAR SESIÓN
+        # -----------------------------------
+    
+        SessionManager.login({
+            "id": usuario_api.get("id"),
+            "usuario": usuario_api.get("usuario"),
+            "nombre": usuario_api.get("nombre"),
+            "apellido": usuario_api.get("apellido"),
+            "rol": usuario_api.get("rol"),
+            "nivel_seguridad": usuario_api.get("nivel_seguridad"),
+            "es_superusuario": usuario_api.get("es_superusuario", False)
+        })
+    
+        # -----------------------------------
+        # TOKENS
+        # -----------------------------------
+    
+        self.api.set_tokens(
+            resultado.get("token"),
+            resultado.get("refresh_token")
         )
-
-        rol = usuario.rol
-
-        nivel_seguridad = (
-            usuario.nivel_seguridad
-        )
-
-        descripcion_nivel = (
-            obtener_descripcion_nivel(
-                nivel_seguridad
-            )
-        )
-
+    
+        # -----------------------------------
+        # UI INFO
+        # -----------------------------------
+    
+        nombre_usuario = f"{usuario_api.get('nombre','')} {usuario_api.get('apellido','')}"
+        rol = usuario_api.get("rol", "")
+        nivel = usuario_api.get("nivel_seguridad", 0)
+    
+        descripcion_nivel = obtener_descripcion_nivel(nivel)
+    
         QMessageBox.information(
             self,
             "Inicio de Sesión",
-            (
-                f"Bienvenido {nombre_usuario}\n\n"
-                f"Rol: {rol}\n"
-                f"Nivel: {descripcion_nivel}"
-            )
+            f"Bienvenido {nombre_usuario}\n\nRol: {rol}\nNivel: {descripcion_nivel}"
         )
-
+    
         # -----------------------------------
         # ABRIR SISTEMA
         # -----------------------------------
-
+    
         self.hide()
+        self.ventana_principal = iniciar_aplicacion_principal()
 
-        self.ventana_principal = (
-            iniciar_aplicacion_principal()
-        )
+
+# ===================================
+# MAIN
+# ===================================
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -114,6 +114,9 @@ def login(
         datos.password
     )
 
+    print("LOGIN RESULTADO:")
+    print(resultado)
+
     # -----------------------------------
     # LOGIN FALLIDO
     # -----------------------------------

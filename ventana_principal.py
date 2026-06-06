@@ -125,31 +125,23 @@ class VentanaPrincipal(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        logging.debug(
-            "Inicializando ventana principal..."
-        )
+        logging.debug("Inicializando ventana principal...")
 
         # -----------------------------------
         # VALIDAR SESIÓN
         # -----------------------------------
 
         if not validar_sesion():
-        
-            logging.warning(
-                "Intento acceso sin sesión."
-            )
+
+            logging.warning("Intento acceso sin sesión.")
 
             QMessageBox.critical(
                 self,
                 "Sesión inválida",
-                (
-                    "Debe iniciar sesión "
-                    "para acceder al sistema."
-                )
+                "Debe iniciar sesión para acceder al sistema."
             )
 
             self.close()
-
             return
 
         # -----------------------------------
@@ -157,68 +149,48 @@ class VentanaPrincipal(QMainWindow):
         # -----------------------------------
 
         if not validar_nivel(1):
-        
-            logging.warning(
-                "Nivel insuficiente "
-                "para ingresar al sistema."
-            )
+
+            logging.warning("Nivel insuficiente para ingresar.")
 
             QMessageBox.critical(
                 self,
                 "Acceso denegado",
-                (
-                    "No posee permisos "
-                    "para ingresar "
-                    "al sistema."
-                )
+                "No posee permisos para ingresar al sistema."
             )
 
             SessionManager.logout()
-
             self.close()
-
             return
 
-        logging.debug(
-            "Acceso autorizado "
-            "a ventana principal."
-        )
+        logging.debug("Acceso autorizado a ventana principal.")
 
         # -----------------------------------
-        # USUARIO SESIÓN ACTUAL
+        # USUARIO ACTUAL
         # -----------------------------------
 
-        self.usuario_actual = (
-            SessionManager.obtener_usuario()
-        )
+        self.usuario_actual = SessionManager.obtener_usuario()
 
         # -----------------------------------
-        # DATOS USUARIO
+        # DATOS USUARIO (SAFE HYBRID)
         # -----------------------------------
 
-        if self.usuario_actual:
-        
-            nombre = get_usuario_attr(self.usuario_actual, "nombre")
-            apellido = get_usuario_attr(self.usuario_actual, "apellido")
-            rol = get_usuario_attr(self.usuario_actual, "rol")
+        nombre = get_usuario_attr(self.usuario_actual, "nombre", "")
+        apellido = get_usuario_attr(self.usuario_actual, "apellido", "")
+        rol = get_usuario_attr(self.usuario_actual, "rol", "")
+        nivel_seguridad = get_usuario_attr(self.usuario_actual, "nivel_seguridad", 0)
 
-            """ self.label_usuario.setText(
+        # -----------------------------------
+        # UI
+        # -----------------------------------
+
+        if hasattr(self, "label_usuario"):
+            self.label_usuario.setText(
                 f"{nombre} {apellido} - {rol}"
-            ) """
-            
-
-            nivel_seguridad = get_usuario_attr(
-                self.usuario_actual,
-                "nivel_seguridad"
             )
 
-        else:
-        
-            self.nombre_usuario = None
-
-            self.rol = None
-
-            self.nivel_seguridad = 0
+        self.nombre_usuario = nombre
+        self.rol = rol
+        self.nivel_seguridad = nivel_seguridad  
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -1126,6 +1098,15 @@ class VentanaPrincipal(QMainWindow):
 
             return
 
+        logging.debug(
+            f"USUARIO ACTUAL = {usuario}"
+        )
+
+        logging.debug(
+            f"ES SUPERUSUARIO = "
+            f"{get_usuario_attr(usuario, 'es_superusuario')}"
+        )
+
         # -----------------------------------
         # VALIDAR PERMISO EDITAR
         # -----------------------------------
@@ -1135,7 +1116,7 @@ class VentanaPrincipal(QMainWindow):
         ):
 
             logging.warning(
-                f"Usuario '{usuario.usuario}' "
+                f"Usuario '{get_usuario_attr(usuario, 'usuario')}'"
                 f"sin permiso EDITAR."
             )
 

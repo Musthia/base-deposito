@@ -4,8 +4,12 @@ from core.session_manager import (
     SessionManager
 )
 
-print(SessionManager)
-print(dir(SessionManager))
+from utils.user_helpers import (
+    get_usuario_attr
+)
+
+#print(SessionManager)
+#print(dir(SessionManager))
 
 # -----------------------------------
 # VALIDAR SESIÓN
@@ -47,8 +51,11 @@ def validar_nivel(nivel_requerido):
     # SUPERUSUARIO (FIX API)
     # -----------------------------------
 
-    if usuario_actual and usuario_actual.get("es_superusuario", False):
-
+    if get_usuario_attr(
+        usuario_actual,
+        "es_superusuario",
+        False
+    ):
         logging.debug("SUPERUSUARIO: bypass niveles.")
 
         return True

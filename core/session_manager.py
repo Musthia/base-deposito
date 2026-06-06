@@ -2,6 +2,7 @@ from datetime import datetime
 import logging
 
 from services.usuarios_permisos_service import usuario_tiene_permiso
+from utils.user_helpers import get_usuario_attr
 
 
 class SessionManager:
@@ -26,9 +27,20 @@ class SessionManager:
             f"{usuario.get('usuario')}"
         )
 
+    # -----------------------------------
+    # VALIDAR SESIÓN
+    # -----------------------------------
+
     @classmethod
     def validar_sesion(cls):
-        return cls._usuario_actual is not None
+
+        if not cls._sesion_activa:
+            return False
+
+        if not cls._usuario_actual:
+            return False
+
+        return True    
 
     # -----------------------------------
     # LOGOUT
@@ -51,14 +63,14 @@ class SessionManager:
     def obtener_usuario(cls):
         return cls._usuario_actual
 
-    # -----------------------------------
+    """ # -----------------------------------
     # VALIDAR SESIÓN
     # -----------------------------------
 
     @classmethod
     def hay_sesion(cls):
         return cls._sesion_activa
-
+ """
     # -----------------------------------
     # FECHA LOGIN
     # -----------------------------------
@@ -75,10 +87,15 @@ class SessionManager:
     def obtener_nivel_seguridad(cls):
 
         if not cls._usuario_actual:
+            logging.debug(
+            f"Sesión iniciada: {usuario.get('usuario')}"
+        )
             return 0
 
         return cls._usuario_actual.get("nivel_seguridad", 0)
 
+        
+        
     # -----------------------------------
     # ROL
     # -----------------------------------
@@ -97,12 +114,38 @@ class SessionManager:
 
     @classmethod
     def tiene_permiso(cls, codigo_permiso):
-
+    
         if not cls._usuario_actual:
-            logging.warning("Validación permiso sin sesión.")
             return False
-
+    
+        if get_usuario_attr(
+            cls._usuario_actual,
+            "es_superusuario",
+            False
+        ):
+            return True
+    
         return usuario_tiene_permiso(
-            cls._usuario_actual.get("id"),
+            cls.obtener_usuario_id(),
             codigo_permiso
         )
+            
+    @classmethod
+    def es_superusuario(cls):
+
+        if not cls._usuario_actual:
+            return False
+
+        return cls._usuario_actual.get(
+            "es_superusuario",
+            False
+        )
+
+
+    @classmethod
+    def obtener_usuario_id(cls):
+
+        if not cls._usuario_actual:
+            return None
+
+        return cls._usuario_actual.get("id")

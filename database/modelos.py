@@ -103,11 +103,11 @@ class Usuario(Base):
     )
 
     usuario_permisos = relationship(
-    "UsuarioPermiso",
-    back_populates="usuario",
-    cascade="all, delete-orphan"
-)
-
+        "UsuarioPermiso",
+        back_populates="usuario",
+        cascade="all, delete-orphan"
+    )
+    
 # -----------------------------------
 # TABLA PERMISOS
 # -----------------------------------

@@ -1,35 +1,25 @@
+import logging
+
 from PySide6.QtWidgets import (
-    QWidget,
+    QDialog,
     QMessageBox
 )
 
-from PySide6.QtGui import (
-    QStandardItemModel,
-    QStandardItem
-)
+from PySide6.QtGui import QStandardItemModel, QStandardItem
 
-from ui.ventana_usuario import (
-    Ui_VentanaUsuarios
-)
+from ui.ventana_usuario import Ui_VentanaUsuarios
 
+# SOLO DICT EN FRONTEND
 from services.usuario_service import (
-    listar_usuarios
-)
-
-from services.usuario_service import (
-    listar_usuarios,
-    obtener_usuario_por_id,
+    listar_usuarios_dict,
+    obtener_usuario_por_id_dict,
     activar_usuario,
     desactivar_usuario
 )
 
-import logging
+from ventanas.ventana_alta_usuario import VentanaAltaUsuario
 
-from PySide6.QtWidgets import QDialog
-
-from ventanas.ventana_alta_usuario import (
-    VentanaAltaUsuario
-)
+from utils.user_helpers import get_usuario_attr
 
 class VentanaUsuarios(QDialog):
 
@@ -111,7 +101,7 @@ class VentanaUsuarios(QDialog):
 
         logging.debug(
             f"Editar usuario: "
-            f"{self.usuario_seleccionado.usuario}"
+            f"{get_usuario_attr(self.usuario_seleccionado,'usuario')}"
         )
 
         from ventanas.ventana_editar_usuario import (
@@ -143,9 +133,8 @@ class VentanaUsuarios(QDialog):
 
         logging.debug(
             f"Administrar permisos: "
-            f"{self.usuario_seleccionado.usuario}"
+            f"{get_usuario_attr(self.usuario_seleccionado,'usuario')}"
         )
-
         from ventanas.ventana_permisos_usuario import (
             VentanaPermisosUsuario
         )
@@ -191,41 +180,49 @@ class VentanaUsuarios(QDialog):
 
         try:
 
-            usuarios = listar_usuarios()
+            usuarios = listar_usuarios_dict()
 
             for usuario in usuarios:
 
                 fila = [
-
+                
                     QStandardItem(
-                        str(usuario.id)
+                        str(get_usuario_attr(usuario, "id"))
                     ),
 
                     QStandardItem(
-                        usuario.nombre
+                        str(get_usuario_attr(usuario, "nombre", ""))
                     ),
 
                     QStandardItem(
-                        usuario.apellido
+                        str(get_usuario_attr(usuario, "apellido", ""))
                     ),
 
                     QStandardItem(
-                        usuario.usuario
+                        str(get_usuario_attr(usuario, "usuario", ""))
                     ),
 
                     QStandardItem(
-                        usuario.rol
+                        str(get_usuario_attr(usuario, "rol", ""))
                     ),
 
                     QStandardItem(
                         str(
-                            usuario.nivel_seguridad
+                            get_usuario_attr(
+                                usuario,
+                                "nivel_seguridad",
+                                0
+                            )
                         )
                     ),
 
                     QStandardItem(
                         "Sí"
-                        if usuario.activo
+                        if get_usuario_attr(
+                            usuario,
+                            "activo",
+                            False
+                        )
                         else "No"
                     )
                 ]
@@ -263,10 +260,8 @@ class VentanaUsuarios(QDialog):
             item_id.text()
         )
     
-        self.usuario_seleccionado = (
-            obtener_usuario_por_id(
-                self.usuario_seleccionado_id
-            )
+        self.usuario_seleccionado = obtener_usuario_por_id_dict(
+            self.usuario_seleccionado_id
         )
     
         if not self.usuario_seleccionado:
@@ -279,9 +274,9 @@ class VentanaUsuarios(QDialog):
     
         logging.debug(
             f"Usuario seleccionado: "
-            f"{self.usuario_seleccionado.usuario}"
+            f"{get_usuario_attr(self.usuario_seleccionado,'usuario')}"
         )
-
+        
     def activar_usuario_seleccionado(self):
 
         if not self.usuario_seleccionado:
@@ -296,11 +291,14 @@ class VentanaUsuarios(QDialog):
 
         logging.debug(
             f"Activando usuario: "
-            f"{self.usuario_seleccionado.usuario}"
+            f"{get_usuario_attr(self.usuario_seleccionado,'usuario')}"
         )
 
         resultado = activar_usuario(
-            self.usuario_seleccionado.id
+            get_usuario_attr(
+                self.usuario_seleccionado,
+                "id"
+            )
         )
 
         if resultado["success"]:
@@ -335,17 +333,13 @@ class VentanaUsuarios(QDialog):
 
         logging.debug(
             f"Desactivando usuario: "
-            f"{self.usuario_seleccionado.usuario}"
+            f"{get_usuario_attr(self.usuario_seleccionado,'usuario')}"
         )
 
         from core.session_manager import SessionManager
 
         usuario_actual = (
             SessionManager.obtener_usuario()
-        )
-
-        logging.debug(
-            f"usuario_actual={usuario_actual}"
         )
 
         if not usuario_actual:
@@ -363,11 +357,14 @@ class VentanaUsuarios(QDialog):
             return
         
         if (
-            usuario_actual.id
+            get_usuario_attr(usuario_actual, "id")
             ==
-            self.usuario_seleccionado.id
+            get_usuario_attr(
+                self.usuario_seleccionado,
+                "id"
+            )
         ):
-        
+                
             QMessageBox.warning(
                 self,
                 "Protección",
@@ -381,7 +378,10 @@ class VentanaUsuarios(QDialog):
             return
 
         resultado = desactivar_usuario(
-            self.usuario_seleccionado.id
+            get_usuario_attr(
+                self.usuario_seleccionado,
+                "id"
+            )
         )
 
         if resultado["success"]:

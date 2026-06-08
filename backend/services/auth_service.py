@@ -60,9 +60,8 @@ def login_usuario(
             f"LOGIN usuario={usuario}"
         )
 
-        logger.debug(
-            f"USUARIO_DB={usuario_db}"
-        )
+        logger.debug(f"USUARIO_DB_ID={usuario_db.id}")
+        #logger.debug(f"USUARIO_DB_USER={usuario_db.usuario}")
 
         if not usuario_db:
 

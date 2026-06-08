@@ -24,6 +24,8 @@ from config.app_config import (
     MODO_DESARROLLO
 )
 
+from utils.user_helpers import get_usuario_attr
+
 class VentanaEditarUsuario(QDialog):
 
     usuario_actualizado = Signal()
@@ -70,21 +72,15 @@ class VentanaEditarUsuario(QDialog):
             self.guardar_usuario
         )
 
-        self.ui.pushButton_cancelar.clicked.connect(
-            self.reject
-        )
-
         self.ui.pushButton_reset_pass.clicked.connect(
             self.reset_password
         )
 
     def reset_password(self):
 
-        nueva_password = "Temp1234"
-
         resultado = cambiar_password(
-            self.usuario.id,
-            nueva_password
+            get_usuario_attr(self.usuario, "id"),
+            "Temp1234"
         )
 
         if resultado["success"]:
@@ -135,53 +131,27 @@ class VentanaEditarUsuario(QDialog):
         # -----------------------------------
 
         if (
-            self.usuario.es_superusuario
-            and
-            not MODO_DESARROLLO
+            get_usuario_attr(self.usuario, "es_superusuario", False)
+            and not MODO_DESARROLLO
         ):
-
             QMessageBox.warning(
                 self,
                 "Protegido",
-                (
-                    "No puede modificar "
-                    "un superusuario."
-                )
+                "No puede modificar un superusuario."
             )
-
             return
 
         # -----------------------------------
         # CAPTURAR DATOS
         # -----------------------------------
 
-        nombre = (
-            self.ui.lineEdit_nombre.text()
-        )
-
-        apellido = (
-            self.ui.lineEdit_apellido.text()
-        )
-
-        usuario = (
-            self.ui.lineEdit_usuario.text()
-        )
-
-        rol = (
-            self.ui.comboBox_rol.currentText()
-        )
-
-        nivel = (
-            self.ui.spinBox_nivel.value()
-        )
-
-        activo = (
-            self.ui.checkBox_activo.isChecked()
-        )
-
-        password = (
-            self.ui.lineEdit_password.text()
-        )
+        nombre = self.ui.lineEdit_nombre.text().strip()
+        apellido = self.ui.lineEdit_apellido.text().strip()
+        usuario_texto = self.ui.lineEdit_usuario.text().strip()
+        rol = self.ui.comboBox_rol.currentText()
+        nivel = self.ui.spinBox_nivel.value()
+        activo = self.ui.checkBox_activo.isChecked()
+        password = self.ui.lineEdit_password.text().strip() or None
 
         # -----------------------------------
         # VALIDACIONES
@@ -212,24 +182,16 @@ class VentanaEditarUsuario(QDialog):
         # -----------------------------------
 
         resultado = actualizar_usuario(
-            usuario_id=self.usuario.id,
-        
-            nombre=self.ui.lineEdit_nombre.text(),
-        
-            apellido=self.ui.lineEdit_apellido.text(),
-        
-            usuario=self.ui.lineEdit_usuario.text(),
-        
-            rol=self.ui.comboBox_rol.currentText(),
-        
-            nivel_seguridad=self.ui.spinBox_nivel.value(),
-        
-            activo=self.ui.checkBox_activo.isChecked(),
-        
-            password=(
-                self.ui.lineEdit_password.text().strip()
-                or None
-            )
+
+            usuario_id=get_usuario_attr(self.usuario, "id"),
+
+            nombre=nombre,
+            apellido=apellido,
+            usuario=usuario_texto,
+            rol=rol,
+            nivel_seguridad=nivel,
+            activo=activo,
+            password=password
         )
 
         # -----------------------------------
@@ -269,31 +231,15 @@ class VentanaEditarUsuario(QDialog):
 
         logging.debug(
             f"Cargando usuario edición: "
-            f"{self.usuario.usuario}"
+            f"{get_usuario_attr(self.usuario,'usuario')}"
         )
 
-        self.ui.lineEdit_nombre.setText(
-            self.usuario.nombre
-        )
+        u = self.usuario
 
-        self.ui.lineEdit_apellido.setText(
-            self.usuario.apellido
-        )
-
-        self.ui.lineEdit_usuario.setText(
-            self.usuario.usuario
-        )
-
-        self.ui.comboBox_rol.setCurrentText(
-            self.usuario.rol
-        )
-
-        self.ui.spinBox_nivel.setValue(
-            self.usuario.nivel_seguridad
-        )
-
-        self.ui.checkBox_activo.setChecked(
-            self.usuario.activo
-        )
-
+        self.ui.lineEdit_nombre.setText(get_usuario_attr(u, "nombre", ""))
+        self.ui.lineEdit_apellido.setText(get_usuario_attr(u, "apellido", ""))
+        self.ui.lineEdit_usuario.setText(get_usuario_attr(u, "usuario", ""))
+        self.ui.comboBox_rol.setCurrentText(get_usuario_attr(u, "rol", ""))
+        self.ui.spinBox_nivel.setValue(get_usuario_attr(u, "nivel_seguridad", 0))
+        self.ui.checkBox_activo.setChecked(get_usuario_attr(u, "activo", True))
         self.ui.lineEdit_password.clear()

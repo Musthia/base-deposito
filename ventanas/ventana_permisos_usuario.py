@@ -48,6 +48,8 @@ from ui.permisos_usuario_ui import (
 
 import logging
 
+from utils.user_helpers import get_usuario_attr
+
 class VentanaPermisosUsuario(QDialog):
 
     def __init__(
@@ -70,8 +72,8 @@ class VentanaPermisosUsuario(QDialog):
 
         logging.debug(
             f"Cargando permisos usuario: "
-            f"{usuario.usuario}"
-        )              
+            f"{get_usuario_attr(usuario,'usuario')}"
+        )             
 
         # -----------------------------------
         # MODELOS
@@ -149,7 +151,10 @@ class VentanaPermisosUsuario(QDialog):
 
         resultado = (
             asignar_permiso_usuario(
-                self.usuario.id,
+                get_usuario_attr(
+                    self.usuario,
+                    "id"
+                ),
                 permiso
             )
         )
@@ -199,7 +204,10 @@ class VentanaPermisosUsuario(QDialog):
 
         resultado = (
             quitar_permiso_usuario(
-                self.usuario.id,
+                get_usuario_attr(
+                    self.usuario,
+                    "id"
+                ),
                 permiso
             )
         )
@@ -230,14 +238,17 @@ class VentanaPermisosUsuario(QDialog):
 
         logging.debug(
             f"Cargando permisos usuario: "
-            f"{self.usuario.usuario}"
+            f"{get_usuario_attr(self.usuario,'usuario')}"
         )
 
         permisos_sistema = listar_permisos()
 
         permisos_usuario = (
             obtener_permisos_usuario(
-                self.usuario.id
+                get_usuario_attr(
+                    self.usuario,
+                    "id"
+                )
             )
         )
 

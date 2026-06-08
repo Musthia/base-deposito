@@ -12,6 +12,8 @@ MODULO_USUARIOS = 10
 
 MODULO_CONFIGURACION = 10
 
+from utils.user_helpers import get_usuario_attr
+
 
 # -----------------------------------
 # VALIDAR NIVEL SEGURIDAD
@@ -23,7 +25,11 @@ def tiene_nivel(
 ):
 
     return (
-        usuario.nivel_seguridad
+        get_usuario_attr(
+            usuario,
+            "nivel_seguridad",
+            0
+        )
         >= nivel_requerido
     )
 
@@ -38,7 +44,11 @@ def tiene_permiso(
 ):
 
     return (
-        usuario.nivel_seguridad
+        get_usuario_attr(
+            usuario,
+            "nivel_seguridad",
+            0
+        )
         >= modulo_requerido
     )
 

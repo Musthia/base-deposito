@@ -1,26 +1,122 @@
-from database.session import SessionLocal
-
-from database.conexion import SessionLocal
-
-from database.modelos import Usuario
-
-from database.crud.crud_usuarios import (
-    generar_hash_password
-)
-
 import logging
 
-from sqlalchemy.orm import Session
-
 from database.conexion import SessionLocal
-
 from database.modelos import Usuario
-
 from utils.hash import hash_password
+from config.app_config import MODO_DESARROLLO
 
-from config.app_config import (
-    MODO_DESARROLLO
-)
+# -----------------------------------
+# SERIALIZAR USUARIO
+# -----------------------------------
+
+def usuario_to_dict(usuario):
+
+    if not usuario:
+
+        return None
+
+    return {
+
+        "id": usuario.id,
+
+        "nombre": usuario.nombre,
+
+        "apellido": usuario.apellido,
+
+        "usuario": usuario.usuario,
+
+        "rol": usuario.rol,
+
+        "nivel_seguridad": usuario.nivel_seguridad,
+
+        "activo": usuario.activo,
+
+        "es_superusuario": usuario.es_superusuario
+    }
+
+# -----------------------------------
+
+# LISTAR USUARIOS (DICT)
+
+# -----------------------------------
+
+def listar_usuarios_dict():
+
+    usuarios = listar_usuarios()
+
+    return [
+
+        usuario_to_dict(usuario)
+
+        for usuario
+
+        in usuarios
+    ]
+
+# -----------------------------------
+
+# OBTENER USUARIO POR ID (DICT)
+
+# -----------------------------------
+
+def obtener_usuario_por_id_dict(
+    usuario_id
+    ):
+
+    
+    usuario = obtener_usuario_por_id(
+        usuario_id
+    )
+
+    return usuario_to_dict(
+        usuario
+    )
+
+
+
+# -----------------------------------
+
+# LISTAR USUARIOS ACTIVOS (DICT)
+
+# -----------------------------------
+
+def listar_usuarios_activos_dict():
+
+
+    usuarios = listar_usuarios_activos()
+
+    return [
+
+        usuario_to_dict(usuario)
+
+        for usuario
+
+        in usuarios
+    ]
+
+
+# -----------------------------------
+
+# LISTAR USUARIOS INACTIVOS (DICT)
+
+# -----------------------------------
+
+def listar_usuarios_inactivos_dict():
+
+
+    usuarios = listar_usuarios_inactivos()
+
+    return [
+
+        usuario_to_dict(usuario)
+
+        for usuario
+
+        in usuarios
+    ]
+
+
+# -----------------------------------
 
 # -----------------------------------
 # ACTUALIZAR USUARIO
@@ -36,9 +132,6 @@ def actualizar_usuario(
     activo,
     password=None
 ):
-
-    from database.conexion import SessionLocal
-    from database.modelos import Usuario
 
     session = SessionLocal()
 
@@ -325,9 +418,6 @@ def listar_usuarios_inactivos():
 
 def desactivar_usuario(usuario_id):
 
-    from database.conexion import SessionLocal
-    #from models.usuario import Usuario
-
     session = SessionLocal()
 
     try:
@@ -368,9 +458,6 @@ def desactivar_usuario(usuario_id):
         session.close()
 
 def activar_usuario(usuario_id):
-
-    from database.conexion import SessionLocal
-    #from models.usuario import Usuario
 
     session = SessionLocal()
 
@@ -420,14 +507,6 @@ def crear_usuario(
     nivel_seguridad,
     activo=True
 ):
-
-    from database.conexion import (
-        SessionLocal
-    )
-
-    from database.modelos import (
-        Usuario
-    )
 
     session = SessionLocal()
 

@@ -2,8 +2,6 @@ from datetime import datetime
 import logging
 
 from services.usuarios_permisos_service import usuario_tiene_permiso
-from utils.user_helpers import get_usuario_attr
-
 
 class SessionManager:
 
@@ -17,14 +15,13 @@ class SessionManager:
 
     @classmethod
     def login(cls, usuario: dict):
-
+    
         cls._usuario_actual = usuario
         cls._fecha_login = datetime.now()
         cls._sesion_activa = True
-
+    
         logging.debug(
-            f"Sesión iniciada: "
-            f"{usuario.get('usuario')}"
+            f"Sesión iniciada: {usuario.get('usuario')}"
         )
 
     # -----------------------------------
@@ -34,13 +31,7 @@ class SessionManager:
     @classmethod
     def validar_sesion(cls):
 
-        if not cls._sesion_activa:
-            return False
-
-        if not cls._usuario_actual:
-            return False
-
-        return True    
+        return bool(cls._sesion_activa and cls._usuario_actual)    
 
     # -----------------------------------
     # LOGOUT
@@ -87,14 +78,9 @@ class SessionManager:
     def obtener_nivel_seguridad(cls):
 
         if not cls._usuario_actual:
-            logging.debug(
-            f"Sesión iniciada: {usuario.get('usuario')}"
-        )
             return 0
 
-        return cls._usuario_actual.get("nivel_seguridad", 0)
-
-        
+        return cls._usuario_actual.get("nivel_seguridad", 0)       
         
     # -----------------------------------
     # ROL
@@ -114,19 +100,16 @@ class SessionManager:
 
     @classmethod
     def tiene_permiso(cls, codigo_permiso):
-    
+
         if not cls._usuario_actual:
             return False
-    
-        if get_usuario_attr(
-            cls._usuario_actual,
-            "es_superusuario",
-            False
-        ):
+
+        # SUPERUSUARIO BYPASS TOTAL
+        if cls.es_superusuario():
             return True
-    
+
         return usuario_tiene_permiso(
-            cls.obtener_usuario_id(),
+            cls._usuario_actual.get("id"),
             codigo_permiso
         )
             
@@ -136,16 +119,13 @@ class SessionManager:
         if not cls._usuario_actual:
             return False
 
-        return cls._usuario_actual.get(
-            "es_superusuario",
-            False
-        )
+        return cls._usuario_actual.get("es_superusuario", False)
 
 
     @classmethod
     def obtener_usuario_id(cls):
-
+    
         if not cls._usuario_actual:
             return None
-
+    
         return cls._usuario_actual.get("id")

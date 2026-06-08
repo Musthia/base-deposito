@@ -1,12 +1,7 @@
 import logging
 
-from core.session_manager import (
-    SessionManager
-)
-
-from utils.user_helpers import (
-    get_usuario_attr
-)
+from core.session_manager import SessionManager
+from utils.user_helpers import get_usuario_attr
 
 #print(SessionManager)
 #print(dir(SessionManager))
@@ -34,35 +29,18 @@ def validar_sesion():
 
 def validar_nivel(nivel_requerido):
 
-    # -----------------------------------
-    # VALIDAR SESIÓN
-    # -----------------------------------
+    if not SessionManager.validar_sesion():
 
-    if not validar_sesion():
+        logging.warning("Acceso denegado: sesión inválida.")
         return False
-
-    # -----------------------------------
-    # USUARIO ACTUAL (DICT)
-    # -----------------------------------
 
     usuario_actual = SessionManager.obtener_usuario()
 
-    # -----------------------------------
-    # SUPERUSUARIO (FIX API)
-    # -----------------------------------
+    # SUPERUSUARIO BYPASS TOTAL
+    if get_usuario_attr(usuario_actual, "es_superusuario", False):
 
-    if get_usuario_attr(
-        usuario_actual,
-        "es_superusuario",
-        False
-    ):
         logging.debug("SUPERUSUARIO: bypass niveles.")
-
         return True
-
-    # -----------------------------------
-    # VALIDAR NIVEL
-    # -----------------------------------
 
     nivel_actual = SessionManager.obtener_nivel_seguridad()
 
@@ -78,10 +56,10 @@ def validar_nivel(nivel_requerido):
 
         return False
 
-    # -----------------------------------
-    # ACCESO AUTORIZADO
-    # -----------------------------------
-
     logging.debug("Acceso autorizado por nivel.")
-
     return True
+
+def usuario():
+    return SessionManager.obtener_usuario()
+
+    get_usuario_attr(usuario(), "rol")

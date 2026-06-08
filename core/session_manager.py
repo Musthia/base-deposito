@@ -3,6 +3,8 @@ import logging
 
 from services.usuarios_permisos_service import usuario_tiene_permiso
 
+from utils.user_helpers import get_usuario_attr
+
 class SessionManager:
 
     _usuario_actual = None
@@ -21,7 +23,8 @@ class SessionManager:
         cls._sesion_activa = True
     
         logging.debug(
-            f"Sesión iniciada: {usuario.get('usuario')}"
+            f"Sesión iniciada: "
+            f"{get_usuario_attr(usuario,'usuario')}"
         )
 
     # -----------------------------------
@@ -80,8 +83,12 @@ class SessionManager:
         if not cls._usuario_actual:
             return 0
 
-        return cls._usuario_actual.get("nivel_seguridad", 0)       
-        
+        return get_usuario_attr(
+            cls._usuario_actual,
+            "nivel_seguridad",
+            0
+        )
+
     # -----------------------------------
     # ROL
     # -----------------------------------
@@ -92,7 +99,10 @@ class SessionManager:
         if not cls._usuario_actual:
             return None
 
-        return cls._usuario_actual.get("rol")
+        return get_usuario_attr(
+            cls._usuario_actual,
+            "rol"
+        )
 
     # -----------------------------------
     # PERMISOS
@@ -119,13 +129,19 @@ class SessionManager:
         if not cls._usuario_actual:
             return False
 
-        return cls._usuario_actual.get("es_superusuario", False)
-
+        return get_usuario_attr(
+            cls._usuario_actual,
+            "es_superusuario",
+            False
+        )
 
     @classmethod
     def obtener_usuario_id(cls):
-    
+
         if not cls._usuario_actual:
             return None
-    
-        return cls._usuario_actual.get("id")
+
+        return get_usuario_attr(
+            cls._usuario_actual,
+            "id"
+        )

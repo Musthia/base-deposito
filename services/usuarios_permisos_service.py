@@ -6,6 +6,8 @@ from database.modelos import (
     UsuarioPermiso
 )
 
+#raise Exception("OLD ORM USAGE DETECTED")
+
 # -----------------------------------
 # ASIGNAR PERMISO
 # -----------------------------------

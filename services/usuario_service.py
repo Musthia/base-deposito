@@ -5,32 +5,27 @@ from database.modelos import Usuario
 from utils.hash import hash_password
 from config.app_config import MODO_DESARROLLO
 
+from repositories.usuarios_repository import UsuariosRepository
+
+repo = UsuariosRepository()
+
 # -----------------------------------
-# SERIALIZAR USUARIO
+# SERIALIZACIÓN (NO ORM)
 # -----------------------------------
 
 def usuario_to_dict(usuario):
 
     if not usuario:
-
         return None
 
     return {
-
         "id": usuario.id,
-
         "nombre": usuario.nombre,
-
         "apellido": usuario.apellido,
-
         "usuario": usuario.usuario,
-
         "rol": usuario.rol,
-
         "nivel_seguridad": usuario.nivel_seguridad,
-
         "activo": usuario.activo,
-
         "es_superusuario": usuario.es_superusuario
     }
 
@@ -133,20 +128,11 @@ def actualizar_usuario(
     password=None
 ):
 
-    session = SessionLocal()
-
     try:
 
-        usuario_db = (
-            session.query(Usuario)
-            .filter(
-                Usuario.id == usuario_id
-            )
-            .first()
-        )
+        usuario_db = repo.get_by_id(usuario_id)
 
         if not usuario_db:
-
             return {
                 "success": False,
                 "mensaje": "Usuario no encontrado."
@@ -160,16 +146,11 @@ def actualizar_usuario(
         usuario_db.activo = activo
 
         if password:
+            usuario_db.password_hash = hash_password(password)
 
-            usuario_db.password_hash = (
-                hash_password(password)
-            )
+        repo.update()
 
-        session.commit()
-
-        logging.debug(
-            f"Usuario actualizado: {usuario}"
-        )
+        logging.debug(f"Usuario actualizado: {usuario}")
 
         return {
             "success": True,
@@ -178,11 +159,7 @@ def actualizar_usuario(
 
     except Exception as e:
 
-        session.rollback()
-
-        logging.exception(
-            "Error actualizando usuario"
-        )
+        logging.exception("Error actualizando usuario")
 
         return {
             "success": False,
@@ -190,8 +167,7 @@ def actualizar_usuario(
         }
 
     finally:
-
-        session.close()
+        repo.close()
 
 # -----------------------------------
 # CAMBIAR PASSWORD
@@ -307,61 +283,28 @@ def cambiar_estado_usuario(
 
 def listar_usuarios():
 
-    db = SessionLocal()
+    repo = UsuariosRepository()
 
     try:
-
-        query = (
-            db.query(Usuario)
-            .order_by(
-                Usuario.id.asc()
-            )
-        )
-
-        # -----------------------------------
-        # PRODUCCIÓN
-        # -----------------------------------
-
-        if not MODO_DESARROLLO:
-
-            query = query.filter(
-                Usuario.es_superusuario == False
-            )
-
-        usuarios = query.all()
-
-        return usuarios
+        return repo.get_all()
 
     finally:
+        repo.close()
 
-        db.close()
 
 # -----------------------------------
 # OBTENER USUARIO POR ID
 # -----------------------------------
 
-def obtener_usuario_por_id(
-    usuario_id
-):
-
-    db = SessionLocal()
+def obtener_usuario_por_id(usuario_id):
 
     try:
 
-        usuario = (
-            db.query(Usuario)
-            .filter(
-                Usuario.id == usuario_id
-            )
-            .first()
-        )
-
-        return usuario
+        return repo.get_by_id(usuario_id)
 
     finally:
 
-        db.close()
-
+        repo.close()
 # -----------------------------------
 # LISTAR USUARIOS ACTIVOS
 # -----------------------------------
@@ -508,81 +451,41 @@ def crear_usuario(
     activo=True
 ):
 
-    session = SessionLocal()
-
     try:
 
-        # -----------------------------------
-        # VALIDAR EXISTE
-        # -----------------------------------
+        # validar existencia
+        existente = repo.session.query(Usuario).filter(
+            Usuario.usuario == usuario
+        ).first()
 
-        existe = (
-            session.query(Usuario)
-            .filter(
-                Usuario.usuario == usuario
-            )
-            .first()
-        )
-
-        if existe:
+        if existente:
 
             return {
                 "success": False,
-                "mensaje": (
-                    "El usuario ya existe."
-                )
+                "mensaje": "El usuario ya existe."
             }
 
-        # -----------------------------------
-        # CREAR USUARIO
-        # -----------------------------------
-
-        nuevo_usuario = Usuario(
-
+        nuevo = Usuario(
             nombre=nombre,
-
             apellido=apellido,
-
             usuario=usuario,
-
-            password_hash=(
-                hash_password(password)
-            ),
-
+            password_hash=hash_password(password),
             rol=rol,
-
-            nivel_seguridad=(
-                nivel_seguridad
-            ),
-
+            nivel_seguridad=nivel_seguridad,
             activo=activo,
-
             es_superusuario=False
         )
 
-        session.add(nuevo_usuario)
-
-        session.commit()
-
-        logging.debug(
-            f"Usuario creado: "
-            f"{usuario}"
-        )
+        repo.create(nuevo)
 
         return {
             "success": True,
-            "mensaje": (
-                "Usuario creado."
-            )
+            "mensaje": "Usuario creado."
         }
 
     except Exception as e:
 
-        session.rollback()
-
-        logging.exception(
-            "Error creando usuario"
-        )
+        logging.exception("Error creando usuario")
 
         return {
             "success": False,
@@ -590,5 +493,4 @@ def crear_usuario(
         }
 
     finally:
-
-        session.close()
+        repo.close()

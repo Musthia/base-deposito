@@ -87,7 +87,7 @@ class VentanaEditarUsuario(QDialog):
 
             logging.debug(
                 f"Password reseteada: "
-                f"{self.usuario.usuario}"
+                f"{get_usuario_attr(self.usuario, 'usuario')}"
             )
 
             QMessageBox.information(

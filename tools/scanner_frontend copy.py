@@ -4,11 +4,8 @@ import re
 RAIZ = Path(".")
 
 PATRONES = [
-    r"\.nombre\b",
-    r"\.apellido\b",
-    r"\.rol\b",
-    r"\.nivel_seguridad\b",
-    r"\.es_superusuario\b",
+    r"obtener_usuario_actual(",
+    
 ]
 
 IGNORAR = {

@@ -23,7 +23,7 @@ export const crearUsuario = async (data) => {
 };
 
 export const actualizarUsuario = async (id, data) => {
-    return api.put(`/usuarios/${id}`, data);
+    return api.patch(`/usuarios/${id}`, data);
 };
 
 export const eliminarUsuario = async (id) => {

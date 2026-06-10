@@ -8,7 +8,10 @@ import {
 
 import { useState, useEffect } from "react";
 
-import { crearUsuario } from "../../services/usuariosService";
+import {
+    actualizarUsuario,
+    crearUsuario
+} from "../../services/usuariosService";
 
 
 
@@ -34,6 +37,7 @@ export default function UsuarioModal({
 
             setForm({
                 usuario: usuario.usuario || "",
+                password: "",
                 nombre: usuario.nombre || "",
                 apellido: usuario.apellido || "",
                 rol: usuario.rol || "",
@@ -44,6 +48,7 @@ export default function UsuarioModal({
 
             setForm({
                 usuario: "",
+                password: "",
                 nombre: "",
                 apellido: "",
                 rol: "",
@@ -56,15 +61,27 @@ export default function UsuarioModal({
 
     const handleSave = async () => {
         try {
-        
-            await crearUsuario({
+
+            const payload = {
                 usuario: form.usuario,
-                password: form.password,
                 nombre: form.nombre,
                 apellido: form.apellido,
                 rol: form.rol,
                 nivel_seguridad: Number(form.nivel_seguridad)
-            });
+            };
+
+            if (form.password) {
+                payload.password = form.password;
+            }
+
+            if (usuario) {
+                await actualizarUsuario(usuario.id, payload);
+            } else {
+                await crearUsuario({
+                    ...payload,
+                    password: form.password
+                });
+            }
         
             onSave();   // solo refresca grid
             onClose();  // cierra modal

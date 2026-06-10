@@ -78,9 +78,11 @@ class VentanaEditarUsuario(QDialog):
 
     def reset_password(self):
 
+        nueva_password = "Temp1234"
+
         resultado = cambiar_password(
             get_usuario_attr(self.usuario, "id"),
-            "Temp1234"
+            nueva_password
         )
 
         if resultado["success"]:
@@ -167,7 +169,7 @@ class VentanaEditarUsuario(QDialog):
 
             return
 
-        if not usuario.strip():
+        if not usuario_texto.strip():
 
             QMessageBox.warning(
                 self,
@@ -202,7 +204,7 @@ class VentanaEditarUsuario(QDialog):
 
             logging.debug(
                 f"Usuario actualizado: "
-                f"{usuario}"
+                f"{usuario_texto}"
             )
 
             QMessageBox.information(

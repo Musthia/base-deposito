@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api/axiosClient";
+import { listarUsuarios } from "../services/usuariosService";
 
 export const useUsuariosGrid = () => {
 
@@ -16,14 +16,10 @@ export const useUsuariosGrid = () => {
         try {
             setLoading(true);
 
-            const res = await api.get("/usuarios", {
-                params: {
-                    page: page + 1,
-                    limit: pageSize
-                }
+            const data = await listarUsuarios({
+                page: page + 1,
+                limit: pageSize
             });
-
-            const data = res.data;
 
             setRows(data.usuarios || []);
             setPagination({

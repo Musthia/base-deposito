@@ -88,3 +88,20 @@ Verificacion:
 ## Siguiente paso recomendado
 
 - Continuar con la duplicidad backend/desktop: servicios directos a BD frente a servicios API.
+
+## 2026-06-10 - Paso 5: arquitectura objetivo documentada
+
+Objetivo: dejar una guia concreta para ordenar el proyecto hibrido sin improvisar refactors grandes.
+
+Cambios aplicados:
+
+- Se creo `docs/arquitectura_hibrida_objetivo.md`.
+
+Motivo:
+
+- El proyecto debe crecer hacia manejo de datos, consulta, edicion, actualizacion, eliminacion y anexion de nuevas tablas/bases.
+- Para evitar duplicidad futura, se define FastAPI como fuente de verdad progresiva y desktop/web como clientes.
+
+Verificacion pendiente:
+
+- Centralizar dependencias DB del backend como primer ajuste tecnico de arquitectura.

@@ -1,19 +1,5 @@
 from backend.database.conexion import (
-    SessionLocal
+    get_db
 )
 
-# -----------------------------------
-# DB SESSION
-# -----------------------------------
-
-def get_db():
-
-    db = SessionLocal()
-
-    try:
-
-        yield db
-
-    finally:
-
-        db.close()
+__all__ = ["get_db"]

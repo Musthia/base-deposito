@@ -94,6 +94,12 @@ from core.seguridad import (
 
 from utils.user_helpers import get_usuario_attr
 
+from ui.tree_loader import TreeLoader
+from ui.dynamic_form import DynamicForm
+from db.router import DatabaseRouter
+
+from db.service import DatabaseService
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
 
@@ -191,6 +197,8 @@ class VentanaPrincipal(QMainWindow):
         self.nombre_usuario = nombre
         self.rol = rol
         self.nivel_seguridad = nivel_seguridad  
+        
+        self.db_service = DatabaseService()
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -274,6 +282,9 @@ class VentanaPrincipal(QMainWindow):
         self.ui.tabwidget_resultados_consulta.tabCloseRequested.connect(
             self.cerrar_pestana_resultado
         )
+        
+        self.router = DatabaseRouter()
+        self.loader = TreeLoader(self.router)
 
     def abrir_administracion_usuarios(self):
 

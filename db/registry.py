@@ -1,5 +1,3 @@
-# db/registry.py
-
 class DBRegistry:
     """
     Mantiene la base activa en runtime (SQLite o PostgreSQL)
@@ -9,6 +7,14 @@ class DBRegistry:
         self.engine = None
         self.db_type = None
         self.current_source = None
+
+    def set_engine(self, engine):
+        self.engine = engine
+        print("[REGISTRY] engine seteado:", engine)
+
+    def get_engine(self):
+        print("[REGISTRY] engine leído:", self.engine)
+        return self.engine
 
     def set_sqlite(self, db_path: str):
         from db.engines import get_sqlite_engine
@@ -23,9 +29,6 @@ class DBRegistry:
         self.engine = postgres_engine
         self.db_type = "postgres"
         self.current_source = "postgresql"
-
-    def get_engine(self):
-        return self.engine
 
 
 # instancia global (tipo singleton)

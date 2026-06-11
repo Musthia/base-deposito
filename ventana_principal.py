@@ -100,6 +100,10 @@ from db.router import DatabaseRouter
 
 from db.service import DatabaseService
 
+from db.registry import db_registry
+from sqlalchemy import create_engine
+import os
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
 
@@ -196,7 +200,10 @@ class VentanaPrincipal(QMainWindow):
 
         self.nombre_usuario = nombre
         self.rol = rol
-        self.nivel_seguridad = nivel_seguridad  
+        self.nivel_seguridad = nivel_seguridad
+        
+        self.router = DatabaseRouter()
+        self.loader = TreeLoader(self.router)
         
         self.db_service = DatabaseService()
 
@@ -206,14 +213,17 @@ class VentanaPrincipal(QMainWindow):
         self.base_actual = None  # 👈 CLAVE
 
         self.ui.entry_consultar.textChanged.connect(self.actualizar_resaltado)
+        
+        self.ui.combo_bases.activated.connect(self.on_base_changed)
 
-        self.ui.combo_bases.currentIndexChanged.connect(
-            self.enfocar_entry_busqueda
-        )
+        self.ui.combo_bases.activated.connect(lambda: self.ui.entry_consultar.setFocus())
 
-        self.ui.combo_bases.activated.connect(
-            lambda: self.ui.entry_consultar.setFocus()
-        )
+        
+        self.ui.combo_bases.activated.connect( lambda: self.ui.entry_consultar.setFocus() ) 
+        self.ui.combo_bases.currentIndexChanged.connect( lambda: print("COMBO CAMBIÓ:", self.ui.combo_bases.currentText()) )
+        
+        self.ui.combo_bases.setCurrentIndex(-1)
+        self.ui.combo_bases.setPlaceholderText("Seleccione una opción")
 
         self.ui.boton_cerrar_sesion.clicked.connect(
             self.cerrar_sesion
@@ -283,8 +293,62 @@ class VentanaPrincipal(QMainWindow):
             self.cerrar_pestana_resultado
         )
         
-        self.router = DatabaseRouter()
-        self.loader = TreeLoader(self.router)
+    def inicializar_engine_base(self, base=None):
+
+        if base is None:
+            base = self.base_actual
+
+        if not base:
+            logging.error("No hay base seleccionada")
+            return
+
+        postgres_bases = {
+            "IPS",
+            "PEDIATRICO",
+            "IGPJ",
+            "IGPJ TXT LISTADO",
+            "IGPJ_LISTADO_NUEVO",
+            "MATERNIDAD",
+            "ESCRIBANIA"
+        }
+
+        if base in postgres_bases:
+
+            engine = create_engine(
+                f"postgresql+psycopg2://"
+                f"{os.getenv('DB_USER')}:"
+                f"{os.getenv('DB_PASSWORD')}@"
+                f"{os.getenv('DB_HOST')}:"
+                f"{os.getenv('DB_PORT')}/"
+                f"{os.getenv('DB_NAME')}"
+            )
+
+        else:
+
+            ruta = os.path.join(
+                self.obtener_ruta_bases(),
+                f"{base}.db"
+            )
+
+            engine = create_engine(f"sqlite:///{ruta}")
+
+        db_registry.set_engine(engine)
+
+        logging.debug(f"[ENGINE SETEADO] {base}")
+        print("[ENGINE OK]", engine)
+        
+    def on_base_changed(self, index=None):
+
+        base = self.ui.combo_bases.currentText()
+        self.base_actual = base
+
+        print("[BASE SELECCIONADA]", base)
+
+        # 🔥 ESTO ES LO QUE TE FALTA
+        self.inicializar_engine_base()
+
+        from db.registry import db_registry
+        print("[ENGINE DESPUÉS]", db_registry.get_engine())
 
     def abrir_administracion_usuarios(self):
 
@@ -539,23 +603,21 @@ class VentanaPrincipal(QMainWindow):
         widget.deleteLater()
 
     def consultar_base_seleccionada(self):
-        from PySide6.QtWidgets import QMessageBox
-        #from utils import obtener_ruta_bases
-        from utils.rutas import (
-            obtener_ruta_bases
+        
+        base = self.base_actual
+        tabla = "Datcorr_database"
+
+        schema = self.mapear_base_a_schema(base)
+
+        resultados, columnas = self.db_service.consultar(
+            schema=schema,
+            table=tabla
         )
 
-        base = self.ui.combo_bases.currentText().strip()
-
-        if not base:
-            return
-
-        self.base_actual = base  # 👈 CLAVE
-
-        # Ruta real de la DB
-        ruta_db = os.path.join(
-            obtener_ruta_bases(),
-            f"{base}.db"
+        self.crear_o_actualizar_pestana(
+            base,
+            columnas,
+            resultados
         )
 
         if not os.path.exists(ruta_db):
@@ -835,7 +897,8 @@ class VentanaPrincipal(QMainWindow):
 
         # 👉 Seleccionar la primera base si existe
         if bases:
-            self.ui.combo_bases.setCurrentIndex(0)
+            self.ui.combo_bases.setCurrentIndex(-1)
+            self.ui.combo_bases.setPlaceholderText("Seleccione una opción")
             self.ui.combo_bases.setFocus()
 
     def buscar_en_base(self):
@@ -1020,10 +1083,11 @@ class VentanaPrincipal(QMainWindow):
                 background-color: #aedfff;
             }
             """)            
-
+            
+            #tree.doubleClicked.connect(self.on_row_double_click)
             tree.doubleClicked.connect(
                 lambda index, b=base: self.editar_fila(index, b)
-            )
+            )            
 
             cantidad = len(resultados)
             titulo = f"RESULTADO {base} ({cantidad})"
@@ -1078,6 +1142,31 @@ class VentanaPrincipal(QMainWindow):
         tree.resizeColumnToContents(0)
         # Ocultar columna ID
         #tree.setColumnHidden(0, True)
+        
+    """ def on_row_double_click(self, index):
+
+        # -----------------------------------
+        # 1. OBTENER FILA SELECCIONADA
+        # -----------------------------------
+        row = index.row()
+
+        # -----------------------------------
+        # 2. EXTRAER DATOS DEL TREEVIEW
+        # -----------------------------------
+        data = {}
+
+        for col in range(tree.columnCount()):
+
+            header = tree.horizontalHeaderItem(col).text()
+
+            value = tree.item(row, col).text()
+
+            data[header] = value
+
+        # -----------------------------------
+        # 3. ABRIR FORMULARIO DINÁMICO
+        # -----------------------------------
+        self.ui.open_dynamic_form(data) """
 
     def editar_fila(self, index, base):
 
@@ -1179,26 +1268,14 @@ class VentanaPrincipal(QMainWindow):
         ]
 
         # ---------- RUTA DB ----------
-        #from utils import obtener_ruta_bases
-        from utils.rutas import (
-            obtener_ruta_bases
-        )
-        import os
+        if base not in self.pestanas_resultados:
+            return
 
-        ruta_db = os.path.join(
-            obtener_ruta_bases(),
-            f"{base}.db"
-        )
-
-        logging.debug(f"[EDITAR_FILA] Base: {base}")
-        logging.debug(f"[EDITAR_FILA] Ruta DB: {ruta_db}")
-        logging.debug(f"[EDITAR_FILA] ID registro: {id_registro}")
-
-        if not os.path.exists(ruta_db):
-            QMessageBox.critical(
+        if db_registry.get_engine() is None:
+            QMessageBox.warning(
                 self,
-                "ERROR",
-                f"No existe la base de datos:\n{ruta_db}"
+                "Sistema no inicializado",
+                "Seleccione una base antes de editar."
             )
             return
 
@@ -1208,7 +1285,9 @@ class VentanaPrincipal(QMainWindow):
             id_registro=id_registro,
             columnas=columnas,
             valores=valores,
-            ruta_db=ruta_db,
+            schema=self.mapear_base_a_schema(base),
+            table="Datcorr_database",
+            db_service=self.db_service,
             parent=self
         )
 
@@ -1217,6 +1296,20 @@ class VentanaPrincipal(QMainWindow):
         )
 
         self.ventana_edicion.exec()
+        
+    def mapear_base_a_schema(self, base):
+
+        mapa = {
+            "IPS": "ips",
+            "PEDIATRICO": "pediatrico",
+            "IGPJ_LISTADO_NUEVO": "igpj_listado_nuevo",
+            "IGPJ TXT LISTADO": "igpj_txt_listado",
+            "IGPJ": "igpj",
+            "MATERNIDAD": "maternidad",
+            "ESCRIBANIA": "escribania"
+        }
+
+        return mapa.get(base)
 
     def closeEvent(self, event):
 
@@ -1234,23 +1327,65 @@ class VentanaPrincipal(QMainWindow):
         event.accept()
 
     def actualizar_fila_treeview(self, base, id_registro, datos_actualizados):
+        
+        print("ACTUALIZAR TREEVIEW")
+        print("BASE:", base)
+        print("ID:", id_registro)
+        print("DATOS:", datos_actualizados)
 
         datos = self.pestanas_resultados.get(base)
         if not datos:
             return
 
         model = datos["model"]
+        
+        print("HEADERS DEL MODEL:")
+
+        for i in range(model.columnCount()):
+            print(
+                i,
+                model.headerData(i, Qt.Horizontal)
+            )
 
         for fila in range(model.rowCount()):
             item_id = model.item(fila, 0).data(Qt.UserRole)
 
             if item_id == id_registro:
+                
+                print(
+                    "TREE ID:",
+                    item_id,
+                    "BUSCANDO:",
+                    id_registro
+                )
 
                 for col_index in range(model.columnCount()):
-                    nombre_col = model.headerData(col_index, Qt.Horizontal)
+
+                    nombre_col = model.headerData(
+                        col_index,
+                        Qt.Horizontal
+                    )
+
+                    print(
+                        "HEADER:",
+                        nombre_col,
+                        "EXISTE:",
+                        nombre_col in datos_actualizados
+                    )
 
                     if nombre_col in datos_actualizados:
-                        model.item(fila, col_index).setText(
+                    
+                        print(
+                            "ACTUALIZANDO:",
+                            nombre_col,
+                            "->",
+                            datos_actualizados[nombre_col]
+                        )
+
+                        model.item(
+                            fila,
+                            col_index
+                        ).setText(
                             datos_actualizados[nombre_col]
                         )
                 break
@@ -1277,9 +1412,16 @@ class VentanaPrincipal(QMainWindow):
 class VentanaEdicionRegistro(QDialog):
 
     datos_actualizados = Signal(str, int, dict)
-    # base, id_registro, {col: valor}
 
-    def __init__(self, base, id_registro, columnas, valores, ruta_db, parent=None):
+    def __init__(self, 
+                 base, 
+                 id_registro, 
+                 columnas, 
+                 valores, 
+                 schema, table, 
+                 db_service, 
+                 parent=None):
+        
         super().__init__(parent)
 
         # Ícono de la ventana
@@ -1295,22 +1437,50 @@ class VentanaEdicionRegistro(QDialog):
         # ---------- ASIGNACIONES PRIMERO ----------
         self.base = base
         self.id_registro = id_registro
-        self.ruta_db = ruta_db      # 👈 AHORA SÍ, PRIMERO
+
+        # NUEVO SISTEMA HÍBRIDO
+        self.schema = schema
+        self.table = table
+        self.db_service = db_service
+        
+        # Determina si estamos usando PostgreSQL
+        self.usar_postgres = (
+            self.schema is not None
+            and self.table is not None
+            and self.db_service is not None
+        )
+
         self.campos = {}
 
         # ---------- VALIDACIÓN ----------
-        if not isinstance(self.ruta_db, str) or not os.path.exists(self.ruta_db):
-            logging.error(f"[EDICION] ruta_db inválida: {self.ruta_db}")
-            QMessageBox.critical(
-                self,
-                "ERROR DE CONFIGURACIÓN",
-                "Ruta de base de datos inválida.\n"
-                f"{self.ruta_db}"
-            )
-            self.reject()
-            return
+        if self.usar_postgres:
 
-        logging.debug(f"[EDICION] Usando DB: {self.ruta_db}")
+            logging.debug(
+                f"[EDICION] PostgreSQL "
+                f"{self.schema}.{self.table}"
+            )
+
+        else:
+        
+            if (
+                not isinstance(self.ruta_db, str)
+                or not os.path.exists(self.ruta_db)
+            ):
+
+                logging.error(
+                    f"[EDICION] ruta_db inválida: "
+                    f"{self.ruta_db}"
+                )
+
+                QMessageBox.critical(
+                    self,
+                    "ERROR DE CONFIGURACIÓN",
+                    "Ruta de base inválida"
+                )
+
+                self.reject()
+                return
+        logging.debug(f"[EDICION] Usando DB: {self.schema if self.usar_postgres else self.ruta_db}")
 
         # ---------- UI ----------
         self.setStyleSheet(style_dialog_dark())
@@ -1337,6 +1507,8 @@ class VentanaEdicionRegistro(QDialog):
 
             layout.addRow(label, entry)
             self.campos[col] = entry
+            
+            print("ENGINE:", db_registry.get_engine())
 
         btn_guardar = QPushButton("Guardar cambios")
         btn_guardar.setStyleSheet(style_pushbutton_dark())
@@ -1346,27 +1518,62 @@ class VentanaEdicionRegistro(QDialog):
         layout.addRow(btn_guardar) 
 
     def guardar_cambios(self):
-        
-        if not os.path.exists(self.ruta_db):
-            QMessageBox.critical(
-                self,
-                "ERROR",
-                f"No existe la base:\n{self.ruta_db}"
-            )
-            return
 
         columnas = list(self.campos.keys())
         valores = [self.campos[c].text() for c in columnas]
 
-        set_clause = ", ".join([f"{c}=?" for c in columnas])
+        datos_actualizados = dict(zip(columnas, valores))
 
-        query = f"""
-            UPDATE Datcorr_database
-            SET {set_clause}
-            WHERE id_datcorr_database = ?
-        """
+        # -----------------------------
+        # POSTGRESQL (HÍBRIDO NUEVO)
+        # -----------------------------
+        if self.usar_postgres:
 
+            try:
+
+                self.db_service.actualizar(
+                    schema=self.schema,
+                    table=self.table,
+                    id_field="id_Datcorr_database",
+                    id_value=self.id_registro,
+                    data=datos_actualizados
+                )
+
+                self.datos_actualizados.emit(
+                    self.base,
+                    self.id_registro,
+                    datos_actualizados
+                )
+
+                self.accept()
+
+            except Exception as e:
+
+                logging.exception(e)
+
+                QMessageBox.critical(
+                    self,
+                    "ERROR",
+                    str(e)
+                )
+
+            return
+
+        # -----------------------------
+        # SQLITE LEGACY (NO TOCAR)
+        # -----------------------------
         try:
+
+            import sqlite3
+
+            set_clause = ", ".join([f"{c}=?" for c in columnas])
+
+            query = f"""
+                UPDATE Datcorr_database
+                SET {set_clause}
+                WHERE id_datcorr_database = ?
+            """
+
             conn = sqlite3.connect(self.ruta_db)
             cursor = conn.cursor()
 
@@ -1374,22 +1581,25 @@ class VentanaEdicionRegistro(QDialog):
             conn.commit()
             conn.close()
 
-            # 👉 emitir señal con los datos nuevos
             self.datos_actualizados.emit(
                 self.base,
                 self.id_registro,
-                dict(zip(columnas, valores))
+                datos_actualizados
             )
 
-            self.accept()  # cerrar ventana
+            self.accept()
 
         except Exception as e:
+
             logging.exception(e)
+
             QMessageBox.critical(
                 self,
                 "ERROR",
                 str(e)
             )
+        
+            return
 
 class ResaltadoCoincidenciaDelegate(QStyledItemDelegate):
     def __init__(self, criterio="", colores_por_columna=None, parent=None):

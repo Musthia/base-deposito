@@ -1174,6 +1174,18 @@ Usuarios</string>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+      </property>
+      <property name="minimumContentsLength">
+       <number>0</number>
+      </property>
+      <property name="placeholderText">
+       <string>Seleccione una Base</string>
+      </property>
      </widget>
     </item>
     <item row="8" column="0" colspan="2">

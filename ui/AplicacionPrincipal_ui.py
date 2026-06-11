@@ -445,6 +445,8 @@ class Ui_MainWindow(object):
         palette4.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush1)
         self.combo_bases.setPalette(palette4)
         self.combo_bases.setStyleSheet(u"")
+        self.combo_bases.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
+        self.combo_bases.setMinimumContentsLength(0)
 
         self.gridLayout_2.addWidget(self.combo_bases, 7, 0, 1, 1)
 
@@ -464,6 +466,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.tabwidget_resultados_consulta.setCurrentIndex(-1)
+        self.combo_bases.setCurrentIndex(-1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -505,5 +508,6 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.combo_bases.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-weight:700;\">SELECCIONAR BASE <br/>DE DATOS</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
+        self.combo_bases.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Seleccione una Base", None))
     # retranslateUi
 

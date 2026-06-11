@@ -49,6 +49,20 @@ class DatabaseRouter:
 
         engine = db_registry.get_engine()
 
+        if engine is None:
+            raise Exception(
+                f"Engine no inicializado para {schema}.{table}. "
+                "Debes seleccionar una base antes de editar."
+            )
+        
+        print("ENGINE:", db_registry.get_engine())
+        
+        print("SCHEMA:", schema)
+        print("TABLE:", table)
+        print("ID_FIELD:", id_field)
+        print("ID_VALUE:", id_value)
+        print("DATA:", data)
+
         set_clause = ",".join(
             f'"{k}" = :{k}' for k in data.keys()
         )
@@ -64,6 +78,10 @@ class DatabaseRouter:
 
         with engine.begin() as conn:
             conn.execute(sql, params)
+            
+            result = conn.execute(sql, params)
+
+            print("FILAS AFECTADAS:", result.rowcount)
 
     # -----------------------------
     # DELETE

@@ -836,6 +836,23 @@ class VentanaPrincipal(QMainWindow):
 
         except Exception:
             logging.exception("[BUSCAR] Error inesperado")
+            
+    def _crear_fila_modelo(self, fila_bd):
+        id_registro = fila_bd[0]
+        valores = fila_bd[1:]
+
+        items = []
+
+        for valor in valores:
+            item = QStandardItem("" if valor is None else str(valor))
+            item.setEditable(False)
+            items.append(item)
+
+        # ID oculto en todos los items de la fila
+        for item in items:
+            item.setData(id_registro, Qt.UserRole)
+
+        return items
 
     def crear_o_actualizar_pestana(
         self,
@@ -844,72 +861,62 @@ class VentanaPrincipal(QMainWindow):
         resultados,
         modo="BUSQUEDA"
     ):
-
+    
         clave = f"{base}_{modo}"
-
-        if clave in self.pestanas_resultados:
-
-            datos_tab = self.pestanas_resultados[clave]
-
-            contenedor = datos_tab["contenedor"]
-            tree = datos_tab["tree"]
-            model = datos_tab["model"]
-            delegate = datos_tab["delegate"]
-
-            model.clear()
-
-            cantidad = len(resultados)
-
-            titulo = (
-                f"{modo} "
-                f"{base} "
-                f"({cantidad})"
-            )
-
-            idx = (
-                self.ui
-                .tabwidget_resultados_consulta
-                .indexOf(contenedor)
-            )
-
-            if idx != -1:
-
-                self.ui.tabwidget_resultados_consulta.setTabText(
-                    idx,
-                    titulo
-                )
-
-                self.ui.tabwidget_resultados_consulta.setCurrentIndex(
-                    idx
-                )
-
-            delegate.set_criterio(
-                self.ui.entry_consultar.text()
-            )
-
-        else:
-
+    
+        datos_tab = self.pestanas_resultados.get(clave)
+    
+        # -----------------------------------
+        # CREAR PESTAÑA SOLO UNA VEZ
+        # -----------------------------------
+        if not datos_tab:
+        
             contenedor = QWidget()
-
-            layout = QVBoxLayout(
-                contenedor
-            )
-            
+    
+            layout = QVBoxLayout(contenedor)
+    
             contenedor.setStyleSheet("""
                 QWidget {
-                    background-color: #80ccff;   /* elegí el color */
+                    background-color: #80ccff;
                 }
             """)
-
+    
             tree = QTreeView()
+    
+            layout.addWidget(tree)
+    
+            model = QStandardItemModel()
+    
+            proxy = QSortFilterProxyModel()
+    
+            proxy.setSourceModel(model)
+    
+            proxy.setFilterCaseSensitivity(
+                Qt.CaseInsensitive
+            )
+    
+            proxy.setFilterKeyColumn(-1)
+    
+            proxy.setSortRole(
+                Qt.UserRole
+            )
+    
+            tree.setModel(proxy)
+    
             tree.setAlternatingRowColors(True)
+    
             tree.setSortingEnabled(True)
-            tree.setEditTriggers(QTreeView.NoEditTriggers)
-
+    
+            tree.setEditTriggers(
+                QTreeView.NoEditTriggers
+            )
+    
             header = tree.header()
+    
             header.setSectionsClickable(True)
+    
             header.setSortIndicatorShown(True)
-            
+    
             tree.setStyleSheet("""
             QHeaderView::section {
                 background-color: #cfcfcf;
@@ -918,252 +925,186 @@ class VentanaPrincipal(QMainWindow):
                 border: 1px solid #d7d7d7;
                 font-weight: bold;
             }
-
+    
             QHeaderView::section:hover {
                 background-color: #debef1;
             }
-
+    
             QHeaderView::section:checked {
                 background-color: #aedfff;
             }
             """)
-
-            layout.addWidget(tree)
-
-            model = QStandardItemModel()
-            proxy = QSortFilterProxyModel()
-            proxy.setSourceModel(model)
-            tree.setModel(proxy)
-
-            delegate = (
-                ResaltadoCoincidenciaDelegate(
-                    self.ui.entry_consultar.text(),
-                    self.colores_columnas,
-                    tree
-                )
+    
+            # -----------------------------------
+            # DELEGATE (SE CREA UNA SOLA VEZ)
+            # -----------------------------------
+    
+            delegate = ResaltadoCoincidenciaDelegate(
+                self.ui.entry_consultar.text(),
+                self.colores_columnas,
+                tree
             )
-
-            tree.setItemDelegate(
-                delegate
-            )
+    
+            tree.setItemDelegate(delegate)
+    
+            # -----------------------------------
+            # EDICIÓN SOLO EN BÚSQUEDA
+            # -----------------------------------
+    
+            if modo == "BUSQUEDA":
             
-            tree.doubleClicked.connect(
-                lambda index, b=base: self.editar_fila(index, b)
-            )
-
-            titulo = (
-                f"{modo} "
-                f"{base} "
-                f"({len(resultados)})"
-            )
-
+                tree.doubleClicked.connect(
+                    lambda index, k=clave:
+                    self.editar_fila(index, k)
+                )
+    
             self.ui.tabwidget_resultados_consulta.addTab(
                 contenedor,
-                titulo
+                f"{modo} {base}"
             )
-
-            self.ui.tabwidget_resultados_consulta.setCurrentWidget(
-                contenedor
-            )
-
+    
             self.pestanas_resultados[clave] = {
-
-                "contenedor": contenedor,
+            
                 "tree": tree,
                 "model": model,
                 "proxy": proxy,
-                "delegate": delegate
+                "delegate": delegate,
+                "contenedor": contenedor,
+                "modo": modo,
+                "base": base
             }
-
+    
+        # -----------------------------------
+        # RECUPERAR OBJETOS EXISTENTES
+        # -----------------------------------
+    
+        datos_tab = self.pestanas_resultados[clave]
+    
+        tree = datos_tab["tree"]
+    
+        model = datos_tab["model"]
+    
+        proxy = datos_tab["proxy"]
+    
+        delegate = datos_tab["delegate"]
+    
+        contenedor = datos_tab["contenedor"]
+    
+        # -----------------------------------
+        # ACTUALIZAR CRITERIO RESALTADO
+        # -----------------------------------
+    
+        delegate.set_criterio(
+            self.ui.entry_consultar.text()
+        )
+    
+        # -----------------------------------
+        # LIMPIAR MODELO
+        # -----------------------------------
+    
+        model.clear()
+    
         model.setColumnCount(
             len(columnas)
         )
-
+    
         model.setHorizontalHeaderLabels(
             columnas
         )
-
-        for fila_bd in resultados:
-
-            id_registro = fila_bd[0]
-
-            items = []
-
-            for valor in fila_bd[1:]:
-            
-                texto = (
-                    ""
-                    if valor is None
-                    else str(valor)
-                )
-
-                item = QStandardItem(
-                    texto
-                )
-
-                item.setEditable(False)
-
-                items.append(
-                    item
-                )
-
-            # --------------------------
-            # GUARDAR ID OCULTO
-            # EN PRIMER ITEM
-            # --------------------------
-
-            if items:
-            
-                items[0].setData(
-                    id_registro,
-                    Qt.UserRole
-                )
-
-            model.appendRow(
-                items
-            )
-            
-    """ def on_row_double_click(self, index):
-
+    
         # -----------------------------------
-        # 1. OBTENER FILA SELECCIONADA
+        # CARGAR FILAS
         # -----------------------------------
-        row = index.row()
-
-        # -----------------------------------
-        # 2. EXTRAER DATOS DEL TREEVIEW
-        # -----------------------------------
-        data = {}
-
-        for col in range(tree.columnCount()):
-
-            header = tree.horizontalHeaderItem(col).text()
-
-            value = tree.item(row, col).text()
-
-            data[header] = value
-
-        # -----------------------------------
-        # 3. ABRIR FORMULARIO DINÁMICO
-        # -----------------------------------
-        self.ui.open_dynamic_form(data) """
-
-    def editar_fila(self, index, base):
-
-        # -----------------------------------
-        # VALIDAR ACCESO EDICIÓN
-        # -----------------------------------
+    
+        for fila in resultados:
         
-        logging.debug(
-            "Validando acceso a edición..."
+            model.appendRow(
+                self._crear_fila_modelo(fila)
+            )
+    
+        # -----------------------------------
+        # ACTUALIZAR TÍTULO
+        # -----------------------------------
+    
+        cantidad = len(resultados)
+    
+        titulo = (
+            f"{modo} "
+            f"{base} "
+            f"({cantidad})"
         )
-
-        # -----------------------------------
-        # VALIDAR SESIÓN
-        # -----------------------------------
-
-        usuario = SessionManager.obtener_usuario()
-
-        if not usuario:
-
-            logging.warning(
-                "Edición denegada: sin sesión."
+    
+        index_tab = (
+            self.ui
+            .tabwidget_resultados_consulta
+            .indexOf(contenedor)
+        )
+    
+        if index_tab != -1:
+        
+            self.ui.tabwidget_resultados_consulta.setTabText(
+                index_tab,
+                titulo
             )
-
-            QMessageBox.critical(
-                self,
-                "Sesión inválida",
-                "Debe iniciar sesión."
+    
+            self.ui.tabwidget_resultados_consulta.setCurrentIndex(
+                index_tab
             )
+    
+        # -----------------------------------
+        # REFRESH VISUAL QT
+        # -----------------------------------
+    
+        proxy.invalidate()
+    
+        tree.viewport().update()
+    
+        model.layoutChanged.emit()
+    
+    def editar_fila(self, index, clave):
 
+        print("EDITAR_FILA")
+
+        datos_tab = self.pestanas_resultados.get(clave)
+        if not datos_tab:
             return
 
-        logging.debug(
-            f"USUARIO ACTUAL = {usuario}"
-        )
-
-        logging.debug(
-            f"ES SUPERUSUARIO = "
-            f"{get_usuario_attr(usuario, 'es_superusuario')}"
-        )
-
-        # -----------------------------------
-        # VALIDAR PERMISO EDITAR
-        # -----------------------------------
-
-        if not SessionManager.tiene_permiso(
-            "EDITAR"
-        ):
-
-            logging.warning(
-                f"Usuario '{get_usuario_attr(usuario, 'usuario')}'"
-                f"sin permiso EDITAR."
-            )
-
-            QMessageBox.warning(
-                self,
-                "Permiso denegado",
-                (
-                    "No posee permisos "
-                    "para editar registros."
-                )
-            )
-
-            return
-
-        logging.debug(
-            "Acceso autorizado a edición."
-        )
-
-        if base not in self.pestanas_resultados:
-            return
-
-        datos_tab = self.pestanas_resultados[base]
-
-        tree = datos_tab["tree"]
-        model = datos_tab["model"]
         proxy = datos_tab["proxy"]
 
+        # siempre convertir a source
         index_source = proxy.mapToSource(index)
+
         fila = index_source.row()
 
-        if fila < 0:
-            return
+        # obtener modelo REAL
+        model = datos_tab["model"]
 
-        # ID real del registro
-        item_id = model.item(fila, 0)
-        if item_id is None:
-            return
+        # 🔥 ID seguro (desde cualquier columna de la fila)
+        id_registro = model.item(fila, 0).data(Qt.UserRole)
 
-        id_registro = item_id.data(Qt.UserRole)
+        # 🔥 leer datos correctamente (SIN model.item)
+        valores = []
+        columnas = model.columnCount()
 
-        columnas = [
+        for col in range(columnas):
+            idx = model.index(fila, col)
+            valores.append(idx.data())
+
+        headers = [
             model.headerData(i, Qt.Horizontal)
-            for i in range(model.columnCount())
+            for i in range(columnas)
         ]
 
-        valores = [
-            model.item(fila, i).text()
-            for i in range(model.columnCount())
-        ]
+        print("ID:", id_registro)
+        print("VALORES:", valores)
 
-        # ---------- RUTA DB ----------
-        if base not in self.pestanas_resultados:
-            return
+        # abrir editor SOLO en BUSQUEDA
+        base = datos_tab["base"]
 
-        if db_registry.get_engine() is None:
-            QMessageBox.warning(
-                self,
-                "Sistema no inicializado",
-                "Seleccione una base antes de editar."
-            )
-            return
-
-        # ---------- CREAR DIÁLOGO ----------
         self.ventana_edicion = VentanaEdicionRegistro(
             base=base,
             id_registro=id_registro,
-            columnas=columnas,
+            columnas=headers,
             valores=valores,
             schema=self.mapear_base_a_schema(base),
             table="Datcorr_database",
@@ -1175,7 +1116,7 @@ class VentanaPrincipal(QMainWindow):
             self.actualizar_fila_treeview
         )
 
-        self.ventana_edicion.show()
+        self.ventana_edicion.exec()
         
     def mapear_base_a_schema(self, base):
 
@@ -1206,90 +1147,57 @@ class VentanaPrincipal(QMainWindow):
 
         event.accept()
 
-    def actualizar_fila_treeview(self, base, id_registro, datos_actualizados):
+    def actualizar_fila_treeview(self, base, id_registro, datos):
         
-        print("ACTUALIZAR TREEVIEW")
-        print("BASE:", base)
-        print("ID:", id_registro)
-        print("DATOS:", datos_actualizados)
-
-        datos = self.pestanas_resultados.get(base)
-        if not datos:
-            return
-
-        model = datos["model"]
+        for clave, tab in self.pestanas_resultados.items():
         
-        print("HEADERS DEL MODEL:")
-
-        for i in range(model.columnCount()):
-            print(
-                i,
-                model.headerData(i, Qt.Horizontal)
-            )
-
-        for fila in range(model.rowCount()):
-            item_id = model.item(fila, 0).data(Qt.UserRole)
-
-            if item_id == id_registro:
+            if tab["base"] != base:
+                continue
+            
+            model = tab["model"]
+    
+            for row in range(model.rowCount()):
+            
+                item = model.item(row, 0)
+    
+                if item and item.data(Qt.UserRole) == id_registro:
                 
-                print(
-                    "TREE ID:",
-                    item_id,
-                    "BUSCANDO:",
-                    id_registro
-                )
-
-                for col_index in range(model.columnCount()):
-
-                    nombre_col = model.headerData(
-                        col_index,
-                        Qt.Horizontal
-                    )
-
-                    print(
-                        "HEADER:",
-                        nombre_col,
-                        "EXISTE:",
-                        nombre_col in datos_actualizados
-                    )
-
-                    if nombre_col in datos_actualizados:
-                    
-                        print(
-                            "ACTUALIZANDO:",
-                            nombre_col,
-                            "->",
-                            datos_actualizados[nombre_col]
-                        )
-
-                        model.item(
-                            fila,
-                            col_index
-                        ).setText(
-                            datos_actualizados[nombre_col]
-                        )
-                break
+                    for col in range(model.columnCount()):
+                        key = model.headerData(col, Qt.Horizontal)
+    
+                        if key in datos:
+                            idx = model.index(row, col)
+                            model.setData(idx, datos[key])
+    
+                    return
 
     def actualizar_resaltado(self, texto):
 
         index = self.ui.tabwidget_resultados_consulta.currentIndex()
-        if index == -2:
+        if index == -1:
             return
 
-        widget_actual = self.ui.tabwidget_resultados_consulta.widget(index)
+        widget = self.ui.tabwidget_resultados_consulta.widget(index)
 
-        for base, datos in self.pestanas_resultados.items():
+        datos = next(
+            (d for d in self.pestanas_resultados.values()
+             if d["contenedor"] is widget),
+            None
+        )
 
-            tree = datos["tree"]
-            delegate = datos["delegate"]
-            contenedor = datos["contenedor"]
+        if not datos:
+            return
 
-            if contenedor == widget_actual:
-                delegate.set_criterio(texto)
-                tree.viewport().update()
-                break
+        datos["delegate"].set_criterio(texto)
+
+        view = datos["tree"]
+        model = view.model()
+
+        model.layoutChanged.emit()
 
 class VentanaEdicionRegistro(QDialog):
+    
+    print("ANTES DE CREAR VENTANA")
 
     datos_actualizados = Signal(str, int, dict)
 
@@ -1302,17 +1210,29 @@ class VentanaEdicionRegistro(QDialog):
                  db_service, 
                  parent=None):
         
+        print("INICIO __init__")
+        
+        print("ENTRÓ A VentanaEdicionRegistro")
+        
         super().__init__(parent)
+        
+        print("SUPER OK")
+        
+        print("PASÓ SUPER")
+        
+        print("BASE:", base)
+        
+        print("ID:", id_registro)
+        
+        print("COLUMNAS:", len(columnas))
+        
+        print("VALORES:", len(valores))
 
         # Ícono de la ventana
         self.setWindowIcon(QIcon("img/datcorr.ico"))
 
         # Tamaño fijo exacto
         self.resize(550, 500)
-
-        from PySide6.QtWidgets import QMessageBox
-        import os
-        import logging
 
         # ---------- ASIGNACIONES PRIMERO ----------
         self.base = base
@@ -1331,6 +1251,10 @@ class VentanaEdicionRegistro(QDialog):
         )
 
         self.campos = {}
+        
+        print("FIN __init__")
+        
+        print("FIN CONSTRUCTOR")
 
         # ---------- VALIDACIÓN ----------
         if self.usar_postgres:

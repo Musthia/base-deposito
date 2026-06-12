@@ -230,9 +230,9 @@ class VentanaPrincipal(QMainWindow):
         )
 
         # 🔌 CONEXIÓN DEL BOTÓN
-        #self.ui.pushButton_carga_datos.clicked.connect(
-        #    self.on_pushButton_carga_datos_clicked
-        #)
+        self.ui.pushButton_carga_datos.clicked.connect(
+            self.on_pushButton_carga_datos_clicked
+        )
 
         self.ui.boton_adm_usuar.clicked.connect(
             self.abrir_administracion_usuarios
@@ -603,62 +603,228 @@ class VentanaPrincipal(QMainWindow):
         widget.deleteLater()
 
     def consultar_base_seleccionada(self):
-
-        logging.debug(
-            "[CONSULTA] iniciando"
-        )
-
+        
         base = self.base_actual
-
-        if not base:
-
-            QMessageBox.warning(
-                self,
-                "Sin selección",
-                "Seleccione una base."
-            )
-
-            return
-
         tabla = "Datcorr_database"
 
-        schema = self.mapear_base_a_schema(
-            base
+        schema = self.mapear_base_a_schema(base)
+
+        resultados, columnas = self.db_service.consultar(
+            schema=schema,
+            table=tabla
         )
 
+        self.crear_o_actualizar_pestana(
+            base,
+            columnas,
+            resultados
+        )
+
+        if not os.path.exists(ruta_db):
+            QMessageBox.warning(
+                self,
+                "Base no encontrada",
+                f"No existe la base:\n{ruta_db}"
+            )
+            return
+
+        # 🟢 1. SI YA ESTÁ ABIERTA → solo activar
+        if base in self.pestanas_consulta:
+            info = self.pestanas_consulta[base]
+            widget = info["widget"]
+
+            if not isValid(widget):
+                # widget muerto → limpiar
+                del self.pestanas_consulta[base]
+            else:
+                index = self.ui.tabwidget_resultados_consulta.indexOf(widget)
+
+                if index != -1:
+                    self.ui.tabwidget_resultados_consulta.setCurrentIndex(index)
+
+                    self._cargar_datos_tabla(
+                        base,
+                        info["model"],
+                        ruta_db=ruta_db
+                    )
+                    return
+
+        # 🟡 2. SI ESTÁ EN CACHÉ (fue cerrada)
+        if hasattr(self, "cache_pestanas") and base in self.cache_pestanas:
+            cache = self.cache_pestanas[base]
+
+            self._crear_pestana_consulta(
+                base,
+                ruta_db=ruta_db,
+                model=cache.get("model")  # reutiliza modelo
+            )
+
+            # ❌ limpiar caché
+            del self.cache_pestanas[base]
+            return
+
+        # 🔵 3. SI NO EXISTE → crear nueva
+        self._crear_pestana_consulta(
+            base,
+            ruta_db=ruta_db
+        )
+
+    def _crear_pestana_consulta(self, base, ruta_db):
+        from PySide6.QtWidgets import QMessageBox
+
+        # 🔁 Si la pestaña ya existe → enfocar y refrescar
+        if base in self.pestanas_consulta:
+
+            pestaña = self.pestanas_consulta[base]
+            self.ui.tabwidget_resultados_consulta.setCurrentWidget(
+                pestaña["widget"]
+            )
+            self._cargar_datos_tabla(
+                base,
+                pestaña["model"],
+                ruta_db
+            )
+            return
+
+        if not os.path.exists(ruta_db):
+            QMessageBox.warning(
+                self,
+                "ERROR",
+                f"No existe la base:\n{ruta_db}"
+            )
+            return
+
+        # ---------- CONSULTA DB ----------
         try:
+            conn = sqlite3.connect(ruta_db)
+            cursor = conn.cursor()
 
-            resultados, columnas = (
-                self.db_service.consultar(
-                    schema=schema,
-                    table=tabla
-                )
-            )
+            cursor.execute("PRAGMA table_info(Datcorr_database)")
+            columnas_info = cursor.fetchall()
 
-            self.crear_o_actualizar_pestana(
-                base=base,
-                columnas=columnas,
-                resultados=resultados,
-                modo="CONSULTA"
-            )
+            columnas = [
+                col[1] for col in columnas_info
+                if col[1].lower() not in ("id", "id_datcorr_database")
+            ]
 
-            logging.debug(
-                f"[CONSULTA OK] "
-                f"{base} "
-                f"{len(resultados)} registros"
-            )
+            cursor.execute(f"""
+                SELECT id_datcorr_database, {", ".join(columnas)}
+                FROM Datcorr_database
+            """)
+
+            resultados = cursor.fetchall()
+            conn.close()
 
         except Exception as e:
-
             logging.exception(e)
-
             QMessageBox.critical(
                 self,
-                "Error",
+                "ERROR",
                 str(e)
             )
+            return
 
-    """ def on_pushButton_carga_datos_clicked(self):
+        cantidad = len(resultados)
+
+        # ---------- UI ----------
+        contenedor = QWidget()
+        layout = QVBoxLayout(contenedor)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        view = QTableView()
+        view.setAlternatingRowColors(True)
+        view.setSortingEnabled(True)
+        view.setSelectionBehavior(QTableView.SelectRows)
+        view.setEditTriggers(QTableView.NoEditTriggers)
+
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(columnas)
+
+        view.setModel(model)
+        layout.addWidget(view)
+
+        # ---------- CARGA DE DATOS ----------
+        for fila in resultados:
+            id_registro = fila[0]
+            datos = fila[1:]
+
+            items = []
+            for valor in datos:
+                texto = "" if valor is None else str(valor)
+                item = QStandardItem(texto)
+                item.setEditable(False)
+                item.setData(id_registro, Qt.UserRole)
+                items.append(item)
+
+            model.appendRow(items)
+
+        # ---------- TÍTULO ----------
+        titulo = f"DATABASE {base} ({cantidad})"
+        self.ui.tabwidget_resultados_consulta.addTab(contenedor, titulo)
+        self.ui.tabwidget_resultados_consulta.setCurrentWidget(contenedor)
+
+        # ---------- REGISTRO ----------
+        self.pestanas_consulta[base] = {
+            "widget": contenedor,
+            "view": view,
+            "model": model,
+            "ruta_db": ruta_db   # 👈 clave
+        }
+
+    def _cargar_datos_tabla(self, base, model, ruta_db):
+        from PySide6.QtWidgets import QMessageBox
+
+        model.clear()
+
+        if not os.path.exists(ruta_db):
+            QMessageBox.warning(
+                self,
+                "ERROR",
+                f"No existe la base:\n{ruta_db}"
+            )
+            return
+
+        try:
+            conn = sqlite3.connect(ruta_db)
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT * FROM Datcorr_database")
+            filas = cursor.fetchall()
+
+            columnas = [desc[0] for desc in cursor.description]
+            conn.close()
+
+        except Exception as e:
+            logging.exception(e)
+            QMessageBox.critical(
+                self,
+                "ERROR",
+                str(e)
+            )
+            return
+
+        model.setColumnCount(len(columnas))
+        model.setHorizontalHeaderLabels(columnas)
+
+        for fila in filas:
+            items = []
+            for valor in fila:
+                texto = "" if valor is None else str(valor)
+                item = QStandardItem(texto)
+                item.setEditable(False)
+
+                if texto.isdigit():
+                    item.setData(int(texto), Qt.UserRole)
+                    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                else:
+                    item.setData(texto.lower(), Qt.UserRole)
+
+                items.append(item)
+
+            model.appendRow(items)
+
+
+    def on_pushButton_carga_datos_clicked(self):
         from PySide6.QtWidgets import QMessageBox
 
         self.dialogo_bases = SelectorBasesDialog(self)
@@ -688,7 +854,7 @@ class VentanaPrincipal(QMainWindow):
             parent=self
         )
 
-        self.dialogo_bases.close() """
+        self.dialogo_bases.close()
 
     def enfocar_entry_busqueda(self):
         if self.ui.combo_bases.currentText():
@@ -768,6 +934,7 @@ class VentanaPrincipal(QMainWindow):
             "a búsqueda."
         )
 
+
         criterio = self.ui.entry_consultar.text().strip()
         base = self.ui.combo_bases.currentText().strip()
 
@@ -830,27 +997,22 @@ class VentanaPrincipal(QMainWindow):
             self.crear_o_actualizar_pestana(
                 base=base,
                 columnas=columnas,
-                resultados=resultados,
-                modo="BUSQUEDA"
+                resultados=resultados
             )
 
         except Exception:
             logging.exception("[BUSCAR] Error inesperado")
 
-    def crear_o_actualizar_pestana(
-        self,
-        base,
-        columnas,
-        resultados,
-        modo="BUSQUEDA"
-    ):
 
-        clave = f"{base}_{modo}"
+        except Exception as e:
+            logging.exception("[BUSCAR] Error inesperado")
+            QMessageBox.critical(self, "Error", str(e))
 
-        if clave in self.pestanas_resultados:
+    def crear_o_actualizar_pestana(self, base, columnas, resultados):
 
-            datos_tab = self.pestanas_resultados[clave]
+        if base in self.pestanas_resultados:
 
+            datos_tab = self.pestanas_resultados[base]
             contenedor = datos_tab["contenedor"]
             tree = datos_tab["tree"]
             model = datos_tab["model"]
@@ -859,42 +1021,19 @@ class VentanaPrincipal(QMainWindow):
             model.clear()
 
             cantidad = len(resultados)
+            titulo = f"RESULTADO {base} ({cantidad})"
 
-            titulo = (
-                f"{modo} "
-                f"{base} "
-                f"({cantidad})"
-            )
+            index_tab = self.ui.tabwidget_resultados_consulta.indexOf(contenedor)
+            if index_tab != -1:
+                self.ui.tabwidget_resultados_consulta.setTabText(index_tab, titulo)
 
-            idx = (
-                self.ui
-                .tabwidget_resultados_consulta
-                .indexOf(contenedor)
-            )
-
-            if idx != -1:
-
-                self.ui.tabwidget_resultados_consulta.setTabText(
-                    idx,
-                    titulo
-                )
-
-                self.ui.tabwidget_resultados_consulta.setCurrentIndex(
-                    idx
-                )
-
-            delegate.set_criterio(
-                self.ui.entry_consultar.text()
-            )
+            delegate.set_criterio(self.ui.entry_consultar.text())
 
         else:
 
             contenedor = QWidget()
+            layout = QVBoxLayout(contenedor)
 
-            layout = QVBoxLayout(
-                contenedor
-            )
-            
             contenedor.setStyleSheet("""
                 QWidget {
                     background-color: #80ccff;   /* elegí el color */
@@ -902,6 +1041,24 @@ class VentanaPrincipal(QMainWindow):
             """)
 
             tree = QTreeView()
+            layout.addWidget(tree)
+
+            model = QStandardItemModel()
+            proxy = QSortFilterProxyModel()
+            proxy.setSourceModel(model)
+            proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
+            proxy.setFilterKeyColumn(-1)
+            proxy.setSortRole(Qt.UserRole)
+
+            tree.setModel(proxy)
+
+            delegate = ResaltadoCoincidenciaDelegate(
+                self.ui.entry_consultar.text(),
+                self.colores_columnas,
+                tree
+            )
+            tree.setItemDelegate(delegate)
+
             tree.setAlternatingRowColors(True)
             tree.setSortingEnabled(True)
             tree.setEditTriggers(QTreeView.NoEditTriggers)
@@ -909,7 +1066,7 @@ class VentanaPrincipal(QMainWindow):
             header = tree.header()
             header.setSectionsClickable(True)
             header.setSortIndicatorShown(True)
-            
+
             tree.setStyleSheet("""
             QHeaderView::section {
                 background-color: #cfcfcf;
@@ -918,7 +1075,6 @@ class VentanaPrincipal(QMainWindow):
                 border: 1px solid #d7d7d7;
                 font-weight: bold;
             }
-
             QHeaderView::section:hover {
                 background-color: #debef1;
             }
@@ -926,48 +1082,19 @@ class VentanaPrincipal(QMainWindow):
             QHeaderView::section:checked {
                 background-color: #aedfff;
             }
-            """)
-
-            layout.addWidget(tree)
-
-            model = QStandardItemModel()
-            proxy = QSortFilterProxyModel()
-            proxy.setSourceModel(model)
-            tree.setModel(proxy)
-
-            delegate = (
-                ResaltadoCoincidenciaDelegate(
-                    self.ui.entry_consultar.text(),
-                    self.colores_columnas,
-                    tree
-                )
-            )
-
-            tree.setItemDelegate(
-                delegate
-            )
+            """)            
             
+            #tree.doubleClicked.connect(self.on_row_double_click)
             tree.doubleClicked.connect(
                 lambda index, b=base: self.editar_fila(index, b)
-            )
+            )            
 
-            titulo = (
-                f"{modo} "
-                f"{base} "
-                f"({len(resultados)})"
-            )
+            cantidad = len(resultados)
+            titulo = f"RESULTADO {base} ({cantidad})"
 
-            self.ui.tabwidget_resultados_consulta.addTab(
-                contenedor,
-                titulo
-            )
+            self.ui.tabwidget_resultados_consulta.addTab(contenedor, titulo)
 
-            self.ui.tabwidget_resultados_consulta.setCurrentWidget(
-                contenedor
-            )
-
-            self.pestanas_resultados[clave] = {
-
+            self.pestanas_resultados[base] = {
                 "contenedor": contenedor,
                 "tree": tree,
                 "model": model,
@@ -975,54 +1102,47 @@ class VentanaPrincipal(QMainWindow):
                 "delegate": delegate
             }
 
-        model.setColumnCount(
-            len(columnas)
-        )
+        # -----------------------------------------
+        # CONFIGURAR HEADERS (SIEMPRE)
+        # -----------------------------------------
 
-        model.setHorizontalHeaderLabels(
-            columnas
-        )
+        model.setColumnCount(len(columnas))
+        model.setHorizontalHeaderLabels(columnas)
 
-        for fila_bd in resultados:
+        # -----------------------------------------
+        # CARGAR DATOS (SIEMPRE)
+        # -----------------------------------------
 
-            id_registro = fila_bd[0]
+        for fila in resultados:
+
+            id_registro = fila[0]
+            datos = fila[1:]
 
             items = []
 
-            for valor in fila_bd[1:]:
-            
-                texto = (
-                    ""
-                    if valor is None
-                    else str(valor)
-                )
-
-                item = QStandardItem(
-                    texto
-                )
-
+            for valor in datos:
+                texto = "" if valor is None else str(valor)
+                item = QStandardItem(texto)
                 item.setEditable(False)
 
-                items.append(
-                    item
-                )
+                if texto.isdigit():
+                    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                    item.setData(int(texto), Qt.UserRole)
+                else:
+                    item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+                    item.setData(texto.lower(), Qt.UserRole)
 
-            # --------------------------
-            # GUARDAR ID OCULTO
-            # EN PRIMER ITEM
-            # --------------------------
+                items.append(item)
 
             if items:
-            
-                items[0].setData(
-                    id_registro,
-                    Qt.UserRole
-                )
+                items[0].setData(id_registro, Qt.UserRole)
 
-            model.appendRow(
-                items
-            )
-            
+            model.appendRow(items)
+
+        tree.resizeColumnToContents(0)
+        # Ocultar columna ID
+        #tree.setColumnHidden(0, True)
+        
     """ def on_row_double_click(self, index):
 
         # -----------------------------------
@@ -1175,7 +1295,7 @@ class VentanaPrincipal(QMainWindow):
             self.actualizar_fila_treeview
         )
 
-        self.ventana_edicion.show()
+        self.ventana_edicion.exec()
         
     def mapear_base_a_schema(self, base):
 

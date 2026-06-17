@@ -298,7 +298,9 @@ class Plantilla(QWidget):
         id_registro = item.data(Qt.UserRole)
         self.lista_autocomplete.hide()
     
-        self._cargar_fila_completa(id_re    def _cargar_fila_completa(self, id_registro):
+        self._cargar_fila_completa(id_registro)   
+                                   
+    def _cargar_fila_completa(self, id_registro):
         if not self._campo_autocomplete_actual:
             return
 
@@ -346,7 +348,7 @@ class Plantilla(QWidget):
                     WHERE "{pk_col}" = :id_registro
                 """)
                 result = conn.execute(query, {"id_registro": id_registro})
-                fila = result.fetchone()onn.close()
+                fila = result.fetchone()
 
             if not fila:
                 return

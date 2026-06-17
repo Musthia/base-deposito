@@ -4,7 +4,6 @@
 # Librerías estándar
 # =========================
 import os
-import sqlite3
 
 # =========================
 # PySide6 - Widgets
@@ -46,10 +45,8 @@ from PySide6.QtUiTools import QUiLoader
 # Proyecto / Modelo
 # =========================
 from model.datcorr_dao_pediatrico import DatcorrDAO
-#from utils import obtener_ruta_bases
-from utils.rutas import (
-    obtener_ruta_bases
-)
+from sqlalchemy import text
+from db.registry import db_registry
 
 # =========================
 # Estilos
@@ -133,13 +130,9 @@ class Plantilla(QWidget):
             self.ui.line_caja.setFocus
         )        
 
-         # ---------- CONEXIÓN DB ----------
-        ruta_db = os.path.join(
-            obtener_ruta_bases(),
-            f"{self.base_actual}.db"
-        )
-
-        self.dao = DatcorrDAO(ruta_db)
+        # ---------- CONEXIÓN DB ----------
+        schema = self.base_actual.lower()
+        self.dao = DatcorrDAO(schema)
 
         # ---------- CONEXIÓN BOTÓN ----------
         self.ui.pushButton_guardar_carga_pediatrico.clicked.connect(
@@ -228,6 +221,10 @@ class Plantilla(QWidget):
         self._timer_autocomplete.start(250)
 
     def _ejecutar_busqueda_autocomplete(self):
+        if not getattr(self, "base_actual", None):
+            self.lista_autocomplete.hide()
+            return
+
         lineedit = self._lineedit_pendiente
         texto = self._texto_pendiente
 
@@ -237,20 +234,27 @@ class Plantilla(QWidget):
         columna = self.autocomplete_campos[lineedit]
 
         try:
-            conn = sqlite3.connect(
-                os.path.join(obtener_ruta_bases(), f"{self.base_actual}.db")
-            )
-            cursor = conn.cursor()
+            engine = db_registry.get_engine()
+            schema = self.base_actual.lower()
 
-            cursor.execute(f"""
-                SELECT id_Datcorr_database, {columna}
-                FROM Datcorr_database
-                WHERE {columna} LIKE ?
-                LIMIT 30
-            """, (f"%{texto}%",))
+            with engine.connect() as conn:
+                res_cols = conn.execute(text(f"""
+                    SELECT column_name
+                    FROM information_schema.columns
+                    WHERE table_schema = '{schema}' AND table_name = 'Datcorr_database'
+                    AND LOWER(column_name) = 'id_datcorr_database'
+                """))
+                row = res_cols.fetchone()
+                pk_col = row[0] if row else "id_Datcorr_database"
 
-            resultados = cursor.fetchall()
-            conn.close()
+                query = text(f"""
+                    SELECT "{pk_col}", "{columna}"
+                    FROM "{schema}"."Datcorr_database"
+                    WHERE "{columna}"::text ILIKE :texto
+                    LIMIT 30
+                """)
+                result = conn.execute(query, {"texto": f"%{texto}%"})
+                resultados = result.fetchall()
 
         except Exception:
             self.lista_autocomplete.hide()
@@ -297,29 +301,35 @@ class Plantilla(QWidget):
         campos_a_cargar = self.CAMPOS_CARGA_POR_ORIGEN[columna_origen]
 
         try:
-            conn = sqlite3.connect(
-                os.path.join(obtener_ruta_bases(), f"{self.base_actual}.db")
-            )
-            cursor = conn.cursor()
+            engine = db_registry.get_engine()
+            schema = self.base_actual.lower()
 
-            cursor.execute("""
+            with engine.connect() as conn:
+                res_cols = conn.execute(text(f"""
+                    SELECT column_name
+                    FROM information_schema.columns
+                    WHERE table_schema = '{schema}' AND table_name = 'Datcorr_database'
+                    AND LOWER(column_name) = 'id_datcorr_database'
+                """))
+                row = res_cols.fetchone()
+                pk_col = row[0] if row else "id_Datcorr_database"
+
+                query = text(f"""
                     SELECT caja,
                            estado,
-                           caratula, 
+                           caratula,
                            egreso,
-                           ingreso,                           
+                           ingreso,
                            observaciones,
                            fecha,
-                           denominacion,  
-                           hh_cc,                           
-                           documento                                                                 
-                           
-                FROM Datcorr_database
-                WHERE id_Datcorr_database = ?
-            """, (id_registro,))
-
-            fila = cursor.fetchone()
-            conn.close()
+                           denominacion,
+                           hh_cc,
+                           documento
+                    FROM "{schema}"."Datcorr_database"
+                    WHERE "{pk_col}" = :id_registro
+                """)
+                result = conn.execute(query, {"id_registro": id_registro})
+                fila = result.fetchone()
 
             if not fila:
                 return

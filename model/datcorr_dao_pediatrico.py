@@ -1,12 +1,23 @@
-import sqlite3
-import os
-
-# model/datcorr_dao_mpediatrico.py
+# model/datcorr_dao_pediatrico.py
 
 class DatcorrDAO:
 
-    def __init__(self, ruta_db):
-        self.ruta_db = ruta_db
+    def __init__(self, schema_name):
+        self.schema = schema_name
+        self._pk_col = None
+
+    def _get_pk_col(self, conn):
+        if self._pk_col is None:
+            from sqlalchemy import text
+            res = conn.execute(text(f"""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_schema = '{self.schema}' AND table_name = 'Datcorr_database'
+                AND LOWER(column_name) = 'id_datcorr_database'
+            """))
+            row = res.fetchone()
+            self._pk_col = row[0] if row else "id_Datcorr_database"
+        return self._pk_col
 
     def insertar(
         self,
@@ -19,13 +30,16 @@ class DatcorrDAO:
         fecha,  
         denominacion,
         hh_cc,
-        documento,               
+        documento               
     ):
-        conn = sqlite3.connect(self.ruta_db)
-        cursor = conn.cursor()
+        from sqlalchemy import text
+        from db.registry import db_registry
 
-        cursor.execute("""
-            INSERT INTO Datcorr_database (
+        engine = db_registry.get_engine()
+        with engine.begin() as conn:
+            pk = self._get_pk_col(conn)
+            query = text(f"""
+                INSERT INTO "{self.schema}"."Datcorr_database" (
                     caja,
                     estado,
                     caratula,
@@ -36,52 +50,61 @@ class DatcorrDAO:
                     denominacion,
                     hh_cc,
                     documento,
-                
-                registro
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now','localtime'))
-        """, (
-            caja,
-            estado,
-            caratula,
-            egreso,
-            ingreso,
-            observaciones,        
-            fecha,  
-            denominacion,
-            hh_cc,
-            documento
-        ))
-
-        conn.commit()
-        id_insertado = cursor.lastrowid  # ✅ CLAVE
-
-        conn.close()
+                    registro
+                )
+                VALUES (
+                    :caja,
+                    :estado,
+                    :caratula,
+                    :egreso,
+                    :ingreso,
+                    :observaciones,        
+                    :fecha,  
+                    :denominacion,
+                    :hh_cc,
+                    :documento,
+                    NOW()
+                )
+                RETURNING "{pk}"
+            """)
+            id_insertado = conn.execute(query, {
+                "caja": caja,
+                "estado": estado,
+                "caratula": caratula,
+                "egreso": egreso,
+                "ingreso": ingreso,
+                "observaciones": observaciones,        
+                "fecha": fecha,  
+                "denominacion": denominacion,
+                "hh_cc": hh_cc,
+                "documento": documento
+            }).scalar()
 
         return id_insertado
     
     def actualizar(self, id_registro, columna, valor):
-        conn = sqlite3.connect(self.ruta_db)
-        cursor = conn.cursor()
-    
-        query = f"""
-            UPDATE Datcorr_database
-            SET {columna} = ?
-            WHERE id_Datcorr_database = ?
-        """
-    
-        cursor.execute(query, (valor, id_registro))
-        conn.commit()
-        conn.close()
+        from sqlalchemy import text
+        from db.registry import db_registry
 
+        engine = db_registry.get_engine()
+        with engine.begin() as conn:
+            pk = self._get_pk_col(conn)
+            query = text(f"""
+                UPDATE "{self.schema}"."Datcorr_database"
+                SET "{columna}" = :valor
+                WHERE "{pk}" = :id_registro
+            """)
+            conn.execute(query, {"valor": valor, "id_registro": id_registro})
+    
     def eliminar(self, id_registro):
-        conn = sqlite3.connect(self.ruta_db)
-        cursor = conn.cursor()
-    
-        cursor.execute(
-            "DELETE FROM Datcorr_database WHERE id_datcorr_database = ?",
-            (id_registro,)
-        )
-    
-        conn.commit()
-        conn.close()
+        from sqlalchemy import text
+        from db.registry import db_registry
+
+        engine = db_registry.get_engine()
+        with engine.begin() as conn:
+            pk = self._get_pk_col(conn)
+            query = text(f"""
+                DELETE FROM "{self.schema}"."Datcorr_database"
+                WHERE "{pk}" = :id_registro
+            """)
+            conn.execute(query, {"id_registro": id_registro})

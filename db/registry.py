@@ -4,9 +4,10 @@ class DBRegistry:
     """
 
     def __init__(self):
-        self.engine = None
-        self.db_type = None
-        self.current_source = None
+        from db.engines import postgres_engine
+        self.engine = postgres_engine
+        self.db_type = "postgres"
+        self.current_source = "postgresql"
 
     def set_engine(self, engine):
         self.engine = engine

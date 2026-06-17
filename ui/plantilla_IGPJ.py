@@ -136,12 +136,9 @@ class Plantilla(QWidget):
         )
 
         # ---------- CONEXIÓN DB ----------
-        ruta_db = os.path.join(
-            obtener_ruta_bases(),
-            f"{self.base_actual}.db"
-        )
+        schema = self.base_actual.lower()
         
-        self.dao = DatcorrDAO(ruta_db)
+        self.dao = DatcorrDAO(schema)
 
         # ---------- CONEXIÓN BOTÓN ----------
         self.ui.pushButton_guardar_carga_igpj.clicked.connect(
@@ -249,24 +246,30 @@ class Plantilla(QWidget):
         columna = self.autocomplete_campos[lineedit]
 
         try:
-            conn = sqlite3.connect(
-                os.path.join(obtener_ruta_bases(), f"{self.base_actual}.db")
-            )
-            cursor = conn.cursor()
-            print("BASE:", self.base_actual)
-            print("COLUMNA:", columna)
-            print("TEXTO:", texto)
+            from sqlalchemy import text
+            from db.registry import db_registry
 
+            engine = db_registry.get_engine()
+            schema = self.base_actual.lower()
 
-            cursor.execute(f"""
-                SELECT id_Datcorr_database, {columna}
-                FROM Datcorr_database
-                WHERE {columna} LIKE ?
-                LIMIT 30
-            """, (f"%{texto}%",))
+            with engine.connect() as conn:
+                res_cols = conn.execute(text(f"""
+                    SELECT column_name 
+                    FROM information_schema.columns 
+                    WHERE table_schema = '{schema}' AND table_name = 'Datcorr_database'
+                    AND LOWER(column_name) = 'id_datcorr_database'
+                """))
+                row = res_cols.fetchone()
+                pk_col = row[0] if row else "id_Datcorr_database"
 
-            resultados = cursor.fetchall()
-            conn.close()
+                query = text(f"""
+                    SELECT "{pk_col}", "{columna}"
+                    FROM "{schema}"."Datcorr_database"
+                    WHERE "{columna}"::text ILIKE :texto
+                    LIMIT 30
+                """)
+                result = conn.execute(query, {"texto": f"%{texto}%"})
+                resultados = result.fetchall()
 
         except Exception:
             self.lista_autocomplete.hide()
@@ -312,14 +315,24 @@ class Plantilla(QWidget):
         campos_a_cargar = self.CAMPOS_CARGA_POR_ORIGEN[columna_origen]
 
         try:
-            conn = sqlite3.connect(
-                os.path.join(obtener_ruta_bases(), f"{self.base_actual}.db")
-            )
-            cursor = conn.cursor()
+            from sqlalchemy import text
+            from db.registry import db_registry
 
-            cursor.execute("""
-                SELECT denominacion,
-                            
+            engine = db_registry.get_engine()
+            schema = self.base_actual.lower()
+
+            with engine.connect() as conn:
+                res_cols = conn.execute(text(f"""
+                    SELECT column_name 
+                    FROM information_schema.columns 
+                    WHERE table_schema = '{schema}' AND table_name = 'Datcorr_database'
+                    AND LOWER(column_name) = 'id_datcorr_database'
+                """))
+                row = res_cols.fetchone()
+                pk_col = row[0] if row else "id_Datcorr_database"
+
+                query = text(f"""
+                    SELECT denominacion,
                            departamento,
                            expediente, 
                            estado, 
@@ -328,13 +341,11 @@ class Plantilla(QWidget):
                            egreso,
                            observaciones,
                            caja                     
-                           
-                FROM Datcorr_database
-                WHERE id_Datcorr_database = ?
-            """, (id_registro,))
-
-            fila = cursor.fetchone()
-            conn.close()
+                    FROM "{schema}"."Datcorr_database"
+                    WHERE "{pk_col}" = :id_registro
+                """)
+                result = conn.execute(query, {"id_registro": id_registro})
+                fila = result.fetchone()
 
             if not fila:
                 return

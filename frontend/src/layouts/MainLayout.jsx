@@ -63,12 +63,15 @@ export default function MainLayout() {
     const closeTab = (tabId) => {
         setTabs((prev) => {
             const filtered = prev.filter(t => t.id !== tabId);
-
-            // si cerramos la activa, mover foco
-            if (activeTab === tabId && filtered.length > 0) {
-                setActiveTab(filtered[filtered.length - 1].id);
+        
+            if (activeTab === tabId) {
+                if (filtered.length > 0) {
+                    setActiveTab(filtered[filtered.length - 1].id);
+                } else {
+                    setActiveTab(null);
+                }
             }
-
+        
             return filtered;
         });
     };
@@ -83,16 +86,17 @@ export default function MainLayout() {
 
     return (
         <div style={styles.container}>
-                {/* BARRA DE BÚSQUEDA GLOBAL */}
-            <GlobalSearchBar onResults={handleSearchResults} />
 
             {/* SIDEBAR */}
             <Sidebar openTab={openTab} />
 
-            {/* AREA CENTRAL */}
+            {/* MAIN AREA */}
             <div style={styles.main}>
 
-                {/* TABS HEADER */}
+                {/* TOP BAR (BUSCADOR) */}
+                <GlobalSearchBar onResults={handleSearchResults} />
+
+                {/* TABS */}
                 <div style={styles.tabsBar}>
                     {tabs.map(tab => (
                         <div
@@ -103,9 +107,8 @@ export default function MainLayout() {
                             }}
                             onClick={() => setActiveTab(tab.id)}
                         >
-                            <span>{tab.title}</span>
+                            {tab.title}
 
-                            {/* ❌ cerrar */}
                             <button
                                 style={styles.closeBtn}
                                 onClick={(e) => {
@@ -119,7 +122,7 @@ export default function MainLayout() {
                     ))}
                 </div>
 
-                {/* CONTENIDO */}
+                {/* CONTENT */}
                 <div style={styles.content}>
                     {renderActiveTab()}
                 </div>
@@ -132,8 +135,12 @@ export default function MainLayout() {
         const styles = {
             container: {
                 display: "flex",
-                height: "100vh",
-                fontFamily: "Arial"
+                gap: "10px",
+                padding: "10px",
+                background: "#1e1e2f",
+                position: "sticky",
+                top: 0,
+                zIndex: 10
             },
         
             main: {

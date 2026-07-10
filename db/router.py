@@ -24,7 +24,7 @@ class DatabaseRouter:
             return result.fetchall(), result.keys()
 
     # -----------------------------
-    # INSERT DINÁMICO
+    # INSERT DINÁMICO (retorna ID insertado)
     # -----------------------------
     def insert(self, schema, table, data: dict):
 
@@ -37,10 +37,13 @@ class DatabaseRouter:
             INSERT INTO "{schema}"."{table}"
             ({columns})
             VALUES ({values})
+            RETURNING "id_Datcorr_database"
         """)
 
         with engine.begin() as conn:
-            conn.execute(sql, data)
+            result = conn.execute(sql, data)
+            row = result.fetchone()
+            return row[0] if row else None
 
     # -----------------------------
     # UPDATE DINÁMICO (por ID)

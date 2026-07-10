@@ -270,7 +270,7 @@ class VentanaPrincipal(QMainWindow):
             self.cerrar_pestana_resultado
         )
         
-    def inicializar_engine_base(self, base=None):
+    """ def inicializar_engine_base(self, base=None):
 
         if base is None:
             base = self.base_actual
@@ -292,7 +292,7 @@ class VentanaPrincipal(QMainWindow):
 
         logging.debug(f"[ENGINE SETEADO] {base}")
         print("[ENGINE OK]", engine)
-        
+         """
     def on_base_changed(self, index=None):
 
         base = self.ui.combo_bases.currentText()
@@ -301,7 +301,7 @@ class VentanaPrincipal(QMainWindow):
         print("[BASE SELECCIONADA]", base)
 
         # 🔥 ESTO ES LO QUE TE FALTA
-        self.inicializar_engine_base()
+        #self.inicializar_engine_base()
 
         from db.registry import db_registry
         print("[ENGINE DESPUÉS]", db_registry.get_engine())

@@ -84,6 +84,78 @@ class DatabaseRouter:
             print("FILAS AFECTADAS:", result.rowcount)
 
     # -----------------------------
+    # LISTAR BASES (schemas con Datcorr_database)
+    # -----------------------------
+    def list_bases(self):
+
+        engine = db_registry.get_engine()
+
+        with engine.connect() as conn:
+
+            sql = text(
+                "SELECT schema_name FROM information_schema.schemata "
+                "WHERE schema_name NOT IN ('public', 'information_schema', 'pg_catalog', 'pg_toast')"
+            )
+            result = conn.execute(sql)
+            schemas = [row[0] for row in result]
+
+            bases = []
+            for schema in schemas:
+                tbl_sql = text(
+                    "SELECT 1 FROM information_schema.tables "
+                    "WHERE table_schema = :schema AND table_name = 'Datcorr_database'"
+                )
+                tbl_result = conn.execute(tbl_sql, {"schema": schema})
+                if tbl_result.fetchone():
+                    bases.append(schema)
+
+            return bases
+
+    # -----------------------------
+    # SEARCH (ILIKE en todas las columnas)
+    # -----------------------------
+    def search(self, schema, table, criterio):
+
+        engine = db_registry.get_engine()
+
+        with engine.connect() as conn:
+
+            col_sql = text(
+                "SELECT column_name, data_type FROM information_schema.columns "
+                "WHERE table_schema = :schema AND table_name = :table"
+            )
+            col_result = conn.execute(col_sql, {"schema": schema, "table": table})
+            columnas_info = col_result.fetchall()
+
+            columnas = [
+                row[0] for row in columnas_info
+                if not row[0].lower().startswith("id_datcorr")
+            ]
+
+            if not columnas:
+                return [], []
+
+            where_clause = " OR ".join(
+                'CAST("{}" AS TEXT) ILIKE :patron'.format(c) for c in columnas
+            )
+
+            id_col = next(
+                (row[0] for row in columnas_info if row[0].lower().startswith("id_datcorr")),
+                "id_Datcorr_database"
+            )
+
+            cols_select = ", ".join('"{}"'.format(c) for c in columnas)
+
+            sql = text(
+                'SELECT "{}", {} FROM "{}"."{}" WHERE {}'.format(
+                    id_col, cols_select, schema, table, where_clause
+                )
+            )
+
+            result = conn.execute(sql, {"patron": f"%{criterio}%"})
+            return result.fetchall(), result.keys()
+
+    # -----------------------------
     # DELETE
     # -----------------------------
     def delete_by_id(self, schema, table, id_field, id_value):

@@ -64,10 +64,7 @@ from ui.styles import (
     style_combobox_dark,
 )
 
-#from utils import obtener_ruta_bases
-from utils.rutas import (
-    obtener_ruta_bases
-)
+
 
 from PySide6.QtWidgets import QMessageBox
 
@@ -77,7 +74,6 @@ from PySide6.QtWidgets import QMessageBox
 import os
 import sys
 import json
-import sqlite3
 import subprocess
 import logging
 import importlib
@@ -108,25 +104,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LAUNCHER_DATA = os.path.join(BASE_DIR, "launcher_data.json")
 
 #DEBUG = True  # <- Poner False cuando ya esté todo ok
-EXTENSIONES_SQLITE = (".db", ".sqlite", ".sqlite3")
-
-def asegurar_carpeta_bases():
-    ruta = obtener_ruta_bases()
-    if not os.path.exists(ruta):
-        os.makedirs(ruta)
-    return ruta
-
-def listar_bases_sin_extension():
-    """
-    Devuelve una lista con los nombres de bases sin extensión.
-    """
-    ruta = asegurar_carpeta_bases()
-    bases = []
-    for archivo in os.listdir(ruta):
-        nombre, ext = os.path.splitext(archivo)
-        if ext.lower() in EXTENSIONES_SQLITE:
-            bases.append(nombre)
-    return bases
 
 # ----------------------------
 # Ventana Principal
@@ -230,9 +207,9 @@ class VentanaPrincipal(QMainWindow):
         )
 
         # 🔌 CONEXIÓN DEL BOTÓN
-        #self.ui.pushButton_carga_datos.clicked.connect(
-        #    self.on_pushButton_carga_datos_clicked
-        #)
+        self.ui.pushButton_carga_datos.clicked.connect(
+            self.on_pushButton_carga_datos_clicked
+        )
 
         self.ui.boton_adm_usuar.clicked.connect(
             self.abrir_administracion_usuarios
@@ -302,35 +279,14 @@ class VentanaPrincipal(QMainWindow):
             logging.error("No hay base seleccionada")
             return
 
-        postgres_bases = {
-            "IPS",
-            "PEDIATRICO",
-            "IGPJ",
-            "IGPJ TXT LISTADO",
-            "IGPJ_LISTADO_NUEVO",
-            "MATERNIDAD",
-            "ESCRIBANIA"
-        }
-
-        if base in postgres_bases:
-
-            engine = create_engine(
-                f"postgresql+psycopg2://"
-                f"{os.getenv('DB_USER')}:"
-                f"{os.getenv('DB_PASSWORD')}@"
-                f"{os.getenv('DB_HOST')}:"
-                f"{os.getenv('DB_PORT')}/"
-                f"{os.getenv('DB_NAME')}"
-            )
-
-        else:
-
-            ruta = os.path.join(
-                self.obtener_ruta_bases(),
-                f"{base}.db"
-            )
-
-            engine = create_engine(f"sqlite:///{ruta}")
+        engine = create_engine(
+            f"postgresql+psycopg2://"
+            f"{os.getenv('DB_USER')}:"
+            f"{os.getenv('DB_PASSWORD')}@"
+            f"{os.getenv('DB_HOST')}:"
+            f"{os.getenv('DB_PORT')}/"
+            f"{os.getenv('DB_NAME')}"
+        )
 
         db_registry.set_engine(engine)
 
@@ -658,10 +614,23 @@ class VentanaPrincipal(QMainWindow):
                 str(e)
             )
 
-    """ def on_pushButton_carga_datos_clicked(self):
+    def on_pushButton_carga_datos_clicked(self):
         from PySide6.QtWidgets import QMessageBox
 
-        self.dialogo_bases = SelectorBasesDialog(self)
+        SCHEMA_A_BASE = {
+            "maternidad": "MATERNIDAD",
+            "igpj_listado_nuevo": "IGPJ_LISTADO_NUEVO",
+            "igpj_txt_listado": "IGPJ TXT LISTADO",
+            "escribania": "ESCRIBANIA",
+            "igpj": "IGPJ",
+            "pediatrico": "PEDIATRICO",
+            "ips": "IPS",
+        }
+
+        schemas = self.db_service.listar_bases()
+        bases_disponibles = [SCHEMA_A_BASE.get(s, s.upper()) for s in schemas]
+
+        self.dialogo_bases = SelectorBasesDialog(bases_disponibles, self)
 
         self.dialogo_bases.btn_aceptar.clicked.connect(
             self._procesar_base_seleccionada
@@ -688,48 +657,46 @@ class VentanaPrincipal(QMainWindow):
             parent=self
         )
 
-        self.dialogo_bases.close() """
+        self.dialogo_bases.close()
 
     def enfocar_entry_busqueda(self):
         if self.ui.combo_bases.currentText():
             self.ui.entry_consultar.setFocus()
 
     def cargar_bases_en_combo(self):
-        from PySide6.QtWidgets import QMessageBox
-        #from utils import obtener_ruta_bases
-        from utils.rutas import (
-            obtener_ruta_bases
-        )
+
+        SCHEMA_A_BASE = {
+            "maternidad": "MATERNIDAD",
+            "igpj_listado_nuevo": "IGPJ_LISTADO_NUEVO",
+            "igpj_txt_listado": "IGPJ TXT LISTADO",
+            "escribania": "ESCRIBANIA",
+            "igpj": "IGPJ",
+            "pediatrico": "PEDIATRICO",
+            "ips": "IPS",
+        }
 
         self.ui.combo_bases.blockSignals(True)
         self.ui.combo_bases.clear()
         self.ui.combo_bases.setStyleSheet(style_combobox_dark())
 
-        # DEBUG: ruta real de bases
-        ruta_bases = obtener_ruta_bases()
+        schemas = self.db_service.listar_bases()
 
-        if not os.path.exists(ruta_bases):
+        if not schemas:
             QMessageBox.warning(
                 self,
-                "ERROR",
-                f"No existe la carpeta bases_g:\n{ruta_bases}"
+                "Sin bases",
+                "No se encontraron bases de datos en PostgreSQL."
             )
             self.ui.combo_bases.blockSignals(False)
             return
 
-        # Listar bases reales
-        bases = [
-            os.path.splitext(f)[0]
-            for f in os.listdir(ruta_bases)
-            if f.lower().endswith(".db")
-        ]
+        bases = [SCHEMA_A_BASE.get(s, s.upper()) for s in schemas]
 
         for base in bases:
             self.ui.combo_bases.addItem(base)
 
         self.ui.combo_bases.blockSignals(False)
 
-        # 👉 Seleccionar la primera base si existe
         if bases:
             self.ui.combo_bases.setCurrentIndex(-1)
             self.ui.combo_bases.setPlaceholderText("Seleccione una opción")
@@ -779,41 +746,18 @@ class VentanaPrincipal(QMainWindow):
 
         self.base_actual = base  # 👈 GARANTIZA estado consistente
 
-        ruta_db = os.path.join(obtener_ruta_bases(), f"{base}.db")
-        logging.debug(f"[BUSCAR] ruta_db={ruta_db}")
-
-        if not os.path.exists(ruta_db):
-            logging.error(f"[BUSCAR] NO existe la base: {ruta_db}")
-            return  # 👈 solo consola, sin QMessageBox
+        schema = self.mapear_base_a_schema(base)
+        if not schema:
+            logging.error(f"[BUSCAR] schema no encontrado para base: {base}")
+            return
 
         try:
-            conn = sqlite3.connect(ruta_db)
-            cursor = conn.cursor()
 
-            cursor.execute("PRAGMA table_info(Datcorr_database)")
-            columnas_info = cursor.fetchall()
-
-            columnas = [
-                col[1] for col in columnas_info
-                if col[1].lower() != "id_datcorr_database"
-            ]
-
-            if not columnas:
-                logging.warning("[BUSCAR] no se detectaron columnas")
-                return
-
-            where = " OR ".join([f"{c} LIKE ?" for c in columnas])
-            parametros = [f"%{criterio}%"] * len(columnas)
-
-            query = f"""
-                SELECT id_datcorr_database, {", ".join(columnas)}
-                FROM Datcorr_database
-                WHERE {where}
-            """
-
-            cursor.execute(query, parametros)
-            resultados = cursor.fetchall()
-            conn.close()
+            resultados, columnas = self.db_service.buscar(
+                schema=schema,
+                table="Datcorr_database",
+                criterio=criterio
+            )
 
             logging.debug(f"[BUSCAR] filas encontradas={len(resultados)}")
 
@@ -824,12 +768,12 @@ class VentanaPrincipal(QMainWindow):
                     f"No se encontraron coincidencias en la base '{base}'."
                 )
                 return
-                logging.info("[BUSCAR] sin resultados")
-                return
+
+            columnas_out = list(columnas)
 
             self.crear_o_actualizar_pestana(
                 base=base,
-                columnas=columnas,
+                columnas=columnas_out[1:],  # saltar id
                 resultados=resultados,
                 modo="BUSQUEDA"
             )
@@ -1238,17 +1182,9 @@ class VentanaEdicionRegistro(QDialog):
         self.base = base
         self.id_registro = id_registro
 
-        # NUEVO SISTEMA HÍBRIDO
         self.schema = schema
         self.table = table
         self.db_service = db_service
-        
-        # Determina si estamos usando PostgreSQL
-        self.usar_postgres = (
-            self.schema is not None
-            and self.table is not None
-            and self.db_service is not None
-        )
 
         self.campos = {}
         
@@ -1257,34 +1193,10 @@ class VentanaEdicionRegistro(QDialog):
         print("FIN CONSTRUCTOR")
 
         # ---------- VALIDACIÓN ----------
-        if self.usar_postgres:
-
-            logging.debug(
-                f"[EDICION] PostgreSQL "
-                f"{self.schema}.{self.table}"
-            )
-
-        else:
-        
-            if (
-                not isinstance(self.ruta_db, str)
-                or not os.path.exists(self.ruta_db)
-            ):
-
-                logging.error(
-                    f"[EDICION] ruta_db inválida: "
-                    f"{self.ruta_db}"
-                )
-
-                QMessageBox.critical(
-                    self,
-                    "ERROR DE CONFIGURACIÓN",
-                    "Ruta de base inválida"
-                )
-
-                self.reject()
-                return
-        logging.debug(f"[EDICION] Usando DB: {self.schema if self.usar_postgres else self.ruta_db}")
+        logging.debug(
+            f"[EDICION] PostgreSQL "
+            f"{self.schema}.{self.table}"
+        )
 
         # ---------- UI ----------
         self.setStyleSheet(style_dialog_dark())
@@ -1328,62 +1240,15 @@ class VentanaEdicionRegistro(QDialog):
 
         datos_actualizados = dict(zip(columnas, valores))
 
-        # -----------------------------
-        # POSTGRESQL (HÍBRIDO NUEVO)
-        # -----------------------------
-        if self.usar_postgres:
-
-            try:
-
-                self.db_service.actualizar(
-                    schema=self.schema,
-                    table=self.table,
-                    id_field="id_Datcorr_database",
-                    id_value=self.id_registro,
-                    data=datos_actualizados
-                )
-
-                self.datos_actualizados.emit(
-                    self.base,
-                    self.id_registro,
-                    datos_actualizados
-                )
-
-                self.accept()
-
-            except Exception as e:
-
-                logging.exception(e)
-
-                QMessageBox.critical(
-                    self,
-                    "ERROR",
-                    str(e)
-                )
-
-            return
-
-        # -----------------------------
-        # SQLITE LEGACY (NO TOCAR)
-        # -----------------------------
         try:
 
-            import sqlite3
-
-            set_clause = ", ".join([f"{c}=?" for c in columnas])
-
-            query = f"""
-                UPDATE Datcorr_database
-                SET {set_clause}
-                WHERE id_datcorr_database = ?
-            """
-
-            conn = sqlite3.connect(self.ruta_db)
-            cursor = conn.cursor()
-
-            cursor.execute(query, valores + [self.id_registro])
-            conn.commit()
-            conn.close()
+            self.db_service.actualizar(
+                schema=self.schema,
+                table=self.table,
+                id_field="id_Datcorr_database",
+                id_value=self.id_registro,
+                data=datos_actualizados
+            )
 
             self.datos_actualizados.emit(
                 self.base,
@@ -1402,8 +1267,6 @@ class VentanaEdicionRegistro(QDialog):
                 "ERROR",
                 str(e)
             )
-        
-            return
 
 class ResaltadoCoincidenciaDelegate(QStyledItemDelegate):
     def __init__(self, criterio="", colores_por_columna=None, parent=None):

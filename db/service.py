@@ -23,6 +23,22 @@ class DatabaseService:
         return rows, columns
 
     # -----------------------------------
+    # LISTAR BASES DISPONIBLES
+    # -----------------------------------
+    def listar_bases(self):
+
+        return self.router.list_bases()
+
+    # -----------------------------------
+    # BÚSQUEDA (ILIKE en todas las columnas)
+    # -----------------------------------
+    def buscar(self, schema, table, criterio):
+
+        rows, columns = self.router.search(schema, table, criterio)
+
+        return rows, columns
+
+    # -----------------------------------
     # UPDATE (EDITAR REGISTRO)
     # -----------------------------------
     def actualizar(self, schema, table, id_field, id_value, data):

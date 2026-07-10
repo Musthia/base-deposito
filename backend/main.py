@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from backend.routers.auth_router import router as auth_router
 from backend.routers.admin_router import router as admin_router
 from backend.routers.usuarios_router import router as usuarios_router
+from backend.routers.database_router import router as database_router
 
 from backend.core.exceptions import DatcorrException
 from backend.core.handlers import (
@@ -71,6 +72,7 @@ app.add_exception_handler(
 app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(usuarios_router)
+app.include_router(database_router)
 
 # -----------------------------------
 # ROOT

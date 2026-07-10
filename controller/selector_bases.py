@@ -1,6 +1,5 @@
 # controller/selector_bases.py
 
-import os
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QLabel,
     QComboBox, QPushButton, QMessageBox
@@ -9,18 +8,13 @@ from PySide6.QtWidgets import (
 from ui.styles import style_combobox_dark
 from ui.styles import style_pushbutton_dark
 
-#from utils import obtener_ruta_bases
-from utils.rutas import (
-    obtener_ruta_bases
-)
-
 
 class SelectorBasesDialog(QDialog):
     """
-    Diálogo no modal para seleccionar una base de datos (*.db)
+    Diálogo no modal para seleccionar una base de datos desde PostgreSQL
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, bases_disponibles=None, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle("Seleccionar base de datos")
@@ -39,31 +33,17 @@ class SelectorBasesDialog(QDialog):
         self.layout.addWidget(self.combo_bases)
         self.layout.addWidget(self.btn_aceptar)
 
-        self._cargar_bases()
+        self._cargar_bases(bases_disponibles)
 
-    def _cargar_bases(self):
-        # DEBUG 1: ruta real de bases
-        ruta = obtener_ruta_bases()
+    def _cargar_bases(self, bases_disponibles=None):
 
-        if not os.path.exists(ruta):
-            QMessageBox.warning(
-                self,
-                "Error",
-                f"No existe la carpeta 'bases_g':\n{ruta}"
-            )
-            return
-
-        bases = [
-            os.path.splitext(f)[0]
-            for f in os.listdir(ruta)
-            if f.lower().endswith(".db")
-        ]
+        bases = bases_disponibles or []
 
         if not bases:
             QMessageBox.information(
                 self,
                 "Sin bases",
-                "No se encontraron bases de datos"
+                "No se encontraron bases de datos en PostgreSQL"
             )
             return
 

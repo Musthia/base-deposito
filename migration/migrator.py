@@ -30,10 +30,23 @@ class Migrator:
             table_name
         )
 
+        id_column = "id_Datcorr_database"
+
+        self.writer.drop_table(
+            schema_name,
+            table_name
+        )
+
         self.writer.create_table_if_not_exists(
             schema_name,
             table_name,
             columns
+        )
+
+        self.writer.ensure_id_sequence(
+            schema_name,
+            table_name,
+            id_column
         )
 
         self.writer.insert_rows(
@@ -43,6 +56,10 @@ class Migrator:
             rows
         )
 
-        print(
-            f"{len(rows)} registros migrados"
+        self.writer.sync_sequence(
+            schema_name,
+            table_name,
+            id_column
         )
+
+        return len(rows)

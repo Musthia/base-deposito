@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { TabProvider } from "../context/TabContext";
 
 export default function MainLayout() {
     return (
@@ -12,7 +13,9 @@ export default function MainLayout() {
                 minHeight: "100vh",
                 background: "#f4f4f4"
             }}>
-                <Outlet />
+                <TabProvider>
+                    <Outlet />
+                </TabProvider>
             </main>
         </div>
     );

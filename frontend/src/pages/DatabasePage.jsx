@@ -19,17 +19,16 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { listarBases, consultarBase, buscarEnBase } from "../services/databaseService";
 import EditRecordModal from "../components/modals/EditRecordModal";
+import { useTabs } from "../context/TabContext";
 
 export default function DatabasePage() {
     const [bases, setBases] = useState([]);
     const [baseActual, setBaseActual] = useState("");
     const [criterio, setCriterio] = useState("");
     const [loading, setLoading] = useState(false);
-    const [tabs, setTabs] = useState([]);
-    const [tabIndex, setTabIndex] = useState(0);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
-    const [pagination, setPagination] = useState({});
+    const { tabs, tabIndex, setTabIndex, agregarTab, cerrarTab, actualizarFila } = useTabs();
 
     useEffect(() => {
         listarBases().then(setBases).catch(console.error);
@@ -43,8 +42,7 @@ export default function DatabasePage() {
         denominacion: "#0014ff",
     };
 
-    const agregarTab = useCallback((base, modo, columnas, registros, total) => {
-        const clave = `${base}_${modo}_${Date.now()}`;
+    const construirTab = useCallback((base, modo, columnas, registros, total) => {
         const columns = columnas
             .filter((col) => !col.toLowerCase().startsWith("id_datcorr"))
             .map((col) => ({
@@ -52,7 +50,7 @@ export default function DatabasePage() {
                 headerName: col,
                 flex: 1,
                 minWidth: 120,
-                cellClassName: (params) => {
+                cellClassName: () => {
                     const color = coloresColumnas[col.toLowerCase()];
                     if (!color) return "";
                     return `highlight-${col.toLowerCase().replace(/\s+/g, "-")}`;
@@ -76,19 +74,17 @@ export default function DatabasePage() {
             return rowData;
         });
 
-        setTabs((prev) => [
-            ...prev,
-            { clave, base, modo, columns, rows, total, columnas },
-        ]);
-        setTabIndex(tabs.length);
-    }, [tabs.length]);
+        return { base, modo, columns, rows, total, columnas };
+    }, []);
 
     const handleConsultar = async () => {
         if (!baseActual) return;
         setLoading(true);
         try {
             const data = await consultarBase(baseActual, { limit: 200 });
-            agregarTab(baseActual, "CONSULTA", data.columnas, data.registros, data.total);
+            const tab = construirTab(baseActual, "CONSULTA", data.columnas, data.registros, data.total);
+            agregarTab(tab);
+            setTabIndex(tabs.length);
         } catch (err) {
             console.error("Error consultando:", err);
         } finally {
@@ -101,7 +97,9 @@ export default function DatabasePage() {
         setLoading(true);
         try {
             const data = await buscarEnBase(baseActual, criterio.trim(), { limit: 200 });
-            agregarTab(baseActual, "BUSQUEDA", data.columnas, data.registros, data.total);
+            const tab = construirTab(baseActual, "BUSQUEDA", data.columnas, data.registros, data.total);
+            agregarTab(tab);
+            setTabIndex(tabs.length);
         } catch (err) {
             console.error("Error buscando:", err);
         } finally {
@@ -111,13 +109,6 @@ export default function DatabasePage() {
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter") handleBuscar();
-    };
-
-    const cerrarTab = (idx) => {
-        setTabs((prev) => prev.filter((_, i) => i !== idx));
-        if (tabIndex >= idx && tabIndex > 0) {
-            setTabIndex(tabIndex - 1);
-        }
     };
 
     const handleDoubleClick = (params) => {
@@ -130,14 +121,17 @@ export default function DatabasePage() {
             idRegistro: row._idValue,
             columnas: tab.columnas,
             valores,
+            claveTab: tab.clave,
         });
         setEditModalOpen(true);
     };
 
-    const handleEditSaved = () => {
+    const handleEditSaved = (datos) => {
+        if (editData && datos) {
+            actualizarFila(editData.claveTab, editData.idRegistro, datos);
+        }
         setEditModalOpen(false);
         setEditData(null);
-        handleConsultar();
     };
 
     if (!bases.length) {

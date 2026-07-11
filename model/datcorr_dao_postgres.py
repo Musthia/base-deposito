@@ -2,6 +2,7 @@
 
 import logging
 from datetime import datetime, timezone
+from typing import Optional
 
 from sqlalchemy import text
 from db.router import DatabaseRouter
@@ -18,7 +19,7 @@ class DatcorrDAOPostgres:
         self.id_field = "id_Datcorr_database"
         self.router = DatabaseRouter()
 
-    def insertar(self, **kwargs) -> int | None:
+    def insertar(self, **kwargs) -> Optional[int]:
         data = dict(kwargs)
         data["registro"] = datetime.now(timezone.utc).isoformat()
 
@@ -67,3 +68,39 @@ class DatcorrDAOPostgres:
 
         with engine.begin() as conn:
             conn.execute(sql, {"id": id_registro})
+
+    def buscar_autocomplete(self, columna: str, texto: str, limite: int = 30):
+        engine = db_registry.get_engine()
+        if not engine:
+            raise RuntimeError("Engine no inicializado")
+
+        sql = text(f"""
+            SELECT "{self.id_field}", "{columna}"
+            FROM "{self.schema}"."{self.table}"
+            WHERE "{columna}" ILIKE :patron
+            LIMIT {limite}
+        """)
+
+        with engine.connect() as conn:
+            result = conn.execute(sql, {"patron": f"%{texto}%"})
+            return result.fetchall()
+
+    def cargar_por_id(self, id_registro: int, columnas: list[str]):
+        engine = db_registry.get_engine()
+        if not engine:
+            raise RuntimeError("Engine no inicializado")
+
+        cols = ", ".join(f'"{c}"' for c in columnas)
+
+        sql = text(f"""
+            SELECT {cols}
+            FROM "{self.schema}"."{self.table}"
+            WHERE "{self.id_field}" = :id
+        """)
+
+        with engine.connect() as conn:
+            result = conn.execute(sql, {"id": id_registro})
+            row = result.fetchone()
+            if row:
+                return dict(zip(columnas, row))
+            return None

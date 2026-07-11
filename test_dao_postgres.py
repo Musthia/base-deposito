@@ -127,9 +127,105 @@ def test_dao_insert_maternidad():
     assert isinstance(id_insertado, int)
     print("   OK")
 
-    # Limpiar
     dao.eliminar(id_insertado)
     print("   Limpieza OK")
+
+
+def test_buscar_autocomplete():
+    print("\n=== 7. DAO Postgres - buscar_autocomplete en escribania ===")
+    dao = DatcorrDAOPostgres(schema="escribania")
+
+    # Insertar registro de prueba con datos distintivos
+    id_temp = dao.insertar(
+        estado="AUTOCOMPLETE-TEST",
+        ingreso="TEST-INGRESO",
+        egreso="TEST-EGRESO",
+        observaciones="Registro para test autocomplete",
+        caja="TEST-CAJA",
+        localidad="TEST-LOCALIDAD",
+        legajo="TEST-LEGAJO",
+        nombre_apellido="JUAN PEREZ AUTOCOMPLETE",
+        timbrado_fiscal="TEST-TIMBRADO",
+    )
+    assert id_temp is not None
+
+    # Buscar por nombre_apellido
+    resultados = dao.buscar_autocomplete("nombre_apellido", "JUAN PEREZ")
+    print(f"   Resultados autocomplete por nombre_apellido: {len(resultados)}")
+    assert len(resultados) > 0, "Debe encontrar al menos 1 resultado"
+    encontrado = any(r[0] == id_temp for r in resultados)
+    assert encontrado, "El registro insertado debe aparecer en resultados"
+    print("   OK")
+
+    # Buscar por caja
+    resultados = dao.buscar_autocomplete("caja", "TEST-CAJA")
+    print(f"   Resultados autocomplete por caja: {len(resultados)}")
+    assert len(resultados) > 0
+    print("   OK")
+
+    # Buscar sin resultados
+    resultados = dao.buscar_autocomplete("nombre_apellido", "ZZZZNOEXISTE")
+    assert len(resultados) == 0, "No debe encontrar resultados"
+    print("   Búsqueda sin resultados OK")
+
+    # Limpiar
+    dao.eliminar(id_temp)
+    print("   Limpieza OK")
+
+
+def test_cargar_por_id():
+    print("\n=== 8. DAO Postgres - cargar_por_id en escribania ===")
+    dao = DatcorrDAOPostgres(schema="escribania")
+
+    columnas = ["estado", "ingreso", "egreso", "observaciones", "caja",
+                "localidad", "legajo", "nombre_apellido", "timbrado_fiscal"]
+
+    id_temp = dao.insertar(
+        estado="CARGA-TEST",
+        ingreso="CI-INGRESO",
+        egreso="CI-EGRESO",
+        observaciones="Test cargar_por_id",
+        caja="CI-CAJA",
+        localidad="CI-LOCALIDAD",
+        legajo="CI-LEGAJO",
+        nombre_apellido="CI-NOMBRE",
+        timbrado_fiscal="CI-TIMBRADO",
+    )
+    assert id_temp is not None
+
+    datos = dao.cargar_por_id(id_temp, columnas)
+    assert datos is not None, "cargar_por_id debe retornar un dict"
+    assert datos["estado"] == "CARGA-TEST"
+    assert datos["observaciones"] == "Test cargar_por_id"
+    assert datos["nombre_apellido"] == "CI-NOMBRE"
+    print(f"   Datos cargados: {datos}")
+    print("   Todos los campos coinciden OK")
+
+    dao.eliminar(id_temp)
+    print("   Limpieza OK")
+
+
+def test_utils_organismos():
+    print("\n=== 9. Verificar utils.organismos ===")
+    from utils.organismos import MAPA_SCHEMA, MAPEO_COLUMNAS_POR_ORGANISMO
+
+    assert "IPS" in MAPA_SCHEMA
+    assert MAPA_SCHEMA["IPS"] == "ips"
+    assert MAPA_SCHEMA["ESCRIBANIA"] == "escribania"
+    assert MAPA_SCHEMA["PEDIATRICO"] == "pediatrico"
+    assert len(MAPA_SCHEMA) == 7
+
+    assert "PEDIATRICO" in MAPEO_COLUMNAS_POR_ORGANISMO
+    cols = MAPEO_COLUMNAS_POR_ORGANISMO["PEDIATRICO"]
+    assert "caja" in cols
+    assert "denominacion" in cols
+    print(f"   PEDIATRICO columnas ({len(cols)}): {cols}")
+    print("   OK")
+
+    from utils.organismos import schema_para_base, columnas_para_base
+    assert schema_para_base("IPS") == "ips"
+    assert len(columnas_para_base("ESCRIBANIA")) == 9
+    print("   Funciones schema_para_base y columnas_para_base OK")
 
 
 if __name__ == "__main__":
@@ -140,6 +236,9 @@ if __name__ == "__main__":
         test_dao_update_escribania(id_temp)
         test_dao_delete_escribania(id_temp)
         test_dao_insert_maternidad()
+        test_buscar_autocomplete()
+        test_cargar_por_id()
+        test_utils_organismos()
         print("\n=== TODAS LAS PRUEBAS PASARON ===")
     except AssertionError as e:
         print(f"\nFALLO: {e}")

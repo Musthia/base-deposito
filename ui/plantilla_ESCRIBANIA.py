@@ -4,7 +4,6 @@
 # Librerías estándar
 # =========================
 import os
-import sqlite3
 
 # =========================
 # PySide6 - Widgets
@@ -45,10 +44,10 @@ from PySide6.QtUiTools import QUiLoader
 # =========================
 # Proyecto / Modelo
 # =========================
-from model.datcorr_dao_escribania import DatcorrDAO
-#from utils import obtener_ruta_bases
-from utils.rutas import (
-    obtener_ruta_bases
+from model.datcorr_dao_postgres import DatcorrDAOPostgres
+from utils.organismos import (
+    schema_para_base,
+    columnas_para_base,
 )
 
 # =========================
@@ -136,12 +135,7 @@ class Plantilla(QWidget):
         )
 
         # ---------- CONEXIÓN DB ----------
-        ruta_db = os.path.join(
-            obtener_ruta_bases(),
-            f"{self.base_actual}.db"
-        )
-        
-        self.dao = DatcorrDAO(ruta_db)
+        self.dao_pg = DatcorrDAOPostgres(schema=schema_para_base(self.base_actual))
 
         # ---------- CONEXIÓN BOTÓN ----------
         self.ui.pushButton_guardar_carga_escribania.clicked.connect(
@@ -248,24 +242,7 @@ class Plantilla(QWidget):
         columna = self.autocomplete_campos[lineedit]
 
         try:
-            conn = sqlite3.connect(
-                os.path.join(obtener_ruta_bases(), f"{self.base_actual}.db")
-            )
-            cursor = conn.cursor()
-            print("BASE:", self.base_actual)
-            print("COLUMNA:", columna)
-            print("TEXTO:", texto)
-
-
-            cursor.execute(f"""
-                SELECT id_Datcorr_database, {columna}
-                FROM Datcorr_database
-                WHERE {columna} LIKE ?
-                LIMIT 30
-            """, (f"%{texto}%",))
-
-            resultados = cursor.fetchall()
-            conn.close()
+            resultados = self.dao_pg.buscar_autocomplete(columna, texto)
 
         except Exception:
             self.lista_autocomplete.hide()
@@ -311,45 +288,13 @@ class Plantilla(QWidget):
         campos_a_cargar = self.CAMPOS_CARGA_POR_ORIGEN[columna_origen]
 
         try:
-            conn = sqlite3.connect(
-                os.path.join(obtener_ruta_bases(), f"{self.base_actual}.db")
-            )
-            cursor = conn.cursor()
+            todas_columnas = columnas_para_base(self.base_actual)
+            datos = self.dao_pg.cargar_por_id(id_registro, todas_columnas)
 
-            cursor.execute("""
-                SELECT estado, 
-                        ingreso,
-                        egreso,
-                        observaciones, 
-                        caja,
-                        localidad, 
-                        legajo, 
-                        nombre_apellido, 
-                        timbrado_fiscal                   
-                           
-                FROM Datcorr_database
-                WHERE id_Datcorr_database = ?
-            """, (id_registro,))
-
-            fila = cursor.fetchone()
-            conn.close()
-
-            if not fila:
+            if not datos:
                 return
 
             self._actualizando = True
-
-            datos = {
-                "estado": fila[0],
-                "ingreso": fila[1],
-                "egreso": fila[2],
-                "observaciones": fila[3],
-                "caja": fila[4],
-                "localidad": fila[5],
-                "legajo": fila[6],                
-                "nombre_apellido": fila[7],
-                "timbrado_fiscal": fila[8],                             
-            }
 
             # 🔹 Asignación SELECTIVA
             if "estado" in campos_a_cargar:
@@ -469,7 +414,7 @@ class Plantilla(QWidget):
         try:
             self._actualizando = True
 
-            self.dao.actualizar(
+            self.dao_pg.actualizar(
                 id_registro=id_registro,
                 columna=columna_db,
                 valor=nuevo_valor
@@ -569,7 +514,7 @@ class Plantilla(QWidget):
             ]
     
             # ---- INSERTAR EN DB Y OBTENER ID ----
-            id_registro = self.dao.insertar(*datos)
+            id_registro = self.dao_pg.insertar(**dict(zip(columnas_para_base(self.base_actual), datos)))
 
             # ---- CREAR FILA ----
             fila = []
@@ -684,7 +629,7 @@ class Plantilla(QWidget):
 
         try:
             # DB
-            self.dao.eliminar(id_registro)
+            self.dao_pg.eliminar(id_registro)
 
             # TreeView (solo esta sesión)
             self.modelo_sesion.removeRow(fila)

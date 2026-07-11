@@ -16,6 +16,7 @@ export default function Sidebar() {
         { label: "Usuarios", path: "/usuarios" },
         { label: "Consultar Bases", path: "/database" },
         { label: "Carga de Datos", path: "/carga-datos" },
+        { label: "Auditoria", path: "/auditoria" },
         { label: "Reportes", path: "/reportes" }
     ];
 

@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from sqlalchemy import text
 
 from database.conexion import engine as postgres_engine
@@ -57,4 +57,51 @@ def dashboard_stats():
         "usuarios_activos": user_count or 0,
         "total_usuarios": user_total or 0,
         "actividad": actividad,
+    }
+
+
+@router.get("/auditoria")
+def listar_auditoria(
+    page: int = Query(1, ge=1),
+    limit: int = Query(50, ge=1, le=200),
+):
+    offset = (page - 1) * limit
+    with postgres_engine.connect() as conn:
+        total = conn.execute(
+            text("SELECT COUNT(*) FROM public.auditoria")
+        ).scalar() or 0
+
+        rows = conn.execute(
+            text("""
+                SELECT id, usuario, accion, tabla, registro_id, endpoint, ip,
+                       detalle, fecha, ip_address, user_agent
+                FROM public.auditoria
+                ORDER BY fecha DESC
+                OFFSET :offset LIMIT :limit
+            """),
+            {"offset": offset, "limit": limit},
+        )
+
+        registros = [
+            {
+                "id": r[0],
+                "usuario": r[1],
+                "accion": r[2],
+                "tabla": r[3],
+                "registro_id": r[4],
+                "endpoint": r[5],
+                "ip": r[6],
+                "detalle": r[7],
+                "fecha": r[8].isoformat() if hasattr(r[8], "isoformat") else str(r[8]),
+                "ip_address": r[9],
+                "user_agent": r[10],
+            }
+            for r in rows
+        ]
+
+    return {
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "registros": registros,
     }

@@ -5,6 +5,7 @@ import Dashboard from "../pages/Dashboard";
 import UsuariosPage from "../pages/usuarios/UsuariosPage";
 import DatabasePage from "../pages/DatabasePage";
 import CargaDatosPage from "../pages/CargaDatosPage";
+import AuditoriaPage from "../pages/AuditoriaPage";
 
 import PrivateRoute from "../auth/PrivateRoute";
 import MainLayout from "../layouts/MainLayout";
@@ -30,6 +31,7 @@ export default function AppRouter() {
                     <Route path="/reportes" element={<div>Reportes en construcción</div>} />
                     <Route path="/database" element={<DatabasePage />} />
                     <Route path="/carga-datos" element={<CargaDatosPage />} />
+                    <Route path="/auditoria" element={<AuditoriaPage />} />
 
                 {/* fallback */}
                 <Route path="*" element={<Login />} />

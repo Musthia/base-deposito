@@ -40,20 +40,32 @@ def obtener_tablas(base: str) -> list:
         return inspector.get_table_names(schema=schema)
 
 
-def consultar_base(base: str, tabla: str = "Datcorr_database") -> Tuple[List[str], List[list]]:
+def consultar_base(
+    base: str, tabla: str = "Datcorr_database",
+    page: int = 1, limit: int = 50,
+) -> Tuple[List[str], List[list], int]:
     _validar_base(base)
     schema = _schema_para_base(base)
+    offset = (page - 1) * limit
     with postgres_engine.connect() as conn:
-        sql = text(f'SELECT * FROM "{schema}"."{tabla}"')
-        result = conn.execute(sql)
+        total = conn.execute(
+            text(f'SELECT COUNT(*) FROM "{schema}"."{tabla}"')
+        ).scalar() or 0
+
+        sql = text(f'SELECT * FROM "{schema}"."{tabla}" OFFSET :offset LIMIT :limit')
+        result = conn.execute(sql, {"offset": offset, "limit": limit})
         columnas = list(result.keys())
         registros = [list(row) for row in result.fetchall()]
-    return columnas, registros
+    return columnas, registros, total
 
 
-def buscar_en_base(base: str, criterio: str, tabla: str = "Datcorr_database") -> Tuple[List[str], List[list]]:
+def buscar_en_base(
+    base: str, criterio: str, tabla: str = "Datcorr_database",
+    page: int = 1, limit: int = 50,
+) -> Tuple[List[str], List[list], int]:
     _validar_base(base)
     schema = _schema_para_base(base)
+    offset = (page - 1) * limit
     with postgres_engine.connect() as conn:
         col_sql = text(
             "SELECT column_name, data_type FROM information_schema.columns "
@@ -63,7 +75,7 @@ def buscar_en_base(base: str, criterio: str, tabla: str = "Datcorr_database") ->
         columnas_info = col_result.fetchall()
         columnas = [row[0] for row in columnas_info if not row[0].lower().startswith("id_datcorr")]
         if not columnas:
-            return [], []
+            return [], [], 0
         where_clause = " OR ".join(
             'CAST("{}" AS TEXT) ILIKE :patron'.format(c) for c in columnas
         )
@@ -72,15 +84,23 @@ def buscar_en_base(base: str, criterio: str, tabla: str = "Datcorr_database") ->
             "id_Datcorr_database"
         )
         cols_select = ", ".join('"{}"'.format(c) for c in columnas)
+
+        total = conn.execute(
+            text(f'SELECT COUNT(*) FROM "{schema}"."{tabla}" WHERE {where_clause}'),
+            {"patron": f"%{criterio}%"},
+        ).scalar() or 0
+
         sql = text(
-            'SELECT "{}", {} FROM "{}"."{}" WHERE {}'.format(
+            'SELECT "{}", {} FROM "{}"."{}" WHERE {} OFFSET :offset LIMIT :limit'.format(
                 id_col, cols_select, schema, tabla, where_clause
             )
         )
-        result = conn.execute(sql, {"patron": f"%{criterio}%"})
+        result = conn.execute(
+            sql, {"patron": f"%{criterio}%", "offset": offset, "limit": limit}
+        )
         columnas_out = list(result.keys())
         registros = [list(row) for row in result.fetchall()]
-    return columnas_out, registros
+    return columnas_out, registros, total
 
 
 def actualizar_registro(base: str, registro_id: int, data: dict, tabla: str = "Datcorr_database"):

@@ -28,7 +28,7 @@ export default function DatabasePage() {
     const [loading, setLoading] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
-    const { tabs, tabIndex, setTabIndex, agregarTab, cerrarTab, actualizarFila } = useTabs();
+    const { tabs, tabIndex, setTabIndex, agregarTab, cerrarTab, setTabs, actualizarFila } = useTabs();
 
     useEffect(() => {
         listarBases().then(setBases).catch(console.error);
@@ -42,8 +42,8 @@ export default function DatabasePage() {
         denominacion: "#0014ff",
     };
 
-    const construirTab = useCallback((base, modo, columnas, registros, total) => {
-        const columns = columnas
+    const construirTab = useCallback((base, modo, columnas, registros, total, page, pageSize) => {
+        const cols = columnas
             .filter((col) => !col.toLowerCase().startsWith("id_datcorr"))
             .map((col) => ({
                 field: col,
@@ -57,7 +57,7 @@ export default function DatabasePage() {
                 },
             }));
 
-        columns.unshift({
+        cols.unshift({
             field: "id",
             headerName: "ID",
             width: 80,
@@ -74,15 +74,42 @@ export default function DatabasePage() {
             return rowData;
         });
 
-        return { base, modo, columns, rows, total, columnas };
+        return { base, modo, columns: cols, rows, total, columnas, page, pageSize };
     }, []);
+
+    const fetchPage = useCallback(async (tab, newPage, newPageSize) => {
+        try {
+            const params = { page: newPage + 1, limit: newPageSize };
+            let data;
+            if (tab.modo === "BUSQUEDA") {
+                data = await buscarEnBase(tab.base, tab._criterio, params);
+            } else {
+                data = await consultarBase(tab.base, params);
+            }
+            const rebuilt = construirTab(tab.base, tab.modo, data.columnas, data.registros, data.total, newPage, newPageSize);
+            rebuilt._criterio = tab._criterio;
+            rebuilt.clave = tab.clave;
+            return rebuilt;
+        } catch (err) {
+            console.error("Error fetching page:", err);
+            return tab;
+        }
+    }, [construirTab]);
+
+    const handleTabPagination = useCallback(async (newModel) => {
+        const tab = tabs[tabIndex];
+        if (!tab) return;
+        const updated = await fetchPage(tab, newModel.page, newModel.pageSize);
+        setTabs((prev) => prev.map((t, i) => (i === tabIndex ? updated : t)));
+    }, [tabs, tabIndex, fetchPage, setTabs]);
 
     const handleConsultar = async () => {
         if (!baseActual) return;
         setLoading(true);
         try {
-            const data = await consultarBase(baseActual, { limit: 200 });
-            const tab = construirTab(baseActual, "CONSULTA", data.columnas, data.registros, data.total);
+            const params = { page: 1, limit: 50 };
+            const data = await consultarBase(baseActual, params);
+            const tab = construirTab(baseActual, "CONSULTA", data.columnas, data.registros, data.total, 0, 50);
             agregarTab(tab);
             setTabIndex(tabs.length);
         } catch (err) {
@@ -96,8 +123,10 @@ export default function DatabasePage() {
         if (!baseActual || !criterio.trim()) return;
         setLoading(true);
         try {
-            const data = await buscarEnBase(baseActual, criterio.trim(), { limit: 200 });
-            const tab = construirTab(baseActual, "BUSQUEDA", data.columnas, data.registros, data.total);
+            const params = { page: 1, limit: 50 };
+            const data = await buscarEnBase(baseActual, criterio.trim(), params);
+            const tab = construirTab(baseActual, "BUSQUEDA", data.columnas, data.registros, data.total, 0, 50);
+            tab._criterio = criterio.trim();
             agregarTab(tab);
             setTabIndex(tabs.length);
         } catch (err) {
@@ -142,6 +171,8 @@ export default function DatabasePage() {
             </Box>
         );
     }
+
+    const tabActual = tabs[Math.min(tabIndex, tabs.length - 1)];
 
     return (
         <Box sx={{ p: 3 }}>
@@ -224,14 +255,15 @@ export default function DatabasePage() {
 
                     <Box sx={{ height: 600, mt: 1 }}>
                         <DataGrid
-                            key={tabs[Math.min(tabIndex, tabs.length - 1)]?.clave}
-                            rows={tabs[Math.min(tabIndex, tabs.length - 1)]?.rows || []}
-                            columns={tabs[Math.min(tabIndex, tabs.length - 1)]?.columns || []}
+                            key={tabActual?.clave}
+                            rows={tabActual?.rows || []}
+                            columns={tabActual?.columns || []}
                             loading={loading}
+                            rowCount={tabActual?.total || 0}
+                            paginationMode="server"
+                            paginationModel={{ page: tabActual?.page ?? 0, pageSize: tabActual?.pageSize ?? 50 }}
+                            onPaginationModelChange={handleTabPagination}
                             pageSizeOptions={[25, 50, 100]}
-                            initialState={{
-                                pagination: { paginationModel: { pageSize: 50 } },
-                            }}
                             onRowDoubleClick={handleDoubleClick}
                             disableRowSelectionOnClick
                             sx={{

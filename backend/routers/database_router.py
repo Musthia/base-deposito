@@ -51,14 +51,12 @@ def consultar_datos(
     limit: int = Query(50, ge=1, le=1000),
 ):
     try:
-        columnas, registros = consultar_base(base, table)
-        offset = (page - 1) * limit
-        paginados = registros[offset : offset + limit]
+        columnas, registros, total = consultar_base(base, table, page, limit)
         return ConsultaResponse(
             success=True,
-            total=len(registros),
+            total=total,
             columnas=columnas,
-            registros=paginados,
+            registros=registros,
         )
     except (ValueError, FileNotFoundError) as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -77,14 +75,12 @@ def buscar_datos(
     if not q.strip():
         raise HTTPException(status_code=400, detail="El parámetro 'q' es obligatorio")
     try:
-        columnas, registros = buscar_en_base(base, q.strip(), table)
-        offset = (page - 1) * limit
-        paginados = registros[offset : offset + limit]
+        columnas, registros, total = buscar_en_base(base, q.strip(), table, page, limit)
         return BusquedaResponse(
             success=True,
-            total=len(registros),
+            total=total,
             columnas=columnas,
-            registros=paginados,
+            registros=registros,
             base=base,
         )
     except (ValueError, FileNotFoundError) as e:

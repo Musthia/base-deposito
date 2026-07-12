@@ -65,7 +65,7 @@ export default function AuditoriaPage() {
     ];
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, overflow: "hidden", maxWidth: "100%" }}>
             <Typography variant="h5" gutterBottom>
                 Auditoria
             </Typography>
@@ -73,7 +73,7 @@ export default function AuditoriaPage() {
                 Registro de actividad del sistema ({total} eventos)
             </Typography>
 
-            <Box sx={{ height: 600 }}>
+            <Box sx={{ height: 600, width: "100%", overflow: "hidden", maxWidth: "100%" }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
@@ -84,7 +84,12 @@ export default function AuditoriaPage() {
                     onPaginationModelChange={setPaginationModel}
                     pageSizeOptions={[25, 50, 100]}
                     disableRowSelectionOnClick
+                    disableExtendRowFullWidth
                     sx={{
+                        maxWidth: "100%",
+                        overflow: "hidden",
+                        "& .MuiDataGrid-main": { overflow: "hidden" },
+                        "& .MuiDataGrid-virtualScroller": { overflow: "auto" },
                         "& .MuiDataGrid-cell:focus": { outline: "none" },
                     }}
                 />

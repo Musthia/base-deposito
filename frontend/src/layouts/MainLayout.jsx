@@ -9,9 +9,11 @@ export default function MainLayout() {
 
             <main style={{
                 flex: 1,
+                minWidth: 0,
                 padding: "20px",
                 minHeight: "100vh",
-                background: "#f4f4f4"
+                background: "#f4f4f4",
+                overflow: "hidden",
             }}>
                 <TabProvider>
                     <Outlet />

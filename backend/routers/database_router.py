@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from typing import Optional
+from sqlalchemy import text
+
+from database.conexion import engine as postgres_engine
 
 from backend.schemas.database_schema import (
     BasesResponse,
@@ -27,6 +30,35 @@ from backend.services.database_service_web import (
 
 router = APIRouter(prefix="/databases", tags=["Databases"])
 
+MAPA_BASE_SCHEMA = {
+    "IPS": "ips",
+    "PEDIATRICO": "pediatrico",
+    "IGPJ_LISTADO_NUEVO": "igpj_listado_nuevo",
+    "IGPJ TXT LISTADO": "igpj_txt_listado",
+    "IGPJ": "igpj",
+    "MATERNIDAD": "maternidad",
+    "ESCRIBANIA": "escribania",
+}
+
+
+def _auditar(usuario, accion, tabla, registro_id=None, detalle=""):
+    with postgres_engine.begin() as conn:
+        conn.execute(
+            text("""
+                INSERT INTO public.auditoria (usuario, accion, tabla, registro_id, detalle, fecha)
+                VALUES (:usuario, :accion, :tabla, :registro_id, :detalle, NOW())
+            """),
+            {"usuario": usuario, "accion": accion, "tabla": tabla,
+             "registro_id": registro_id, "detalle": detalle},
+        )
+
+
+def _nombre_usuario(request: Request) -> str:
+    user = getattr(request.state, "user", None)
+    if user:
+        return user.get("usuario", "desconocido")
+    return "desconocido"
+
 
 @router.get("/", response_model=BasesResponse)
 def listar_bases_endpoint():
@@ -45,6 +77,7 @@ def listar_tablas(base: str):
 
 @router.get("/{base}/data", response_model=ConsultaResponse)
 def consultar_datos(
+    request: Request,
     base: str,
     table: str = Query("Datcorr_database"),
     page: int = Query(1, ge=1),
@@ -52,6 +85,9 @@ def consultar_datos(
 ):
     try:
         columnas, registros, total = consultar_base(base, table, page, limit)
+        usuario = _nombre_usuario(request)
+        _auditar(usuario, "CONSULTA", f"{MAPA_BASE_SCHEMA.get(base, base)}.{table}",
+                 detalle=f"Consulta {base} (pagina {page}, {limit} registros, total {total})")
         return ConsultaResponse(
             success=True,
             total=total,
@@ -66,6 +102,7 @@ def consultar_datos(
 
 @router.get("/{base}/search", response_model=BusquedaResponse)
 def buscar_datos(
+    request: Request,
     base: str,
     q: str = Query("", min_length=1),
     table: str = Query("Datcorr_database"),
@@ -73,9 +110,12 @@ def buscar_datos(
     limit: int = Query(50, ge=1, le=1000),
 ):
     if not q.strip():
-        raise HTTPException(status_code=400, detail="El parámetro 'q' es obligatorio")
+        raise HTTPException(status_code=400, detail="El parametro 'q' es obligatorio")
     try:
         columnas, registros, total = buscar_en_base(base, q.strip(), table, page, limit)
+        usuario = _nombre_usuario(request)
+        _auditar(usuario, "BUSQUEDA", f"{MAPA_BASE_SCHEMA.get(base, base)}.{table}",
+                 detalle=f"Busqueda '{q}' en {base} ({total} resultados)")
         return BusquedaResponse(
             success=True,
             total=total,
@@ -108,12 +148,17 @@ def listar_columnas(
 
 @router.post("/{base}/records", response_model=CrearRegistroResponse)
 def crear_registro(
+    request: Request,
     base: str,
     body: CrearRegistroRequest,
     table: str = Query("Datcorr_database"),
 ):
     try:
         registro_id = insertar_registro(base, body.data, table)
+        usuario = _nombre_usuario(request)
+        _auditar(usuario, "CREATE", f"{MAPA_BASE_SCHEMA.get(base, base)}.{table}",
+                 registro_id=registro_id,
+                 detalle=f"Registro creado en {base}")
         return CrearRegistroResponse(
             success=True,
             mensaje="Registro creado correctamente",
@@ -127,6 +172,7 @@ def crear_registro(
 
 @router.patch("/{base}/records/{record_id}", response_model=ActualizarResponse)
 def actualizar(
+    request: Request,
     base: str,
     record_id: int,
     body: ActualizarRequest,
@@ -134,6 +180,11 @@ def actualizar(
 ):
     try:
         actualizar_registro(base, record_id, body.data, table)
+        campos = ", ".join(f"{k}={v}" for k, v in body.data.items())
+        usuario = _nombre_usuario(request)
+        _auditar(usuario, "UPDATE", f"{MAPA_BASE_SCHEMA.get(base, base)}.{table}",
+                 registro_id=record_id,
+                 detalle=f"Registro {record_id} actualizado en {base}: {campos}")
         return ActualizarResponse(success=True, mensaje="Registro actualizado correctamente")
     except (ValueError, FileNotFoundError) as e:
         raise HTTPException(status_code=404, detail=str(e))

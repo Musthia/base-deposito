@@ -2,20 +2,20 @@ import { create } from "zustand";
 import { decodeToken } from "./jwt";
 import { parseJwt } from "./jwtUtils";
 
-const access = localStorage.getItem("access_token");
+const access = sessionStorage.getItem("access_token");
 
 export const useAuthStore = create((set) => ({
 
     accessToken: access,
-    refreshToken: localStorage.getItem("refresh_token"),
+    refreshToken: sessionStorage.getItem("refresh_token"),
 
     // 👇 RECONSTRUIR USER AUTOMÁTICAMENTE
     user: decodeToken(access),
 
     setTokens: (access, refresh) => {
 
-        localStorage.setItem("access_token", access);
-        localStorage.setItem("refresh_token", refresh);
+        sessionStorage.setItem("access_token", access);
+        sessionStorage.setItem("refresh_token", refresh);
 
         set({
             accessToken: access,
@@ -26,8 +26,8 @@ export const useAuthStore = create((set) => ({
 
     logout: () => {
 
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("refresh_token");
 
         set({
             accessToken: null,

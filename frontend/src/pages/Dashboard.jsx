@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../auth/authStore";
+import api from "../api/axiosClient";
 import { getDashboardStats } from "../services/dashboardService";
 
 export default function Dashboard() {
+    const navigate = useNavigate();
+    const logout = useAuthStore((s) => s.logout);
+    const refreshToken = useAuthStore((s) => s.refreshToken);
     const [stats, setStats] = useState(null);
 
     useEffect(() => {
@@ -9,6 +15,18 @@ export default function Dashboard() {
             .then(setStats)
             .catch(console.error);
     }, []);
+
+    const handleLogout = async () => {
+        try {
+            if (refreshToken) {
+                await api.post("/auth/logout", { refresh_token: refreshToken });
+            }
+        } catch (err) {
+            console.error("Logout error:", err);
+        }
+        logout();
+        navigate("/");
+    };
 
     if (!stats) {
         return (
@@ -29,8 +47,13 @@ export default function Dashboard() {
                         Gestione y supervise las bases de datos documentales del sistema DatCorr.
                     </p>
                 </div>
-                <div style={welcomeStyles.badge}>
-                    <span style={welcomeStyles.badgeText}>v1.0</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={welcomeStyles.badge}>
+                        <span style={welcomeStyles.badgeText}>v1.0</span>
+                    </div>
+                    <button onClick={handleLogout} style={logoutBtnStyles}>
+                        Cerrar sesion
+                    </button>
                 </div>
             </div>
 
@@ -42,7 +65,7 @@ export default function Dashboard() {
                     iconColor="#0284c7"
                     label="Bases activas"
                     value={stats.total_bases}
-                    sub="Total de esquemas"
+                    sub="Total de Organismos"
                 />
                 <KpiCard
                     icon="R"
@@ -223,6 +246,17 @@ const sectionTitle = {
     margin: 0,
     marginBottom: 12,
     color: "var(--text-primary)",
+};
+
+const logoutBtnStyles = {
+    padding: "8px 16px",
+    background: "#dc2626",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: "pointer",
 };
 
 const loadingStyles = {

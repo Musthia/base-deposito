@@ -57,13 +57,6 @@ export default function DatabasePage() {
                 },
             }));
 
-        cols.unshift({
-            field: "id",
-            headerName: "ID",
-            width: 80,
-            hide: true,
-        });
-
         const rows = registros.map((row, idx) => {
             const rowData = { id: idx };
             columnas.forEach((col, ci) => {
@@ -175,7 +168,7 @@ export default function DatabasePage() {
     const tabActual = tabs[Math.min(tabIndex, tabs.length - 1)];
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, overflow: "hidden", maxWidth: "100%" }}>
             <Typography variant="h5" gutterBottom>
                 Consultar Bases de Datos
             </Typography>
@@ -253,7 +246,7 @@ export default function DatabasePage() {
                         ))}
                     </Tabs>
 
-                    <Box sx={{ height: 600, mt: 1 }}>
+                    <Box sx={{ height: 600, mt: 1, width: "100%", overflow: "hidden", maxWidth: "100%" }}>
                         <DataGrid
                             key={tabActual?.clave}
                             rows={tabActual?.rows || []}
@@ -266,7 +259,12 @@ export default function DatabasePage() {
                             pageSizeOptions={[25, 50, 100]}
                             onRowDoubleClick={handleDoubleClick}
                             disableRowSelectionOnClick
+                            disableExtendRowFullWidth
                             sx={{
+                                maxWidth: "100%",
+                                overflow: "hidden",
+                                "& .MuiDataGrid-main": { overflow: "hidden" },
+                                "& .MuiDataGrid-virtualScroller": { overflow: "auto" },
                                 "& .MuiDataGrid-cell:focus": { outline: "none" },
                             }}
                         />

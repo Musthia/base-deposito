@@ -17,9 +17,14 @@ import {
     Tab,
     IconButton,
     Chip,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
 import { listarBases } from "../services/databaseService";
 import api from "../api/axiosClient";
 
@@ -87,6 +92,7 @@ export default function CargaDatosPage() {
                 base,
                 columnas: cols,
                 formValues: initial,
+                registrosCreados: [],
             };
 
             actualizarTabs((prev) => {
@@ -134,12 +140,30 @@ export default function CargaDatosPage() {
             tabActual.columnas.forEach((c) => {
                 data[c.nombre] = tabActual.formValues[c.nombre] || "";
             });
-            await api.post(`/databases/${encodeURIComponent(tabActual.base)}/records`, { data });
+            const res = await api.post(`/databases/${encodeURIComponent(tabActual.base)}/records`, { data });
+            const registroId = res.data?.registro_id;
+            const resumen = { ...tabActual.formValues };
+            const primerasCols = tabActual.columnas.slice(0, 3).map((c) => c.nombre);
             setSnackbar({ open: true, message: "Registro creado correctamente", severity: "success" });
             const initial = {};
             tabActual.columnas.forEach((c) => { initial[c.nombre] = ""; });
             actualizarTabs((prev) =>
-                prev.map((t, i) => (i !== tabIndex ? t : { ...t, formValues: initial }))
+                prev.map((t, i) => {
+                    if (i !== tabIndex) return t;
+                    return {
+                        ...t,
+                        formValues: initial,
+                        registrosCreados: [
+                            {
+                                id: registroId,
+                                timestamp: new Date().toLocaleString("es-AR"),
+                                datos: resumen,
+                                primerasCols,
+                            },
+                            ...t.registrosCreados,
+                        ],
+                    };
+                })
             );
         } catch (err) {
             console.error("Error creando registro:", err);
@@ -249,6 +273,42 @@ export default function CargaDatosPage() {
                             {saving ? "Guardando..." : "Guardar registro"}
                         </Button>
                     </Box>
+                </Paper>
+            )}
+
+            {tabActual && tabActual.registrosCreados?.length > 0 && (
+                <Paper sx={{ p: 2, mt: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                        Registros creados en esta sesion ({tabActual.base})
+                    </Typography>
+                    <TableContainer sx={{ maxHeight: 300 }}>
+                        <Table size="small" stickyHeader>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>#</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Hora</TableCell>
+                                    {tabActual.registrosCreados[0]?.primerasCols?.map((col) => (
+                                        <TableCell key={col} sx={{ fontWeight: 600, fontSize: 12 }}>
+                                            {col}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {tabActual.registrosCreados.map((r, i) => (
+                                    <TableRow key={r.id || i}>
+                                        <TableCell sx={{ fontSize: 12 }}>{r.id || "-"}</TableCell>
+                                        <TableCell sx={{ fontSize: 12 }}>{r.timestamp}</TableCell>
+                                        {r.primerasCols.map((col) => (
+                                            <TableCell key={col} sx={{ fontSize: 12, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                {r.datos[col] || ""}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Paper>
             )}
 

@@ -19,7 +19,7 @@ export default function Sidebar() {
         { label: "Consultar Bases", path: "/database" },
         { label: "Carga de Datos", path: "/carga-datos" },
         ...(perms.canViewAuditoria ? [{ label: "Auditoria", path: "/auditoria" }] : []),
-        { label: "Reportes", path: "/reportes" }
+        ...(perms.canViewReportes ? [{ label: "Reportes", path: "/reportes" }] : []),
     ];
 
     const handleLogout = async () => {

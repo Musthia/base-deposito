@@ -8,6 +8,8 @@ export const usePermissions = () => {
     if (!user) {
         return {
             canViewUsers: false,
+            canViewAuditoria: false,
+            canViewReportes: false,
             canCreateUser: false,
             canEditUser: false,
             canDeleteUser: false,
@@ -25,6 +27,7 @@ export const usePermissions = () => {
 
         canViewUsers: isAdmin,
         canViewAuditoria: isAdmin,
+        canViewReportes: true,
 
         canCreateUser: isAdmin,
         canEditUser: isAdmin,

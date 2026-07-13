@@ -28,6 +28,7 @@ from PySide6.QtWidgets import (
     QWidgetAction,
     QStyledItemDelegate,
     QStyle,
+    QToolBar,
 )
 
 # =========================
@@ -78,8 +79,6 @@ import subprocess
 import logging
 import importlib
 
-from core.access_control import (validar_sesion, validar_nivel)
-
 from ventanas.ventana_usuarios import (
     VentanaUsuarios
 )
@@ -90,14 +89,7 @@ from core.seguridad import (
 
 from utils.user_helpers import get_usuario_attr
 
-from ui.tree_loader import TreeLoader
 from ui.dynamic_form import DynamicForm
-from db.router import DatabaseRouter
-
-from db.service import DatabaseService
-
-from db.registry import db_registry
-from sqlalchemy import create_engine
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -118,7 +110,7 @@ class VentanaPrincipal(QMainWindow):
         # VALIDAR SESIÓN
         # -----------------------------------
 
-        if not validar_sesion():
+        if not SessionManager.validar_sesion():
 
             logging.warning("Intento acceso sin sesión.")
 
@@ -131,11 +123,7 @@ class VentanaPrincipal(QMainWindow):
             self.close()
             return
 
-        # -----------------------------------
-        # VALIDAR NIVEL MÍNIMO
-        # -----------------------------------
-
-        if not validar_nivel(1):
+        if SessionManager.obtener_nivel_seguridad() < 1:
 
             logging.warning("Nivel insuficiente para ingresar.")
 
@@ -170,19 +158,9 @@ class VentanaPrincipal(QMainWindow):
         # UI
         # -----------------------------------
 
-        if hasattr(self, "label_usuario"):
-            self.label_usuario.setText(
-                f"{nombre} {apellido} - {rol}"
-            )
-
         self.nombre_usuario = nombre
         self.rol = rol
         self.nivel_seguridad = nivel_seguridad
-        
-        self.router = DatabaseRouter()
-        self.loader = TreeLoader(self.router)
-        
-        self.db_service = DatabaseService()
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -269,42 +247,23 @@ class VentanaPrincipal(QMainWindow):
         self.ui.tabwidget_resultados_consulta.tabCloseRequested.connect(
             self.cerrar_pestana_resultado
         )
+
+        self._toolbar = QToolBar("Reportes", self)
+        self.addToolBar(self._toolbar)
+        self._btn_reportes = QAction(QIcon("img/datcorr.ico"), "Reportes", self)
+        self._btn_reportes.triggered.connect(self._abrir_reportes)
+        self._toolbar.addAction(self._btn_reportes)
+
+        # statusbar con usuario logueado
+        self.label_usuario = QLabel(f"  Usuario: {nombre} {apellido}  ({rol})  ")
+        self.statusBar().addPermanentWidget(self.label_usuario)
         
-    """ def inicializar_engine_base(self, base=None):
-
-        if base is None:
-            base = self.base_actual
-
-        if not base:
-            logging.error("No hay base seleccionada")
-            return
-
-        engine = create_engine(
-            f"postgresql+psycopg2://"
-            f"{os.getenv('DB_USER')}:"
-            f"{os.getenv('DB_PASSWORD')}@"
-            f"{os.getenv('DB_HOST')}:"
-            f"{os.getenv('DB_PORT')}/"
-            f"{os.getenv('DB_NAME')}"
-        )
-
-        db_registry.set_engine(engine)
-
-        logging.debug(f"[ENGINE SETEADO] {base}")
-        print("[ENGINE OK]", engine)
-         """
     def on_base_changed(self, index=None):
 
         base = self.ui.combo_bases.currentText()
         self.base_actual = base
 
         print("[BASE SELECCIONADA]", base)
-
-        # 🔥 ESTO ES LO QUE TE FALTA
-        #self.inicializar_engine_base()
-
-        from db.registry import db_registry
-        print("[ENGINE DESPUÉS]", db_registry.get_engine())
 
     def abrir_administracion_usuarios(self):
 
@@ -329,7 +288,12 @@ class VentanaPrincipal(QMainWindow):
         dialogo = VentanaUsuarios(
             parent=self
         )
-    
+
+        dialogo.exec()
+
+    def _abrir_reportes(self):
+        from ui.reportes_viewer import ReportesViewer
+        dialogo = ReportesViewer(parent=self)
         dialogo.exec()
 
     def cerrar_sesion(self):
@@ -578,24 +542,26 @@ class VentanaPrincipal(QMainWindow):
 
         tabla = "Datcorr_database"
 
-        schema = self.mapear_base_a_schema(
-            base
-        )
-
         try:
 
-            resultados, columnas = (
-                self.db_service.consultar(
-                    schema=schema,
-                    table=tabla
-                )
+            data = SessionManager.get_db_client().consultar_datos(
+                base=base, table=tabla, limit=0
             )
 
+            if not data.get("success"):
+                raise Exception(data.get("mensaje", "Error al consultar"))
+            
+            columnas = data.get("columnas", [])
+            resultados = data.get("registros", [])
+            total = data.get("total", len(resultados))
+
+            # omitir la primera columna (id_Datcorr_database) en la vista
             self.crear_o_actualizar_pestana(
                 base=base,
-                columnas=columnas,
+                columnas=columnas[1:],
                 resultados=resultados,
-                modo="CONSULTA"
+                modo="CONSULTA",
+                total=total,
             )
 
             logging.debug(
@@ -617,18 +583,11 @@ class VentanaPrincipal(QMainWindow):
     def on_pushButton_carga_datos_clicked(self):
         from PySide6.QtWidgets import QMessageBox
 
-        SCHEMA_A_BASE = {
-            "maternidad": "MATERNIDAD",
-            "igpj_listado_nuevo": "IGPJ_LISTADO_NUEVO",
-            "igpj_txt_listado": "IGPJ TXT LISTADO",
-            "escribania": "ESCRIBANIA",
-            "igpj": "IGPJ",
-            "pediatrico": "PEDIATRICO",
-            "ips": "IPS",
-        }
-
-        schemas = self.db_service.listar_bases()
-        bases_disponibles = [SCHEMA_A_BASE.get(s, s.upper()) for s in schemas]
+        data = SessionManager.get_db_client().listar_bases()
+        if not data.get("success"):
+            QMessageBox.critical(self, "Error", data.get("mensaje", "Error al listar bases"))
+            return
+        bases_disponibles = [b["nombre"] for b in data.get("bases", [])]
 
         self.dialogo_bases = SelectorBasesDialog(bases_disponibles, self)
 
@@ -665,23 +624,14 @@ class VentanaPrincipal(QMainWindow):
 
     def cargar_bases_en_combo(self):
 
-        SCHEMA_A_BASE = {
-            "maternidad": "MATERNIDAD",
-            "igpj_listado_nuevo": "IGPJ_LISTADO_NUEVO",
-            "igpj_txt_listado": "IGPJ TXT LISTADO",
-            "escribania": "ESCRIBANIA",
-            "igpj": "IGPJ",
-            "pediatrico": "PEDIATRICO",
-            "ips": "IPS",
-        }
-
         self.ui.combo_bases.blockSignals(True)
         self.ui.combo_bases.clear()
         self.ui.combo_bases.setStyleSheet(style_combobox_dark())
 
-        schemas = self.db_service.listar_bases()
+        data = SessionManager.get_db_client().listar_bases()
+        bases = [b["nombre"] for b in data.get("bases", [])] if data.get("success") else []
 
-        if not schemas:
+        if not bases:
             QMessageBox.warning(
                 self,
                 "Sin bases",
@@ -689,8 +639,6 @@ class VentanaPrincipal(QMainWindow):
             )
             self.ui.combo_bases.blockSignals(False)
             return
-
-        bases = [SCHEMA_A_BASE.get(s, s.upper()) for s in schemas]
 
         for base in bases:
             self.ui.combo_bases.addItem(base)
@@ -708,24 +656,14 @@ class VentanaPrincipal(QMainWindow):
         # VALIDAR ACCESO
         # -----------------------------------
 
-        logging.debug(
-            "Validando acceso a búsqueda..."
-        )
+        if SessionManager.obtener_nivel_seguridad() < 1:
 
-        if not validar_nivel(1):
-        
-            logging.warning(
-                "Acceso denegado "
-                "a búsqueda."
-            )
+            logging.warning("Acceso denegado a búsqueda.")
 
             QMessageBox.warning(
                 self,
                 "Acceso denegado",
-                (
-                    "No posee permisos "
-                    "para realizar búsquedas."
-                )
+                "No posee permisos para realizar búsquedas."
             )
 
             return
@@ -744,21 +682,18 @@ class VentanaPrincipal(QMainWindow):
             logging.debug("[BUSCAR] criterio o base vacíos")
             return
 
-        self.base_actual = base  # 👈 GARANTIZA estado consistente
-
-        schema = self.mapear_base_a_schema(base)
-        if not schema:
-            logging.error(f"[BUSCAR] schema no encontrado para base: {base}")
-            return
+        self.base_actual = base
 
         try:
 
-            resultados, columnas = self.db_service.buscar(
-                schema=schema,
-                table="Datcorr_database",
-                criterio=criterio
+            data = SessionManager.get_db_client().buscar_datos(
+                base=base, q=criterio
             )
 
+            if not data.get("success"):
+                raise Exception(data.get("mensaje", "Error al buscar"))
+
+            resultados = data.get("registros", [])
             logging.debug(f"[BUSCAR] filas encontradas={len(resultados)}")
 
             if not resultados:
@@ -769,11 +704,11 @@ class VentanaPrincipal(QMainWindow):
                 )
                 return
 
-            columnas_out = list(columnas)
+            columnas = data.get("columnas", [])
 
             self.crear_o_actualizar_pestana(
                 base=base,
-                columnas=columnas_out[1:],  # saltar id
+                columnas=columnas[1:],
                 resultados=resultados,
                 modo="BUSQUEDA"
             )
@@ -803,7 +738,8 @@ class VentanaPrincipal(QMainWindow):
         base,
         columnas,
         resultados,
-        modo="BUSQUEDA"
+        modo="BUSQUEDA",
+        total=None,
     ):
     
         clave = f"{base}_{modo}"
@@ -971,11 +907,12 @@ class VentanaPrincipal(QMainWindow):
         # -----------------------------------
     
         cantidad = len(resultados)
-    
+        total_str = f" de {total}" if total is not None and total != cantidad else ""
+
         titulo = (
             f"{modo} "
             f"{base} "
-            f"({cantidad})"
+            f"({cantidad}{total_str})"
         )
     
         index_tab = (
@@ -1050,9 +987,6 @@ class VentanaPrincipal(QMainWindow):
             id_registro=id_registro,
             columnas=headers,
             valores=valores,
-            schema=self.mapear_base_a_schema(base),
-            table="Datcorr_database",
-            db_service=self.db_service,
             parent=self
         )
 
@@ -1062,20 +996,6 @@ class VentanaPrincipal(QMainWindow):
 
         self.ventana_edicion.exec()
         
-    def mapear_base_a_schema(self, base):
-
-        mapa = {
-            "IPS": "ips",
-            "PEDIATRICO": "pediatrico",
-            "IGPJ_LISTADO_NUEVO": "igpj_listado_nuevo",
-            "IGPJ TXT LISTADO": "igpj_txt_listado",
-            "IGPJ": "igpj",
-            "MATERNIDAD": "maternidad",
-            "ESCRIBANIA": "escribania"
-        }
-
-        return mapa.get(base)
-
     def closeEvent(self, event):
 
         logging.debug(
@@ -1140,65 +1060,27 @@ class VentanaPrincipal(QMainWindow):
         model.layoutChanged.emit()
 
 class VentanaEdicionRegistro(QDialog):
-    
-    print("ANTES DE CREAR VENTANA")
 
     datos_actualizados = Signal(str, int, dict)
 
-    def __init__(self, 
-                 base, 
-                 id_registro, 
-                 columnas, 
-                 valores, 
-                 schema, table, 
-                 db_service, 
+    def __init__(self,
+                 base,
+                 id_registro,
+                 columnas,
+                 valores,
                  parent=None):
-        
-        print("INICIO __init__")
-        
-        print("ENTRÓ A VentanaEdicionRegistro")
-        
+
         super().__init__(parent)
-        
-        print("SUPER OK")
-        
-        print("PASÓ SUPER")
-        
-        print("BASE:", base)
-        
-        print("ID:", id_registro)
-        
-        print("COLUMNAS:", len(columnas))
-        
-        print("VALORES:", len(valores))
 
-        # Ícono de la ventana
-        self.setWindowIcon(QIcon("img/datcorr.ico"))
-
-        # Tamaño fijo exacto
-        self.resize(550, 500)
-
-        # ---------- ASIGNACIONES PRIMERO ----------
         self.base = base
         self.id_registro = id_registro
-
-        self.schema = schema
-        self.table = table
-        self.db_service = db_service
-
         self.campos = {}
-        
-        print("FIN __init__")
-        
-        print("FIN CONSTRUCTOR")
 
-        # ---------- VALIDACIÓN ----------
-        logging.debug(
-            f"[EDICION] PostgreSQL "
-            f"{self.schema}.{self.table}"
-        )
+        self.setWindowIcon(QIcon("img/datcorr.ico"))
+        self.resize(550, 500)
 
-        # ---------- UI ----------
+        logging.debug(f"[EDICION] {base} registro {id_registro}")
+
         self.setStyleSheet(style_dialog_dark())
         self.setWindowTitle(f"Editar registro - {base}")
 
@@ -1211,7 +1093,6 @@ class VentanaEdicionRegistro(QDialog):
             label = QLabel(col)
             entry = QLineEdit("" if val is None else str(val))
 
-            # SOLO LECTURA
             if col.lower() == "registro":
                 entry.setReadOnly(True)
                 entry.setStyleSheet("""
@@ -1223,32 +1104,30 @@ class VentanaEdicionRegistro(QDialog):
 
             layout.addRow(label, entry)
             self.campos[col] = entry
-            
-            print("ENGINE:", db_registry.get_engine())
 
         btn_guardar = QPushButton("Guardar cambios")
         btn_guardar.setStyleSheet(style_pushbutton_dark())
         btn_guardar.clicked.connect(self.guardar_cambios)
         btn_guardar.setAutoDefault(False)
 
-        layout.addRow(btn_guardar) 
+        layout.addRow(btn_guardar)
 
     def guardar_cambios(self):
 
-        columnas = list(self.campos.keys())
-        valores = [self.campos[c].text() for c in columnas]
-
-        datos_actualizados = dict(zip(columnas, valores))
+        datos_actualizados = {
+            col: self.campos[col].text() for col in self.campos
+        }
 
         try:
 
-            self.db_service.actualizar(
-                schema=self.schema,
-                table=self.table,
-                id_field="id_Datcorr_database",
-                id_value=self.id_registro,
+            result = SessionManager.get_db_client().actualizar(
+                base=self.base,
+                record_id=self.id_registro,
                 data=datos_actualizados
             )
+
+            if not result.get("success"):
+                raise Exception(result.get("mensaje", "Error al actualizar"))
 
             self.datos_actualizados.emit(
                 self.base,

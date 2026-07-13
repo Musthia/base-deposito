@@ -42,18 +42,24 @@ def obtener_tablas(base: str) -> list:
 
 def consultar_base(
     base: str, tabla: str = "Datcorr_database",
-    page: int = 1, limit: int = 50,
+    page: int = 1, limit: Optional[int] = 50,
 ) -> Tuple[List[str], List[list], int]:
     _validar_base(base)
     schema = _schema_para_base(base)
-    offset = (page - 1) * limit
     with postgres_engine.connect() as conn:
         total = conn.execute(
             text(f'SELECT COUNT(*) FROM "{schema}"."{tabla}"')
         ).scalar() or 0
 
-        sql = text(f'SELECT * FROM "{schema}"."{tabla}" OFFSET :offset LIMIT :limit')
-        result = conn.execute(sql, {"offset": offset, "limit": limit})
+        if limit is None or limit <= 0:
+            sql = text(f'SELECT * FROM "{schema}"."{tabla}"')
+            params = {}
+        else:
+            offset = (page - 1) * limit
+            sql = text(f'SELECT * FROM "{schema}"."{tabla}" OFFSET :offset LIMIT :limit')
+            params = {"offset": offset, "limit": limit}
+
+        result = conn.execute(sql, params)
         columnas = list(result.keys())
         registros = [list(row) for row in result.fetchall()]
     return columnas, registros, total
@@ -155,3 +161,40 @@ def insertar_registro(base: str, data: dict, tabla: str = "Datcorr_database") ->
         lastval = conn.execute(text("SELECT LASTVAL()")).scalar()
     logging.debug(f"[DB WEB] Registro insertado en {base} con ID {lastval}")
     return lastval
+
+
+def autocomplete_en_base(
+    base: str, columna: str, texto: str, limite: int = 30,
+    tabla: str = "Datcorr_database"
+) -> list:
+    _validar_base(base)
+    schema = _schema_para_base(base)
+    id_col = "id_Datcorr_database"
+    sql = text(
+        f'SELECT "{id_col}", "{columna}" FROM "{schema}"."{tabla}" '
+        f'WHERE CAST("{columna}" AS TEXT) ILIKE :patron LIMIT :limite'
+    )
+    with postgres_engine.connect() as conn:
+        result = conn.execute(sql, {"patron": f"%{texto}%", "limite": limite})
+        return [list(row) for row in result.fetchall()]
+
+
+def obtener_registro(
+    base: str, registro_id: int, columnas: list = None,
+    tabla: str = "Datcorr_database"
+) -> dict:
+    _validar_base(base)
+    schema = _schema_para_base(base)
+    if not columnas:
+        columnas = ["denominacion"]
+    cols = ", ".join(f'"{c}"' for c in columnas)
+    sql = text(
+        f'SELECT {cols} FROM "{schema}"."{tabla}" '
+        f'WHERE "id_Datcorr_database" = :id'
+    )
+    with postgres_engine.connect() as conn:
+        result = conn.execute(sql, {"id": registro_id})
+        row = result.fetchone()
+        if row:
+            return dict(zip(columnas, row))
+        return None

@@ -68,3 +68,13 @@ class CrearRegistroResponse(BaseModel):
 class EliminarResponse(BaseModel):
     success: bool
     mensaje: str
+
+
+class AutocompleteResponse(BaseModel):
+    success: bool
+    resultados: List[List[Any]]
+
+
+class ObtenerRegistroResponse(BaseModel):
+    success: bool
+    registro: Optional[dict] = None

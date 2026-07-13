@@ -5,11 +5,20 @@ from services.usuarios_permisos_service import usuario_tiene_permiso
 
 from utils.user_helpers import get_usuario_attr
 
+from core.api_client import ApiClient
+from core.api_database_client import ApiDatabaseClient
+from core.api_reportes_client import ApiReportesClient
+
+
 class SessionManager:
 
     _usuario_actual = None
     _fecha_login = None
     _sesion_activa = False
+    _permisos = []
+    _api_client = None
+    _db_client = None
+    _reportes_client = None
 
     # -----------------------------------
     # LOGIN
@@ -17,15 +26,39 @@ class SessionManager:
 
     @classmethod
     def login(cls, usuario: dict):
-    
+
         cls._usuario_actual = usuario
         cls._fecha_login = datetime.now()
         cls._sesion_activa = True
-    
+
         logging.debug(
             f"Sesión iniciada: "
             f"{get_usuario_attr(usuario,'usuario')}"
         )
+
+    @classmethod
+    def sync_from_api(cls):
+        if not cls._api_client:
+            return False
+        try:
+            data = cls._api_client.get("/auth/me")
+            if data.get("success") is False:
+                return False
+            cls._usuario_actual = {
+                "id": data.get("id"),
+                "usuario": data.get("usuario"),
+                "nombre": data.get("nombre"),
+                "apellido": data.get("apellido"),
+                "rol": data.get("rol"),
+                "nivel_seguridad": data.get("nivel_seguridad", 0),
+                "es_superusuario": data.get("es_superusuario", False),
+            }
+            cls._permisos = data.get("permisos", [])
+            cls._sesion_activa = True
+            return True
+        except Exception:
+            logging.warning("sync_from_api falló", exc_info=True)
+            return False
 
     # -----------------------------------
     # VALIDAR SESIÓN
@@ -46,6 +79,7 @@ class SessionManager:
         cls._usuario_actual = None
         cls._fecha_login = None
         cls._sesion_activa = False
+        cls._permisos = []
 
         logging.debug("Sesión finalizada")
 
@@ -114,8 +148,10 @@ class SessionManager:
         if not cls._usuario_actual:
             return False
 
-        # SUPERUSUARIO BYPASS TOTAL
         if cls.es_superusuario():
+            return True
+
+        if codigo_permiso in cls._permisos:
             return True
 
         return usuario_tiene_permiso(
@@ -145,3 +181,21 @@ class SessionManager:
             cls._usuario_actual,
             "id"
         )
+
+    @classmethod
+    def set_api_client(cls, client: ApiClient):
+        cls._api_client = client
+        cls._db_client = ApiDatabaseClient(client)
+        cls._reportes_client = ApiReportesClient(client)
+
+    @classmethod
+    def get_api_client(cls) -> ApiClient:
+        return cls._api_client
+
+    @classmethod
+    def get_db_client(cls) -> ApiDatabaseClient:
+        return cls._db_client
+
+    @classmethod
+    def get_reportes_client(cls) -> ApiReportesClient:
+        return cls._reportes_client

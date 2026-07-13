@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -83,3 +83,15 @@ class LogoutResponse(BaseModel):
     success: bool
 
     mensaje: str
+
+
+class MeResponse(BaseModel):
+
+    id: int
+    usuario: str
+    nombre: str
+    apellido: str
+    rol: str
+    nivel_seguridad: int
+    es_superusuario: bool
+    permisos: List[str]

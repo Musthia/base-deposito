@@ -134,7 +134,7 @@ export default function ReportesPage() {
     };
 
     return (
-        <Box sx={{ p: 3, maxWidth: "100%", overflow: "hidden" }}>
+        <Box sx={{ p: 3, maxWidth: "100%" }}>
             <Typography variant="h5" gutterBottom>Reportes</Typography>
 
             {/* KPIs */}
@@ -199,7 +199,7 @@ export default function ReportesPage() {
 
             {/* Preview */}
             {generated && (
-                <Box sx={{ height: 500, width: "100%", overflow: "hidden", maxWidth: "100%" }}>
+                <Box sx={{ height: "calc(100vh - 350px)", width: "100%", minHeight: 400 }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                         {consultaMeta?.nombre} — {rows.length} registros
                     </Typography>
@@ -214,8 +214,6 @@ export default function ReportesPage() {
                             basePagination: { showFirstButton: true, showLastButton: true },
                         }}
                         sx={{
-                            maxWidth: "100%", overflow: "hidden",
-                            "& .MuiDataGrid-main": { overflow: "hidden" },
                             "& .MuiDataGrid-virtualScroller": { overflow: "auto" },
                             "& .MuiDataGrid-cell:focus": { outline: "none" },
                         }}

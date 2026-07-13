@@ -105,6 +105,12 @@ def login_usuario(
 
             "sub": usuario_db.usuario,
 
+            "nombre": usuario_db.nombre or "",
+
+            "apellido": usuario_db.apellido or "",
+
+            "rol": usuario_db.rol or "",
+
             "nivel": (
                 usuario_db.nivel_seguridad
             ),

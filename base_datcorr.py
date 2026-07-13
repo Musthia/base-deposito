@@ -119,12 +119,24 @@ class InicioSesion(QMainWindow):
         # -----------------------------------
         # TOKENS
         # -----------------------------------
-    
+
         self.api.set_tokens(
             resultado.get("token"),
             resultado.get("refresh_token")
         )
-    
+
+        # -----------------------------------
+        # API CLIENT EN SESSION MANAGER
+        # -----------------------------------
+
+        SessionManager.set_api_client(self.api)
+
+        # -----------------------------------
+        # SYNC /auth/me (permisos actualizados)
+        # -----------------------------------
+
+        SessionManager.sync_from_api()
+
         # -----------------------------------
         # UI INFO
         # -----------------------------------

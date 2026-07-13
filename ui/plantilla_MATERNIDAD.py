@@ -44,9 +44,8 @@ from PySide6.QtUiTools import QUiLoader
 # =========================
 # Proyecto / Modelo
 # =========================
-from model.datcorr_dao_postgres import DatcorrDAOPostgres
+from core.api_dao import ApiDAOPostgres
 from utils.organismos import (
-    schema_para_base,
     columnas_para_base,
 )
 
@@ -125,7 +124,7 @@ class Plantilla(QWidget):
         )
 
         # ---------- CONEXIÓN DB ----------
-        self.dao_pg = DatcorrDAOPostgres(schema=schema_para_base(self.base_actual))
+        self.dao_pg = ApiDAOPostgres(self.base_actual)
 
         # ---------- CONEXIÓN BOTÓN ----------
         self.ui.pushButton_guardar_carga_maternidad.clicked.connect(

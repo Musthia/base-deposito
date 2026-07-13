@@ -18,7 +18,13 @@ from backend.schemas.auth_schema import (
     LoginResponse,
 
     LogoutRequest,
-    LogoutResponse
+    LogoutResponse,
+    MeResponse
+)
+
+from database.modelos import (
+    Permiso,
+    UsuarioPermiso
 )
 
 from backend.services.auth_service import (
@@ -51,6 +57,14 @@ from backend.services.blacklist_service import (
 from backend.security.jwt_manager import (
     SECRET_KEY,
     ALGORITHM
+)
+
+from backend.security.jwt_bearer import (
+    obtener_usuario_actual
+)
+
+from backend.schemas.usuario_schema import (
+    UsuarioResponse
 )
 
 from fastapi.security import (
@@ -287,4 +301,36 @@ def logout(
         success=True,
 
         mensaje=resultado["mensaje"]
+    )
+
+
+# -----------------------------------
+# GET /auth/me
+# -----------------------------------
+
+@router.get(
+    "/me",
+    response_model=MeResponse
+)
+def get_current_user(
+    usuario_actual=Depends(obtener_usuario_actual),
+    db: Session = Depends(get_db)
+):
+    permisos_db = (
+        db.query(Permiso.codigo)
+        .join(UsuarioPermiso, UsuarioPermiso.permiso_id == Permiso.id)
+        .filter(UsuarioPermiso.usuario_id == usuario_actual.id)
+        .all()
+    )
+    permisos = [p[0] for p in permisos_db]
+
+    return MeResponse(
+        id=usuario_actual.id,
+        usuario=usuario_actual.usuario,
+        nombre=usuario_actual.nombre,
+        apellido=usuario_actual.apellido,
+        rol=usuario_actual.rol,
+        nivel_seguridad=usuario_actual.nivel_seguridad,
+        es_superusuario=usuario_actual.es_superusuario,
+        permisos=permisos
     )

@@ -13,7 +13,7 @@ export default function MainLayout() {
                 padding: "20px",
                 minHeight: "100vh",
                 background: "#f4f4f4",
-                overflow: "hidden",
+                overflow: "auto",
             }}>
                 <TabProvider>
                     <Outlet />

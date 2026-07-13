@@ -1,5 +1,5 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 
 from backend.security.jwt_bearer import obtener_usuario_actual
@@ -136,26 +136,12 @@ def alertas(
 @router.get("/ejecutar/{consulta_id}")
 def ejecutar_consulta(
     consulta_id: str,
+    request: Request,
     usuario_actual=Depends(obtener_usuario_actual),
     db: Session = Depends(get_db),
-    activo: str = Query(None),
-    desde: str = Query(None),
-    hasta: str = Query(None),
-    usuario: str = Query(None),
-    accion: str = Query(None),
 ):
     try:
-        filtros = {}
-        if activo is not None:
-            filtros["activo"] = activo
-        if desde is not None:
-            filtros["desde"] = desde
-        if hasta is not None:
-            filtros["hasta"] = hasta
-        if usuario is not None:
-            filtros["usuario"] = usuario
-        if accion is not None:
-            filtros["accion"] = accion
+        filtros = dict(request.query_params)
 
         result = svc.ejecutar_consulta(consulta_id, filtros,
                                        _es_admin(usuario_actual), usuario_actual.usuario)
@@ -176,25 +162,17 @@ def ejecutar_consulta(
 @router.get("/exportar/{consulta_id}")
 def exportar_consulta(
     consulta_id: str,
+    request: Request,
     formato: str = Query("csv"),
     usuario_actual=Depends(obtener_usuario_actual),
     db: Session = Depends(get_db),
-    activo: str = Query(None),
-    desde: str = Query(None),
-    hasta: str = Query(None),
-    usuario: str = Query(None),
-    accion: str = Query(None),
 ):
     try:
         if formato not in FORMATOS_VALIDOS:
             raise HTTPException(400, f"Formato '{formato}' no soportado. Use: {', '.join(FORMATOS_VALIDOS)}")
 
-        filtros = {}
-        if activo is not None: filtros["activo"] = activo
-        if desde is not None: filtros["desde"] = desde
-        if hasta is not None: filtros["hasta"] = hasta
-        if usuario is not None: filtros["usuario"] = usuario
-        if accion is not None: filtros["accion"] = accion
+        filtros = dict(request.query_params)
+        filtros.pop("formato", None)
 
         result = svc.ejecutar_consulta(consulta_id, filtros,
                                        _es_admin(usuario_actual), usuario_actual.usuario)

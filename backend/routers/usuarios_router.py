@@ -65,7 +65,11 @@ from backend.services.auth_service import (
 
 from backend.security.permissions import (
     requiere_permiso,
-    requiere_nivel   # 👈 FALTABA ESTO
+    requiere_nivel
+)
+
+from backend.services.auditoria_service import (
+    registrar_auditoria
 )
 
 # -----------------------------------
@@ -176,6 +180,21 @@ def listar_usuarios(
     logger.debug(
         f"Usuarios serializados: "
         f"{len(usuarios_response)}"
+    )
+
+    registrar_auditoria(
+        db=db,
+        usuario=usuario_actual.usuario,
+        accion="CONSULTA",
+        tabla="usuarios",
+        registro_id=None,
+        detalle=(
+            f"Listado de usuarios - "
+            f"total={resultado['total']}, "
+            f"page={resultado['page']}, "
+            f"search='{search}', "
+            f"rol='{rol}'"
+        )
     )
 
     return UsuariosListadoResponse(

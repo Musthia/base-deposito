@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../auth/authStore";
+import { usePermissions } from "../auth/usePermissions";
 import api from "../api/axiosClient";
 
 export default function Sidebar() {
@@ -10,13 +11,14 @@ export default function Sidebar() {
     const user = useAuthStore((s) => s.user);
     const logout = useAuthStore((s) => s.logout);
     const refreshToken = useAuthStore((s) => s.refreshToken);
+    const perms = usePermissions();
 
     const menu = [
         { label: "Dashboard", path: "/dashboard" },
-        { label: "Usuarios", path: "/usuarios" },
+        ...(perms.canViewUsers ? [{ label: "Usuarios", path: "/usuarios" }] : []),
         { label: "Consultar Bases", path: "/database" },
         { label: "Carga de Datos", path: "/carga-datos" },
-        { label: "Auditoria", path: "/auditoria" },
+        ...(perms.canViewAuditoria ? [{ label: "Auditoria", path: "/auditoria" }] : []),
         { label: "Reportes", path: "/reportes" }
     ];
 

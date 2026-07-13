@@ -21,3 +21,8 @@ export const actualizarRegistro = async (base, recordId, data, params = {}) => {
     const res = await api.patch(`/databases/${encodeURIComponent(base)}/records/${recordId}`, { data }, { params });
     return res.data;
 };
+
+export const eliminarRegistro = async (base, recordId, params = {}) => {
+    const res = await api.delete(`/databases/${encodeURIComponent(base)}/records/${recordId}`, { params });
+    return res.data;
+};

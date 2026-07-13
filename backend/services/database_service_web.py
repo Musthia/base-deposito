@@ -130,6 +130,18 @@ def obtener_columnas(base: str, tabla: str = "Datcorr_database") -> list:
         return [{"nombre": row[0], "tipo": row[1]} for row in result.fetchall()]
 
 
+def eliminar_registro(base: str, registro_id: int, tabla: str = "Datcorr_database"):
+    _validar_base(base)
+    schema = _schema_para_base(base)
+    sql = text(
+        f'DELETE FROM "{schema}"."{tabla}" WHERE "id_Datcorr_database" = :id_value'
+    )
+    with postgres_engine.begin() as conn:
+        result = conn.execute(sql, {"id_value": registro_id})
+        if result.rowcount == 0:
+            raise ValueError(f"Registro {registro_id} no encontrado en {base}")
+
+
 def insertar_registro(base: str, data: dict, tabla: str = "Datcorr_database") -> int:
     _validar_base(base)
     schema = _schema_para_base(base)

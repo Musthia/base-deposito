@@ -12,12 +12,18 @@ import {
     Tab,
     IconButton,
     Chip,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-import { listarBases, consultarBase, buscarEnBase } from "../services/databaseService";
+import { listarBases, consultarBase, buscarEnBase, eliminarRegistro } from "../services/databaseService";
 import EditRecordModal from "../components/modals/EditRecordModal";
 import { useTabs } from "../context/TabContext";
 
@@ -28,6 +34,7 @@ export default function DatabasePage() {
     const [loading, setLoading] = useState(false);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
+    const [deleteDialog, setDeleteDialog] = useState({ open: false, base: "", idRegistro: null, claveTab: "", row: null });
     const { tabs, tabIndex, setTabIndex, agregarTab, cerrarTab, setTabs, actualizarFila } = useTabs();
 
     useEffect(() => {
@@ -133,10 +140,9 @@ export default function DatabasePage() {
         if (e.key === "Enter") handleBuscar();
     };
 
-    const handleDoubleClick = (params) => {
+    const handleEditClick = (row) => {
         const tab = tabs[tabIndex];
-        if (!tab || tab.modo !== "BUSQUEDA") return;
-        const row = params.row;
+        if (!tab) return;
         const valores = tab.columnas.map((col) => row[col]);
         setEditData({
             base: tab.base,
@@ -146,6 +152,39 @@ export default function DatabasePage() {
             claveTab: tab.clave,
         });
         setEditModalOpen(true);
+    };
+
+    const handleDeleteClick = (row) => {
+        const tab = tabs[tabIndex];
+        if (!tab) return;
+        setDeleteDialog({
+            open: true,
+            base: tab.base,
+            idRegistro: row._idValue,
+            claveTab: tab.clave,
+            row,
+        });
+    };
+
+    const handleDeleteConfirm = async () => {
+        const { base, idRegistro, claveTab } = deleteDialog;
+        try {
+            await eliminarRegistro(base, idRegistro);
+            setDeleteDialog({ open: false, base: "", idRegistro: null, claveTab: "", row: null });
+            const tab = tabs.find((t) => t.clave === claveTab);
+            if (tab) {
+                const updated = await fetchPage(tab, tab.page, tab.pageSize);
+                setTabs((prev) =>
+                    prev.map((t) => (t.clave === claveTab ? { ...updated, clave: claveTab } : t))
+                );
+            }
+        } catch (err) {
+            console.error("Error eliminando registro:", err);
+        }
+    };
+
+    const handleDoubleClick = (params) => {
+        handleEditClick(params.row);
     };
 
     const handleEditSaved = (datos) => {
@@ -250,7 +289,43 @@ export default function DatabasePage() {
                         <DataGrid
                             key={tabActual?.clave}
                             rows={tabActual?.rows || []}
-                            columns={tabActual?.columns || []}
+                            columns={
+                                tabActual
+                                    ? [
+                                          {
+                                              field: "acciones",
+                                              headerName: "",
+                                              width: 80,
+                                              sortable: false,
+                                              renderCell: (params) => (
+                                                  <Box>
+                                                      <IconButton
+                                                          size="small"
+                                                          onClick={(e) => {
+                                                              e.stopPropagation();
+                                                              handleEditClick(params.row);
+                                                          }}
+                                                          title="Editar"
+                                                      >
+                                                          <EditIcon fontSize="small" />
+                                                      </IconButton>
+                                                      <IconButton
+                                                          size="small"
+                                                          onClick={(e) => {
+                                                              e.stopPropagation();
+                                                              handleDeleteClick(params.row);
+                                                          }}
+                                                          title="Eliminar"
+                                                      >
+                                                          <DeleteIcon fontSize="small" />
+                                                      </IconButton>
+                                                  </Box>
+                                              ),
+                                          },
+                                          ...tabActual.columns,
+                                      ]
+                                    : []
+                            }
                             loading={loading}
                             rowCount={tabActual?.total || 0}
                             paginationMode="server"
@@ -260,6 +335,12 @@ export default function DatabasePage() {
                             onRowDoubleClick={handleDoubleClick}
                             disableRowSelectionOnClick
                             disableExtendRowFullWidth
+                            slotProps={{
+                                basePagination: {
+                                    showFirstButton: true,
+                                    showLastButton: true,
+                                },
+                            }}
                             sx={{
                                 maxWidth: "100%",
                                 overflow: "hidden",
@@ -300,6 +381,34 @@ export default function DatabasePage() {
                     valores={editData.valores}
                 />
             )}
+
+            <Dialog
+                open={deleteDialog.open}
+                onClose={() => setDeleteDialog({ open: false, base: "", idRegistro: null, claveTab: "", row: null })}
+                maxWidth="xs"
+            >
+                <DialogTitle>Confirmar eliminacion</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        ¿Eliminar el registro <strong>#{deleteDialog.idRegistro}</strong>?
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Esta accion eliminara el registro de la base <strong>{deleteDialog.base}</strong> y quedara registrado en la auditoria.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() =>
+                            setDeleteDialog({ open: false, base: "", idRegistro: null, claveTab: "", row: null })
+                        }
+                    >
+                        Cancelar
+                    </Button>
+                    <Button variant="contained" color="error" onClick={handleDeleteConfirm}>
+                        Eliminar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

@@ -1,8 +1,9 @@
 import logging
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends, HTTPException
 from sqlalchemy import text
 
 from database.conexion import engine as postgres_engine
+from backend.security.jwt_bearer import obtener_usuario_actual
 
 router = APIRouter(tags=["dashboard"])
 
@@ -64,7 +65,10 @@ def dashboard_stats():
 def listar_auditoria(
     page: int = Query(1, ge=1),
     limit: int = Query(50, ge=1, le=200),
+    usuario_actual=Depends(obtener_usuario_actual),
 ):
+    if not usuario_actual.es_superusuario and usuario_actual.nivel_seguridad < 10:
+        raise HTTPException(status_code=403, detail="Sin permisos para ver auditoria.")
     offset = (page - 1) * limit
     with postgres_engine.connect() as conn:
         total = conn.execute(

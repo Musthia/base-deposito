@@ -19,12 +19,15 @@ export const usePermissions = () => {
     const nivel = user.nivel ?? 0;
     const isSuper = user.superusuario ?? false;
 
+    const isAdmin = isSuper || nivel >= 10;
+
     return {
 
-        canViewUsers: true,
+        canViewUsers: isAdmin,
+        canViewAuditoria: isAdmin,
 
-        canCreateUser: isSuper || nivel >= 10,
-        canEditUser: isSuper || nivel >= 10,
+        canCreateUser: isAdmin,
+        canEditUser: isAdmin,
         canDeleteUser: isSuper,
 
         showNivelColumn: isSuper || nivel >= 5,

@@ -63,3 +63,8 @@ class CrearRegistroResponse(BaseModel):
     success: bool
     mensaje: str
     registro_id: Optional[int] = None
+
+
+class EliminarResponse(BaseModel):
+    success: bool
+    mensaje: str

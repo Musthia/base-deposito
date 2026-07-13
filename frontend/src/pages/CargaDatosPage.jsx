@@ -23,9 +23,15 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { listarBases } from "../services/databaseService";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { listarBases, actualizarRegistro, eliminarRegistro } from "../services/databaseService";
 import api from "../api/axiosClient";
 
 const STORAGE_KEY = "datcorr_carga_tabs";
@@ -34,6 +40,7 @@ const CAMPOS_EXCLUIDOS = new Set([
     "id_Datcorr_database",
     "registro",
 ]);
+const CAMPOS_NO_EDITABLES = new Set(["id_datcorr_database", "id_Datcorr_database", "registro"]);
 
 function loadTabs() {
     try {
@@ -57,7 +64,10 @@ export default function CargaDatosPage() {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-    const nuevaBaseRef = useRef("");
+
+    const [editDialog, setEditDialog] = useState({ open: false, registro: null, idx: null });
+    const [editForm, setEditForm] = useState({});
+    const [deleteDialog, setDeleteDialog] = useState({ open: false, registro: null, idx: null });
 
     useEffect(() => {
         listarBases().then(setBases).catch(console.error);
@@ -121,10 +131,7 @@ export default function CargaDatosPage() {
         actualizarTabs((prev) =>
             prev.map((t, i) => {
                 if (i !== tabIndex) return t;
-                return {
-                    ...t,
-                    formValues: { ...t.formValues, [name]: value },
-                };
+                return { ...t, formValues: { ...t.formValues, [name]: value } };
             })
         );
     }, [tabIndex, actualizarTabs]);
@@ -143,7 +150,7 @@ export default function CargaDatosPage() {
             const res = await api.post(`/databases/${encodeURIComponent(tabActual.base)}/records`, { data });
             const registroId = res.data?.registro_id;
             const resumen = { ...tabActual.formValues };
-            const primerasCols = tabActual.columnas.slice(0, 3).map((c) => c.nombre);
+            const todasLasCols = tabActual.columnas.map((c) => c.nombre);
             setSnackbar({ open: true, message: "Registro creado correctamente", severity: "success" });
             const initial = {};
             tabActual.columnas.forEach((c) => { initial[c.nombre] = ""; });
@@ -154,12 +161,7 @@ export default function CargaDatosPage() {
                         ...t,
                         formValues: initial,
                         registrosCreados: [
-                            {
-                                id: registroId,
-                                timestamp: new Date().toLocaleString("es-AR"),
-                                datos: resumen,
-                                primerasCols,
-                            },
+                            { id: registroId, timestamp: new Date().toLocaleString("es-AR"), datos: resumen, todasLasCols },
                             ...t.registrosCreados,
                         ],
                     };
@@ -173,8 +175,81 @@ export default function CargaDatosPage() {
         }
     };
 
+    const abrirEditar = (registro, idx) => {
+        setEditForm({ ...registro.datos });
+        setEditDialog({ open: true, registro, idx });
+    };
+
+    const cerrarEditar = () => {
+        setEditDialog({ open: false, registro: null, idx: null });
+        setEditForm({});
+    };
+
+    const guardarEdicion = async () => {
+        const { registro, idx } = editDialog;
+        if (!tabActual || !registro) return;
+        try {
+            const data = {};
+            tabActual.columnas.forEach((c) => {
+                if (!CAMPOS_NO_EDITABLES.has(c.nombre.toLowerCase())) {
+                    data[c.nombre] = editForm[c.nombre] || "";
+                }
+            });
+            await actualizarRegistro(tabActual.base, registro.id, data);
+            setSnackbar({ open: true, message: "Registro actualizado correctamente", severity: "success" });
+            actualizarTabs((prev) =>
+                prev.map((t, i) => {
+                    if (i !== tabIndex) return t;
+                    const updated = [...t.registrosCreados];
+                    if (updated[idx]) {
+                        updated[idx] = { ...updated[idx], datos: { ...updated[idx].datos, ...data } };
+                    }
+                    return { ...t, registrosCreados: updated };
+                })
+            );
+            cerrarEditar();
+        } catch (err) {
+            console.error("Error actualizando registro:", err);
+            setSnackbar({ open: true, message: "Error al actualizar registro", severity: "error" });
+        }
+    };
+
+    const abrirConfirmarEliminar = (registro, idx) => {
+        setDeleteDialog({ open: true, registro, idx });
+    };
+
+    const cerrarConfirmarEliminar = () => {
+        setDeleteDialog({ open: false, registro: null, idx: null });
+    };
+
+    const confirmarEliminar = async () => {
+        const { registro, idx } = deleteDialog;
+        if (!tabActual || !registro) return;
+        try {
+            await eliminarRegistro(tabActual.base, registro.id);
+            setSnackbar({ open: true, message: "Registro eliminado correctamente", severity: "success" });
+            actualizarTabs((prev) =>
+                prev.map((t, i) => {
+                    if (i !== tabIndex) return t;
+                    return {
+                        ...t,
+                        registrosCreados: t.registrosCreados.filter((_, ri) => ri !== idx),
+                    };
+                })
+            );
+            cerrarConfirmarEliminar();
+        } catch (err) {
+            console.error("Error eliminando registro:", err);
+            setSnackbar({ open: true, message: "Error al eliminar registro", severity: "error" });
+        }
+    };
+
+    const colEditables = tabActual?.columnas.filter(
+        (c) => !CAMPOS_NO_EDITABLES.has(c.nombre.toLowerCase())
+    ) || [];
+
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, overflow: "hidden", maxWidth: "100%" }}>
             <Typography variant="h5" gutterBottom>
                 Carga de Datos
             </Typography>
@@ -278,17 +353,20 @@ export default function CargaDatosPage() {
 
             {tabActual && tabActual.registrosCreados?.length > 0 && (
                 <Paper sx={{ p: 2, mt: 2 }}>
-                    <Typography variant="subtitle2" gutterBottom>
-                        Registros creados en esta sesion ({tabActual.base})
-                    </Typography>
-                    <TableContainer sx={{ maxHeight: 300 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+                        <Typography variant="subtitle2">
+                            Registros creados en esta sesion — {tabActual.base}
+                        </Typography>
+                    </Box>
+                    <TableContainer sx={{ maxHeight: 400, overflow: "auto" }}>
                         <Table size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>#</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>Hora</TableCell>
-                                    {tabActual.registrosCreados[0]?.primerasCols?.map((col) => (
-                                        <TableCell key={col} sx={{ fontWeight: 600, fontSize: 12 }}>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>#</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>Hora</TableCell>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>Acciones</TableCell>
+                                    {tabActual.registrosCreados[0]?.todasLasCols?.map((col) => (
+                                        <TableCell key={col} sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>
                                             {col}
                                         </TableCell>
                                     ))}
@@ -298,9 +376,17 @@ export default function CargaDatosPage() {
                                 {tabActual.registrosCreados.map((r, i) => (
                                     <TableRow key={r.id || i}>
                                         <TableCell sx={{ fontSize: 12 }}>{r.id || "-"}</TableCell>
-                                        <TableCell sx={{ fontSize: 12 }}>{r.timestamp}</TableCell>
-                                        {r.primerasCols.map((col) => (
-                                            <TableCell key={col} sx={{ fontSize: 12, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                        <TableCell sx={{ fontSize: 12, whiteSpace: "nowrap" }}>{r.timestamp}</TableCell>
+                                        <TableCell>
+                                            <IconButton size="small" onClick={() => abrirEditar(r, i)} title="Editar">
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                            <IconButton size="small" onClick={() => abrirConfirmarEliminar(r, i)} title="Eliminar">
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
+                                        </TableCell>
+                                        {r.todasLasCols.map((col) => (
+                                            <TableCell key={col} sx={{ fontSize: 12, maxWidth: 250, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                                                 {r.datos[col] || ""}
                                             </TableCell>
                                         ))}
@@ -314,7 +400,7 @@ export default function CargaDatosPage() {
 
             {!loading && !tabActual && tabs.length === 0 && (
                 <Typography color="text.secondary">
-                    Seleccione una base de datos del menú de arriba para comenzar
+                    Seleccione una base de datos del menu de arriba para comenzar
                 </Typography>
             )}
 
@@ -327,6 +413,55 @@ export default function CargaDatosPage() {
                     {snackbar.message}
                 </Alert>
             </Snackbar>
+
+            {/* Edit Dialog */}
+            <Dialog open={editDialog.open} onClose={cerrarEditar} maxWidth="md" fullWidth>
+                <DialogTitle>
+                    Editar Registro #{editDialog.registro?.id}
+                    <IconButton onClick={cerrarEditar} sx={{ position: "absolute", right: 8, top: 8 }}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <Grid container spacing={2} sx={{ mt: 0.5 }}>
+                        {colEditables.map((col) => (
+                            <Grid item xs={12} sm={6} key={col.nombre}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label={col.nombre}
+                                    name={col.nombre}
+                                    value={editForm[col.nombre] || ""}
+                                    onChange={(e) =>
+                                        setEditForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+                                    }
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cerrarEditar}>Cancelar</Button>
+                    <Button variant="contained" onClick={guardarEdicion}>Guardar cambios</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Confirmation */}
+            <Dialog open={deleteDialog.open} onClose={cerrarConfirmarEliminar} maxWidth="xs">
+                <DialogTitle>Confirmar eliminacion</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        ¿Eliminar el registro #{deleteDialog.registro?.id} de <strong>{tabActual?.base}</strong>?
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Esta accion no se puede deshacer. Se eliminara de la base de datos y de la lista.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={cerrarConfirmarEliminar}>Cancelar</Button>
+                    <Button variant="contained" color="error" onClick={confirmarEliminar}>Eliminar</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

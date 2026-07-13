@@ -11,6 +11,7 @@ from backend.schemas.database_schema import (
     BusquedaResponse,
     ActualizarRequest,
     ActualizarResponse,
+    EliminarResponse,
     TablasResponse,
     ColumnasResponse,
     ColumnaInfo,
@@ -23,6 +24,7 @@ from backend.services.database_service_web import (
     consultar_base,
     buscar_en_base,
     actualizar_registro,
+    eliminar_registro,
     obtener_tablas,
     obtener_columnas,
     insertar_registro,
@@ -186,6 +188,26 @@ def actualizar(
                  registro_id=record_id,
                  detalle=f"Registro {record_id} actualizado en {base}: {campos}")
         return ActualizarResponse(success=True, mensaje="Registro actualizado correctamente")
+    except (ValueError, FileNotFoundError) as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/{base}/records/{record_id}", response_model=EliminarResponse)
+def eliminar(
+    request: Request,
+    base: str,
+    record_id: int,
+    table: str = Query("Datcorr_database"),
+):
+    try:
+        eliminar_registro(base, record_id, table)
+        usuario = _nombre_usuario(request)
+        _auditar(usuario, "DELETE", f"{MAPA_BASE_SCHEMA.get(base, base)}.{table}",
+                 registro_id=record_id,
+                 detalle=f"Registro {record_id} eliminado de {base}")
+        return EliminarResponse(success=True, mensaje="Registro eliminado correctamente")
     except (ValueError, FileNotFoundError) as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:

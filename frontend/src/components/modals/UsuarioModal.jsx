@@ -3,7 +3,11 @@ import {
     Box,
     Typography,
     Button,
-    TextField
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 } from "@mui/material";
 
 import { useState, useEffect } from "react";
@@ -146,23 +150,40 @@ export default function UsuarioModal({
                     onChange={handleChange}
                 />
 
-                <TextField
-                    margin="dense"
-                    label="Rol"
-                    name="rol"
-                    fullWidth
-                    value={form.rol}
-                    onChange={handleChange}
-                />
+                <FormControl fullWidth margin="dense">
+                    <InputLabel id="rol-label">Rol</InputLabel>
+                    <Select
+                        labelId="rol-label"
+                        label="Rol"
+                        name="rol"
+                        value={form.rol}
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="Administrador">Administrador</MenuItem>
+                        <MenuItem value="Supervisor">Supervisor</MenuItem>
+                        <MenuItem value="Operador">Operador</MenuItem>
+                        <MenuItem value="Consulta">Consulta</MenuItem>
+                    </Select>
+                </FormControl>
 
-                <TextField
-                    margin="dense"
-                    label="Nivel"
-                    name="nivel_seguridad"
-                    fullWidth
-                    value={form.nivel_seguridad}
-                    onChange={handleChange}
-                />
+                <FormControl fullWidth margin="dense">
+                    <InputLabel id="nivel-label">Nivel</InputLabel>
+                    <Select
+                        labelId="nivel-label"
+                        label="Nivel"
+                        name="nivel_seguridad"
+                        value={form.nivel_seguridad}
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={0}>0</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                        <MenuItem value={5}>5</MenuItem>
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={9999}>9999</MenuItem>
+                    </Select>
+                </FormControl>
 
             <Button onClick={handleSave}>
                 Guardar

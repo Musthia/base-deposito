@@ -2,6 +2,8 @@ from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QInputDial
 from PySide6.QtGui import QIcon
 import sys
 import logging
+from dotenv import load_dotenv
+load_dotenv()
 
 from services.permisos_service import (
     obtener_descripcion_nivel

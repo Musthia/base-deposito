@@ -71,6 +71,11 @@ class RefreshToken(Base):
         nullable=False
     )
 
+    last_activity = Column(
+        TIMESTAMP,
+        nullable=True
+    )
+
     created_at = Column(
 
         TIMESTAMP,

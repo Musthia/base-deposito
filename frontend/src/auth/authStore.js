@@ -1,37 +1,31 @@
 import { create } from "zustand";
 import { decodeToken } from "./jwt";
-import { parseJwt } from "./jwtUtils";
 
 const access = sessionStorage.getItem("access_token");
 
 export const useAuthStore = create((set) => ({
 
     accessToken: access,
-    refreshToken: sessionStorage.getItem("refresh_token"),
 
-    // 👇 RECONSTRUIR USER AUTOMÁTICAMENTE
+    // refresh_token vive en cookie HttpOnly — no se guarda en JS
     user: decodeToken(access),
 
-    setTokens: (access, refresh) => {
+    setTokens: (access) => {
 
         sessionStorage.setItem("access_token", access);
-        sessionStorage.setItem("refresh_token", refresh);
 
         set({
             accessToken: access,
-            refreshToken: refresh,
-            user: decodeToken(access) // 🔥 CLAVE
+            user: decodeToken(access)
         });
     },
 
     logout: () => {
 
         sessionStorage.removeItem("access_token");
-        sessionStorage.removeItem("refresh_token");
 
         set({
             accessToken: null,
-            refreshToken: null,
             user: null
         });
     }

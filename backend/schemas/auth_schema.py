@@ -67,7 +67,7 @@ class RefreshResponse(BaseModel):
 
 class RefreshRequest(BaseModel):
 
-    refresh_token: str
+    refresh_token: Optional[str] = None
 
 # -----------------------------------
 # LOGOUT
@@ -75,7 +75,7 @@ class RefreshRequest(BaseModel):
 
 class LogoutRequest(BaseModel):
 
-    refresh_token: str
+    refresh_token: Optional[str] = None
 
 
 class LogoutResponse(BaseModel):

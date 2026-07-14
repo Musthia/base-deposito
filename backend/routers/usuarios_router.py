@@ -5,7 +5,8 @@ from fastapi import (
     Depends,
     HTTPException,
     Request,
-    Query
+    Query,
+    Response
 )
 
 from backend.schemas.usuario_schema import (
@@ -27,6 +28,8 @@ from backend.services.usuarios_service import (
 from backend.security.jwt_bearer import (
     obtener_usuario_actual
 )
+
+from backend.security.jwt_manager import set_refresh_cookie
 
 from backend.security.permissions import (
     requiere_permiso
@@ -472,16 +475,25 @@ def desactivar_usuario(
 
 def refresh_token(
 
-    datos: RefreshRequest,
+    request: Request,
 
-    db: Session = Depends(get_db)
+    response: Response,
+
+    db: Session = Depends(get_db),
+
+    datos: RefreshRequest = None
 ):
+
+    refresh_token_str = request.cookies.get("refresh_token") or (getattr(datos, "refresh_token", None) if datos else None)
+
+    if not refresh_token_str:
+        raise HTTPException(status_code=401, detail="Refresh token requerido.")
 
     resultado = refresh_access_token(
 
         db=db,
 
-        refresh_token=datos.refresh_token
+        refresh_token=refresh_token_str
     )
 
     # -------------------------
@@ -500,6 +512,8 @@ def refresh_token(
     # -------------------------
     # OK
     # -------------------------
+
+    set_refresh_cookie(response, resultado["refresh_token"])
 
     return RefreshResponse(
 

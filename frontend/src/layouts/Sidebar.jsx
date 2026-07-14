@@ -10,7 +10,6 @@ export default function Sidebar() {
 
     const user = useAuthStore((s) => s.user);
     const logout = useAuthStore((s) => s.logout);
-    const refreshToken = useAuthStore((s) => s.refreshToken);
     const perms = usePermissions();
 
     const menu = [
@@ -24,9 +23,7 @@ export default function Sidebar() {
 
     const handleLogout = async () => {
         try {
-            if (refreshToken) {
-                await api.post("/auth/logout", { refresh_token: refreshToken });
-            }
+            await api.post("/auth/logout");
         } catch (err) {
             console.error("Logout error:", err);
         }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
     Box,
     Typography,
@@ -36,6 +36,8 @@ export default function DatabasePage() {
     const [editData, setEditData] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState({ open: false, base: "", idRegistro: null, claveTab: "", row: null });
     const { tabs, tabIndex, setTabIndex, agregarTab, cerrarTab, setTabs, actualizarFila } = useTabs();
+    const tabsRef = useRef(tabs);
+    tabsRef.current = tabs;
 
     useEffect(() => {
         listarBases().then(setBases).catch(console.error);
@@ -103,37 +105,42 @@ export default function DatabasePage() {
         setTabs((prev) => prev.map((t, i) => (i === tabIndex ? updated : t)));
     }, [tabs, tabIndex, fetchPage, setTabs]);
 
-    const handleConsultar = async () => {
-        if (!baseActual) return;
+    const encontrarOCrearTab = async (base, modo, criterio) => {
         setLoading(true);
         try {
             const params = { page: 1, limit: 50 };
-            const data = await consultarBase(baseActual, params);
-            const tab = construirTab(baseActual, "CONSULTA", data.columnas, data.registros, data.total, 0, 50);
-            agregarTab(tab);
-            setTabIndex(tabs.length);
-        } catch (err) {
-            console.error("Error consultando:", err);
+            let data;
+            if (modo === "BUSQUEDA") {
+                data = await buscarEnBase(base, criterio, params);
+            } else {
+                data = await consultarBase(base, params);
+            }
+            const tab = construirTab(base, modo, data.columnas, data.registros, data.total, 0, 50);
+            if (modo === "BUSQUEDA") tab._criterio = criterio;
+            const current = tabsRef.current;
+            const idx = current.findIndex((t) =>
+                t.base === base && t.modo === modo && (modo !== "BUSQUEDA" || t._criterio === criterio)
+            );
+            if (idx >= 0) {
+                setTabs((prev) => prev.map((t, i) => (i === idx ? { ...tab, clave: t.clave } : t)));
+                setTabIndex(idx);
+            } else {
+                agregarTab(tab);
+                setTabIndex(current.length);
+            }
         } finally {
             setLoading(false);
         }
     };
 
+    const handleConsultar = async () => {
+        if (!baseActual) return;
+        await encontrarOCrearTab(baseActual, "CONSULTA");
+    };
+
     const handleBuscar = async () => {
         if (!baseActual || !criterio.trim()) return;
-        setLoading(true);
-        try {
-            const params = { page: 1, limit: 50 };
-            const data = await buscarEnBase(baseActual, criterio.trim(), params);
-            const tab = construirTab(baseActual, "BUSQUEDA", data.columnas, data.registros, data.total, 0, 50);
-            tab._criterio = criterio.trim();
-            agregarTab(tab);
-            setTabIndex(tabs.length);
-        } catch (err) {
-            console.error("Error buscando:", err);
-        } finally {
-            setLoading(false);
-        }
+        await encontrarOCrearTab(baseActual, "BUSQUEDA", criterio.trim());
     };
 
     const handleKeyDown = (e) => {

@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request
 from fastapi.responses import JSONResponse
@@ -5,7 +6,7 @@ from fastapi.responses import JSONResponse
 from jose import jwt, JWTError
 
 from backend.database.conexion import SessionLocal
-from backend.security.jwt_manager import SECRET_KEY, ALGORITHM
+from backend.security.jwt_manager import SECRET_KEY, ALGORITHM, INACTIVITY_MINUTES
 
 from backend.services.blacklist_service import token_esta_revocado
 from backend.services.auditoria_service import registrar_auditoria
@@ -119,7 +120,39 @@ class JWTMiddleware(BaseHTTPMiddleware):
                     )
 
                 # ===================================
-                # 8. INYECTAR USUARIO EN REQUEST
+                # 8. INACTIVITY CHECK + TRACKING
+                # ===================================
+
+                from database.modelos import Usuario
+                from database.modelos_refresh import RefreshToken
+
+                user = db.query(Usuario).filter(Usuario.usuario == usuario).first()
+                if user:
+                    rt = db.query(RefreshToken).filter(
+                        RefreshToken.usuario_id == user.id,
+                        RefreshToken.revoked == False
+                    ).order_by(RefreshToken.id.desc()).first()
+
+                    if rt:
+                        ultima = rt.last_activity or rt.created_at
+                        if (datetime.now() - ultima).total_seconds() > INACTIVITY_MINUTES * 60:
+                            rt.revoked = True
+                            db.commit()
+                            registrar_auditoria(
+                                db=db, usuario=usuario, accion="SESSION_EXPIRED_INACTIVITY",
+                                tabla="auth", detalle=f"Inactividad > {INACTIVITY_MINUTES} min",
+                                token_jti=jti
+                            )
+                            return JSONResponse(
+                                status_code=401,
+                                content={"detail": "Sesión expirada por inactividad."}
+                            )
+
+                        rt.last_activity = datetime.now()
+                        db.commit()
+
+                # ===================================
+                # 9. INYECTAR USUARIO EN REQUEST
                 # ===================================
 
                 request.state.user = {
@@ -133,7 +166,7 @@ class JWTMiddleware(BaseHTTPMiddleware):
                 db.close()
 
         # ===================================
-        # 9. TOKEN INVÁLIDO
+        # 10. TOKEN INVÁLIDO
         # ===================================
 
         except JWTError:
@@ -145,7 +178,7 @@ class JWTMiddleware(BaseHTTPMiddleware):
             )
 
         # ===================================
-        # 10. ERROR INESPERADO
+        # 11. ERROR INESPERADO
         # ===================================
 
         except Exception as e:
@@ -157,7 +190,7 @@ class JWTMiddleware(BaseHTTPMiddleware):
             )
 
         # ===================================
-        # 11. CONTINUAR REQUEST
+        # 12. CONTINUAR REQUEST
         # ===================================
 
         return await call_next(request)

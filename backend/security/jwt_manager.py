@@ -1,4 +1,8 @@
+import os
+from dotenv import load_dotenv
 from jose import jwt, JWTError
+
+load_dotenv()
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -21,12 +25,16 @@ datetime.now(timezone.utc)
 
 security = HTTPBearer()
 
-SECRET_KEY = "DATCORR_SECRET_KEY"
-ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATCORR_SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "15"))
 
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
+
+COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() == "true"
+INACTIVITY_MINUTES = int(os.getenv("INACTIVITY_MINUTES", "30"))
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
 # -----------------------------------
 # CREAR TOKEN
@@ -318,14 +326,26 @@ def verificar_refresh_token(token):
             algorithms=[ALGORITHM]
         )
 
-        print("DEBUG PAYLOAD:", payload)
-
         if payload.get("type") != "refresh":
-            print("TOKEN NO ES REFRESH")
             return None
 
         return payload
 
-    except JWTError as e:
-        print("JWT ERROR:", str(e))
+    except JWTError:
         return None
+
+
+def set_refresh_cookie(response, refresh_token):
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite="strict",
+        path="/",
+        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 86400,
+    )
+
+
+def clear_refresh_cookie(response):
+    response.delete_cookie("refresh_token", path="/")

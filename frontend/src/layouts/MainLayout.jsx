@@ -1,8 +1,11 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { TabProvider } from "../context/TabContext";
+import { useIdleTimeout } from "../hooks/useIdleTimeout";
 
 export default function MainLayout() {
+    useIdleTimeout();
+
     return (
         <div style={{ display: "flex" }}>
             <Sidebar />

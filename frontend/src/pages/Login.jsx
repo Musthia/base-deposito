@@ -2,92 +2,75 @@ import { useState } from "react";
 import api from "../api/axiosClient";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../auth/authStore";
+import "./Login.css";
 
 export default function Login() {
-
     const navigate = useNavigate();
     const setTokens = useAuthStore((s) => s.setTokens);
 
     const [usuario, setUsuario] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
-        const res = await api.post("/auth/login", {
-            usuario,
-            password
-        });
-
-        const data = res.data;
-
-        setTokens(data.token, data.refresh_token);
-
-        navigate("/dashboard");
+        setError("");
+        setLoading(true);
+        try {
+            const res = await api.post("/auth/login", { usuario, password });
+            setTokens(res.data.token);
+            navigate("/dashboard");
+        } catch {
+            setError("Usuario o contraseña incorrectos.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div style={styles.container}>
+        <div className="login-page">
 
-            <form style={styles.form} onSubmit={handleLogin}>
+            {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="slideshow-slide" />
+            ))}
 
-                <h2>DatCorr Login</h2>
+            <form className="glass-card" onSubmit={handleLogin}>
+                <h2>DatCorr</h2>
 
-                <input 
-                    style={styles.input}
-                    placeholder="usuario" onChange={e => setUsuario(e.target.value)} />
-                    <input 
-                    style={styles.input}
-                    type="password" onChange={e => setPassword(e.target.value)} 
+                <label htmlFor="usuario-input">Usuario</label>
+                <input
+                    id="usuario-input"
+                    name="usuario"
+                    type="text"
+                    placeholder="usuario"
+                    autoComplete="username"
+                    value={usuario}
+                    onChange={(e) => setUsuario(e.target.value)}
                 />
 
-                <button style={styles.button}>
-                    Iniciar sesión
-                </button>
-        </form>
+                <label htmlFor="password-input">Contraseña</label>
+                <input
+                    id="password-input"
+                    name="password"
+                    type="password"
+                    placeholder="contraseña"
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
 
+                {error && <div className="login-error">{error}</div>}
+
+                <button type="submit" disabled={loading}>
+                    {loading ? "Ingresando…" : "Ingresar"}
+                </button>
+
+                <div className="trust-footer">
+                    <span>Conexión cifrada (TLS)</span>
+                    <span>Datos protegidos</span>
+                </div>
+            </form>
         </div>
     );
 }
-
-const styles = {
-
-    container: {
-        display: "flex",
-        height: "100vh",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#1e1e2f"
-    },
-
-    form: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-        padding: "30px",
-        background: "#2a2a3d",
-        borderRadius: "10px",
-        width: "300px",
-        color: "white"
-    },
-
-    input: {
-        padding: "10px",
-        borderRadius: "5px",
-        border: "none"
-    },
-
-    button: {
-        padding: "10px",
-        background: "#4f46e5",
-        color: "white",
-        border: "none",
-        borderRadius: "5px",
-        cursor: "pointer"
-    },
-
-    error: {
-        color: "red",
-        fontSize: "12px"
-    }
-};

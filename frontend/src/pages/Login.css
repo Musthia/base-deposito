@@ -1,0 +1,132 @@
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0f172a;
+  overflow: hidden;
+}
+
+/* === SLIDESHOW BACKGROUND === */
+
+.slideshow-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 2;
+  animation: crossfade 20s ease-in-out infinite;
+  z-index: 0;
+}
+
+.slideshow-slide:nth-child(1) { background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("/images/login/bg.webp"); }
+.slideshow-slide:nth-child(2) { background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("/images/login/dta_center.webp"); animation-delay: 4s; }
+.slideshow-slide:nth-child(3) { background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("/images/login/bandera_edificio.webp"); animation-delay: 8s; }
+.slideshow-slide:nth-child(4) { background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("/images/login/archivos.webp"); animation-delay: 12s; }
+.slideshow-slide:nth-child(5) { background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("/images/login/archiveros.webp"); animation-delay: 16s; }
+
+@keyframes crossfade {
+  0%, 100% { opacity: 0; }
+  4%       { opacity: 1; }
+  20%      { opacity: 1; }
+  24%      { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slideshow-slide {
+    animation: none;
+    opacity: 0;
+  }
+  .slideshow-slide:nth-child(1) { opacity: 1; }
+}
+
+/* === GLASS CARD === */
+
+.glass-card {
+  position: relative;
+  z-index: 1;
+  width: 320px;
+  max-width: 90vw;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  color: #f1f5f9;
+}
+
+.glass-card h2 {
+  margin: 0 0 20px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.glass-card label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #e2e8f0;
+}
+
+.glass-card input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  color: #f8fafc;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.glass-card input:focus {
+  border-color: #4f46e5;
+}
+
+.glass-card input::placeholder {
+  color: #94a3b8;
+}
+
+.glass-card button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #0a1f44;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.glass-card button:hover:not(:disabled) {
+  background: #1e3a5f;
+}
+
+.glass-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-error {
+  color: #fca5a5;
+  font-size: 13px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.trust-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+}

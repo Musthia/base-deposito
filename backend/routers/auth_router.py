@@ -3,7 +3,8 @@ from fastapi import (
     APIRouter,
     Depends,
     HTTPException,
-    Request
+    Request,
+    Response
 )
 
 from sqlalchemy.orm import Session
@@ -63,6 +64,8 @@ from backend.security.jwt_bearer import (
     obtener_usuario_actual
 )
 
+from backend.security.jwt_manager import set_refresh_cookie, clear_refresh_cookie
+
 from backend.schemas.usuario_schema import (
     UsuarioResponse
 )
@@ -99,6 +102,8 @@ def login(
     request: Request,
 
     datos: LoginRequest,
+
+    response: Response,
 
     db: Session = Depends(get_db)
 ):
@@ -200,6 +205,8 @@ def login(
     # RESPONSE
     # -----------------------------------
 
+    set_refresh_cookie(response, resultado["refresh_token"])
+
     return LoginResponse(
 
         success=True,
@@ -228,19 +235,26 @@ def login(
 
 def logout(
 
-    datos: LogoutRequest,
+    request: Request,
+
+    response: Response,
 
     credentials: HTTPAuthorizationCredentials = Depends(security),
 
+    datos: LogoutRequest = None,
+
     db: Session = Depends(get_db)
 ):
-    print("PASO 1")
+    refresh_token_str = request.cookies.get("refresh_token") or (datos.refresh_token if datos else None)
+
+    if not refresh_token_str:
+        raise HTTPException(status_code=401, detail="Refresh token requerido.")
 
     resultado = logout_usuario(
 
         db=db,
 
-        refresh_token=datos.refresh_token
+        refresh_token=refresh_token_str
     )
 
     # -----------------------------------
@@ -295,6 +309,8 @@ def logout(
     # -----------------------------------
     # OK
     # -----------------------------------
+
+    clear_refresh_cookie(response)
 
     return LogoutResponse(
 

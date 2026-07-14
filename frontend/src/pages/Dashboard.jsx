@@ -7,7 +7,6 @@ import { getDashboardStats } from "../services/dashboardService";
 export default function Dashboard() {
     const navigate = useNavigate();
     const logout = useAuthStore((s) => s.logout);
-    const refreshToken = useAuthStore((s) => s.refreshToken);
     const [stats, setStats] = useState(null);
 
     useEffect(() => {
@@ -18,9 +17,7 @@ export default function Dashboard() {
 
     const handleLogout = async () => {
         try {
-            if (refreshToken) {
-                await api.post("/auth/logout", { refresh_token: refreshToken });
-            }
+            await api.post("/auth/logout");
         } catch (err) {
             console.error("Logout error:", err);
         }

@@ -14,6 +14,7 @@ from backend.core.handlers import (
 )
 
 from backend.middleware.jwt_middleware import JWTMiddleware
+from backend.middleware.rate_limit_middleware import RateLimitMiddleware
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -51,6 +52,7 @@ app.add_middleware(
 # MIDDLEWARE GLOBAL JWT (FASE 6E)
 # -----------------------------------
 
+app.add_middleware(RateLimitMiddleware, max_attempts=5, window_seconds=300, ban_seconds=900)
 app.add_middleware(JWTMiddleware)
 
 # -----------------------------------

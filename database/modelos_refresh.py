@@ -9,7 +9,7 @@ from sqlalchemy import (
     text
 )
 
-from database.modelos import Base
+from database.conexion import Base
 
 # -----------------------------------
 # REFRESH TOKENS
@@ -73,6 +73,11 @@ class RefreshToken(Base):
 
     last_activity = Column(
         TIMESTAMP,
+        nullable=True
+    )
+
+    access_jti = Column(
+        String(255),
         nullable=True
     )
 

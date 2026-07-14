@@ -14,7 +14,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.attempts = defaultdict(list)
 
     async def dispatch(self, request: Request, call_next):
-        if request.url.path == "/auth/login" and request.method == "POST":
+        RUTAS_PROTEGIDAS = [
+            "/auth/login",
+            "/auth/forgot-password",
+            "/auth/reset-password",
+        ]
+        if request.url.path in RUTAS_PROTEGIDAS and request.method == "POST":
             ip = request.client.host if request.client else "unknown"
             now = time.time()
 
@@ -28,7 +33,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
             response = await call_next(request)
 
-            if response.status_code == 401:
+            if response.status_code in (401, 400):
                 self.attempts[ip].append(now)
 
             return response

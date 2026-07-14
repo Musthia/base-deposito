@@ -5,14 +5,14 @@
   <property name="enabled">
    <bool>true</bool>
   </property>
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>308</width>
-    <height>203</height>
-   </rect>
-  </property>
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>308</width>
+     <height>230</height>
+    </rect>
+   </property>
   <property name="focusPolicy">
    <enum>Qt::FocusPolicy::WheelFocus</enum>
   </property>
@@ -266,6 +266,32 @@ background-color: rgb(0, 127, 190);</string>
     </property>
     <property name="default">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="boton_recuperar_contrasena">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>180</y>
+      <width>201</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <familyset>Segoe UI</familyset>
+      <pointsize>9</pointsize>
+      <italic>true</italic>
+     </font>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent; color: rgb(200, 220, 255); text-decoration: underline; border: none;</string>
+    </property>
+    <property name="text">
+     <string>¿Olvidó su contraseña?</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_contrasena">
@@ -1376,8 +1402,9 @@ background-color: rgb(0, 127, 190);</string>
  <tabstops>
   <tabstop>entry_usuario</tabstop>
   <tabstop>entry_contrasena</tabstop>
-  <tabstop>boton_iniciar_sesion</tabstop>
- </tabstops>
+   <tabstop>boton_iniciar_sesion</tabstop>
+   <tabstop>boton_recuperar_contrasena</tabstop>
+  </tabstops>
  <resources>
   <include location="../img/fondo_ini_ses.qrc"/>
  </resources>

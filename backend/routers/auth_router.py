@@ -9,9 +9,19 @@ from fastapi import (
 
 from sqlalchemy.orm import Session
 
+from datetime import datetime, timezone
+
 from backend.database.conexion import (
     get_db
 )
+
+from backend.services.password_reset_service import (
+    solicitar_reset,
+    resetear_password,
+    enviar_email_reset,
+)
+
+from utils.hash import verificar_password, hash_password
 
 from backend.schemas.auth_schema import (
 
@@ -20,7 +30,10 @@ from backend.schemas.auth_schema import (
 
     LogoutRequest,
     LogoutResponse,
-    MeResponse
+    MeResponse,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    ChangePasswordRequest,
 )
 
 from database.modelos import (
@@ -57,7 +70,7 @@ from backend.services.blacklist_service import (
 
 from backend.security.jwt_manager import (
     SECRET_KEY,
-    ALGORITHM
+    ALGORITHM,
 )
 
 from backend.security.jwt_bearer import (
@@ -345,8 +358,60 @@ def get_current_user(
         usuario=usuario_actual.usuario,
         nombre=usuario_actual.nombre,
         apellido=usuario_actual.apellido,
+        email=usuario_actual.email,
         rol=usuario_actual.rol,
         nivel_seguridad=usuario_actual.nivel_seguridad,
         es_superusuario=usuario_actual.es_superusuario,
         permisos=permisos
     )
+
+
+# -----------------------------------
+# POST /auth/forgot-password
+# -----------------------------------
+
+@router.post("/forgot-password")
+def forgot_password(
+    body: ForgotPasswordRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    ip = request.client.host if request.client else None
+    token = solicitar_reset(db, body.email, ip)
+    if token:
+        enlace = f"{request.base_url}reset-password?token={token}"
+        enviar_email_reset(body.email, enlace)
+    return {"success": True, "mensaje": "Si el correo existe, recibirá instrucciones."}
+
+
+# -----------------------------------
+# POST /auth/reset-password
+# -----------------------------------
+
+@router.post("/reset-password")
+def reset_password(
+    body: ResetPasswordRequest,
+    db: Session = Depends(get_db),
+):
+    ok = resetear_password(db, body.token, body.nueva_password)
+    if not ok:
+        raise HTTPException(400, "Token inválido o expirado.")
+    return {"success": True, "mensaje": "Contraseña actualizada correctamente."}
+
+
+# -----------------------------------
+# PATCH /auth/change-password
+# -----------------------------------
+
+@router.patch("/change-password")
+def change_password(
+    body: ChangePasswordRequest,
+    usuario_actual=Depends(obtener_usuario_actual),
+    db: Session = Depends(get_db),
+):
+    if not verificar_password(body.actual, usuario_actual.password_hash):
+        raise HTTPException(400, "La contraseña actual no es correcta.")
+    usuario_actual.password_hash = hash_password(body.nueva)
+    usuario_actual.ultimo_cambio_password = datetime.now(timezone.utc)
+    db.commit()
+    return {"success": True, "mensaje": "Contraseña cambiada correctamente."}

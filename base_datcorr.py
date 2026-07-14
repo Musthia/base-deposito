@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication, QInputDialog, QLineEdit
 from PySide6.QtGui import QIcon
 import sys
 import logging
@@ -59,6 +59,9 @@ class InicioSesion(QMainWindow):
 
         self.ui.boton_iniciar_sesion.clicked.connect(
             self.validar_login
+        )
+        self.ui.boton_recuperar_contrasena.clicked.connect(
+            self.recuperar_contrasena
         )
 
     # ===================================
@@ -158,9 +161,51 @@ class InicioSesion(QMainWindow):
         # -----------------------------------
         
         initialize_postgres()   # <-- Inicializa el engine global
-    
+
         self.hide()
         self.ventana_principal = iniciar_aplicacion_principal()
+
+    # ===================================
+    # RECUPERAR CONTRASEÑA
+    # ===================================
+
+    def recuperar_contrasena(self):
+
+        email, ok = QInputDialog.getText(
+            self,
+            "Recuperar Contraseña",
+            "Ingrese su correo electrónico:",
+            QLineEdit.EchoMode.Normal
+        )
+
+        if not ok or not email:
+            return
+
+        resultado = self.api.post("/auth/forgot-password", {
+            "email": email.strip()
+        })
+
+        if resultado and resultado.get("success"):
+
+            QMessageBox.information(
+                self,
+                "Recuperar Contraseña",
+                "Si el correo está registrado, recibirá "
+                "un enlace para restablecer su contraseña."
+            )
+
+        else:
+
+            mensaje = resultado.get(
+                "mensaje",
+                "Error al enviar solicitud"
+            )
+
+            QMessageBox.critical(
+                self,
+                "Error",
+                mensaje
+            )
 
 
 # ===================================

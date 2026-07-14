@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axiosClient";
-import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../auth/authStore";
 import "./Login.css";
 
@@ -65,6 +65,12 @@ export default function Login() {
                 <button type="submit" disabled={loading}>
                     {loading ? "Ingresando…" : "Ingresar"}
                 </button>
+
+                <div style={{ marginTop: 10, textAlign: "center" }}>
+                    <Link to="/forgot-password" style={{ fontSize: "0.85rem" }}>
+                        ¿Olvidaste tu contraseña?
+                    </Link>
+                </div>
 
                 <div className="trust-footer">
                     <span>Conexión cifrada (TLS)</span>

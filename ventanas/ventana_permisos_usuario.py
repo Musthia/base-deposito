@@ -13,40 +13,7 @@ from ui.permisos_usuario_ui import (
     Ui_EditarUsuario
 )
 
-from services.permisos_service import (
-    listar_permisos
-)
-
-from services.usuarios_permisos_service import (
-    listar_permisos_usuario
-)
-
-from services.permisos_service import (
-    listar_permisos
-)
-
-from services.usuarios_permisos_service import (
-    obtener_permisos_usuario
-)
-
-from services.usuarios_permisos_service import (
-    asignar_permiso_usuario,
-    quitar_permiso_usuario
-)
-
-from PySide6.QtWidgets import (
-    QMessageBox
-)
-
-from PySide6.QtWidgets import (
-    QDialog
-)
-
-from ui.permisos_usuario_ui import (
-    Ui_EditarUsuario
-)
-
-import logging
+from core.session_manager import SessionManager
 
 from utils.user_helpers import get_usuario_attr
 
@@ -149,14 +116,10 @@ class VentanaPermisosUsuario(QDialog):
             f"{permiso}"
         )
 
-        resultado = (
-            asignar_permiso_usuario(
-                get_usuario_attr(
-                    self.usuario,
-                    "id"
-                ),
-                permiso
-            )
+        client = SessionManager.get_usuarios_client()
+        resultado = client.asignar_permiso(
+            get_usuario_attr(self.usuario, "id"),
+            permiso
         )
 
         if resultado["success"]:
@@ -202,14 +165,10 @@ class VentanaPermisosUsuario(QDialog):
             f"{permiso}"
         )
 
-        resultado = (
-            quitar_permiso_usuario(
-                get_usuario_attr(
-                    self.usuario,
-                    "id"
-                ),
-                permiso
-            )
+        client = SessionManager.get_usuarios_client()
+        resultado = client.quitar_permiso(
+            get_usuario_attr(self.usuario, "id"),
+            permiso
         )
 
         if resultado["success"]:
@@ -241,22 +200,23 @@ class VentanaPermisosUsuario(QDialog):
             f"{get_usuario_attr(self.usuario,'usuario')}"
         )
 
-        permisos_sistema = listar_permisos()
+        client = SessionManager.get_usuarios_client()
 
-        permisos_usuario = (
-            obtener_permisos_usuario(
-                get_usuario_attr(
-                    self.usuario,
-                    "id"
-                )
-            )
+        resultado_sistema = client.listar_permisos()
+        permisos_sistema = resultado_sistema.get(
+            "permisos", []
+        )
+
+        resultado_usuario = client.listar_permisos_usuario(
+            get_usuario_attr(self.usuario, "id")
+        )
+        permisos_usuario = resultado_usuario.get(
+            "permisos", []
         )
 
         codigos_usuario = [
-
-            permiso.codigo
-            for permiso
-            in permisos_usuario
+            p.get("codigo", "")
+            for p in permisos_usuario
         ]
 
         permisos_asignados = []
@@ -265,17 +225,15 @@ class VentanaPermisosUsuario(QDialog):
 
         for permiso in permisos_sistema:
 
-            if permiso.codigo in codigos_usuario:
+            codigo = permiso.get("codigo", "")
 
-                permisos_asignados.append(
-                    permiso.codigo
-                )
+            if codigo in codigos_usuario:
+
+                permisos_asignados.append(codigo)
 
             else:
 
-                permisos_disponibles.append(
-                    permiso.codigo
-                )
+                permisos_disponibles.append(codigo)
 
         self.model_disponibles = (
             QStringListModel()

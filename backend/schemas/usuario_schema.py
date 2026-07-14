@@ -5,6 +5,10 @@ from typing import (
     Optional
 )
 
+from backend.schemas.roles_schema import (
+    RolResponse
+)
+
 # -----------------------------------
 # RESPONSE USUARIO
 # -----------------------------------
@@ -15,10 +19,12 @@ class UsuarioResponse(BaseModel):
     nombre: str
     apellido: str
     usuario: str
+    email: Optional[str] = None
     rol: str
     nivel_seguridad: int
     activo: bool
     es_superusuario: bool
+    roles: List[RolResponse] = []
 
 
 # -----------------------------------
@@ -31,9 +37,11 @@ class UsuarioCreate(BaseModel):
     apellido: str
     usuario: str
     password: str
-    rol: str
-    nivel_seguridad: int
+    email: Optional[str] = None
+    rol: Optional[str] = "Consulta"
+    nivel_seguridad: int = 1
     activo: bool = True
+    roles_nombre: Optional[List[str]] = None
 
 
 # -----------------------------------
@@ -73,16 +81,15 @@ class UsuariosListadoResponse(
 # UPDATE USUARIO
 # -----------------------------------
 
-class UsuarioUpdate(
-
-    BaseModel
-):
+class UsuarioUpdate(BaseModel):
 
     nombre: Optional[str] = None
 
     apellido: Optional[str] = None
 
     usuario: Optional[str] = None
+
+    email: Optional[str] = None
 
     password: Optional[str] = None
 
@@ -91,6 +98,8 @@ class UsuarioUpdate(
     nivel_seguridad: Optional[int] = None
 
     activo: Optional[bool] = None
+
+    roles_nombre: Optional[List[str]] = None
 
 # -----------------------------------
 # RESPONSE UPDATE

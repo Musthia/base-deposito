@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(308, 203)
+        MainWindow.resize(308, 230)
         MainWindow.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
         MainWindow.setStyleSheet(u"background-color: rgb(0, 89, 134);")
         self.centralwidget = QWidget(MainWindow)
@@ -258,6 +258,19 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.entry_usuario, self.entry_contrasena)
         QWidget.setTabOrder(self.entry_contrasena, self.boton_iniciar_sesion)
 
+        self.boton_recuperar_contrasena = QPushButton(self.centralwidget)
+        self.boton_recuperar_contrasena.setObjectName(u"boton_recuperar_contrasena")
+        self.boton_recuperar_contrasena.setGeometry(QRect(80, 180, 201, 25))
+        font4 = QFont()
+        font4.setFamilies([u"Segoe UI"])
+        font4.setPointSize(9)
+        font4.setItalic(True)
+        self.boton_recuperar_contrasena.setFont(font4)
+        self.boton_recuperar_contrasena.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.boton_recuperar_contrasena.setStyleSheet(u"background-color: transparent; color: rgb(200, 220, 255); text-decoration: underline; border: none;")
+
+        QWidget.setTabOrder(self.boton_iniciar_sesion, self.boton_recuperar_contrasena)
+
         self.retranslateUi(MainWindow)
         self.entry_usuario.setFocus()
         self.entry_usuario.returnPressed.connect(self.entry_contrasena.setFocus)
@@ -275,5 +288,6 @@ class Ui_MainWindow(object):
         self.label_contrasena.setText(QCoreApplication.translate("MainWindow", u"Contrase\u00f1a", None))
         self.entry_contrasena.setText("")
         self.label_usuario.setText(QCoreApplication.translate("MainWindow", u"Usuario", None))
+        self.boton_recuperar_contrasena.setText(QCoreApplication.translate("MainWindow", u"\u00bfOlvid\u00f3 su contrase\u00f1a?", None))
     # retranslateUi
 

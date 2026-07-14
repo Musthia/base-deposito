@@ -9,13 +9,7 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem
 
 from ui.ventana_usuario import Ui_VentanaUsuarios
 
-# SOLO DICT EN FRONTEND
-from services.usuario_service import (
-    listar_usuarios_dict,
-    obtener_usuario_por_id_dict,
-    activar_usuario,
-    desactivar_usuario
-)
+from core.session_manager import SessionManager
 
 from ventanas.ventana_alta_usuario import VentanaAltaUsuario
 
@@ -158,6 +152,7 @@ class VentanaUsuarios(QDialog):
             "Nombre",
             "Apellido",
             "Usuario",
+            "Email",
             "Rol",
             "Nivel",
             "Activo"
@@ -180,7 +175,9 @@ class VentanaUsuarios(QDialog):
 
         try:
 
-            usuarios = listar_usuarios_dict()
+            client = SessionManager.get_usuarios_client()
+            resultado = client.listar_usuarios(limit=500)
+            usuarios = resultado.get("usuarios", [])
 
             for usuario in usuarios:
 
@@ -200,6 +197,10 @@ class VentanaUsuarios(QDialog):
 
                     QStandardItem(
                         str(get_usuario_attr(usuario, "usuario", ""))
+                    ),
+
+                    QStandardItem(
+                        str(get_usuario_attr(usuario, "email", ""))
                     ),
 
                     QStandardItem(
@@ -260,8 +261,12 @@ class VentanaUsuarios(QDialog):
             item_id.text()
         )
     
-        self.usuario_seleccionado = obtener_usuario_por_id_dict(
+        client = SessionManager.get_usuarios_client()
+        resultado = client.obtener_usuario(
             self.usuario_seleccionado_id
+        )
+        self.usuario_seleccionado = resultado.get(
+            "usuario", resultado
         )
     
         if not self.usuario_seleccionado:
@@ -294,7 +299,8 @@ class VentanaUsuarios(QDialog):
             f"{get_usuario_attr(self.usuario_seleccionado,'usuario')}"
         )
 
-        resultado = activar_usuario(
+        client = SessionManager.get_usuarios_client()
+        resultado = client.activar_usuario(
             get_usuario_attr(
                 self.usuario_seleccionado,
                 "id"
@@ -377,7 +383,8 @@ class VentanaUsuarios(QDialog):
 
             return
 
-        resultado = desactivar_usuario(
+        client = SessionManager.get_usuarios_client()
+        resultado = client.desactivar_usuario(
             get_usuario_attr(
                 self.usuario_seleccionado,
                 "id"

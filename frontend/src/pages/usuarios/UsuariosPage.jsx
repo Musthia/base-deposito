@@ -75,6 +75,7 @@ export default function UsuariosPage() {
         { field: "usuario", headerName: "Usuario", flex: 1 },
         { field: "nombre", headerName: "Nombre", flex: 1 },
         { field: "apellido", headerName: "Apellido", flex: 1 },
+        { field: "email", headerName: "Email", flex: 1 },
 
         ...(permissions.showRolColumn
             ? [{ field: "rol", headerName: "Rol", width: 150 }]

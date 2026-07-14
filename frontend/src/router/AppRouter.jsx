@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 import Dashboard from "../pages/Dashboard";
 import UsuariosPage from "../pages/usuarios/UsuariosPage";
 import DatabasePage from "../pages/DatabasePage";
@@ -18,6 +20,8 @@ export default function AppRouter() {
 
                 {/* PUBLICO */}
                 <Route path="/" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
 
                 {/* PRIVADO + LAYOUT ERP */}  
                 <Route

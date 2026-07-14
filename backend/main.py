@@ -6,6 +6,8 @@ from backend.routers.usuarios_router import router as usuarios_router
 from backend.routers.database_router import router as database_router
 from backend.routers.dashboard_router import router as dashboard_router
 from backend.routers.reportes_router import router as reportes_router
+from backend.routers.roles_router import router as roles_router
+from backend.routers.permisos_router import router as permisos_router
 
 from backend.core.exceptions import DatcorrException
 from backend.core.handlers import (
@@ -79,6 +81,8 @@ app.include_router(usuarios_router)
 app.include_router(database_router)
 app.include_router(dashboard_router)
 app.include_router(reportes_router)
+app.include_router(roles_router)
+app.include_router(permisos_router)
 
 # -----------------------------------
 # ROOT

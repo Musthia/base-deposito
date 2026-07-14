@@ -25,7 +25,14 @@ datetime.now(timezone.utc)
 
 security = HTTPBearer()
 
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "DATCORR_SECRET_KEY")
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not SECRET_KEY and ENVIRONMENT == "production":
+    raise RuntimeError("JWT_SECRET_KEY no configurado")
+if not SECRET_KEY:
+    SECRET_KEY = "DATCORR_SECRET_KEY"
+
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "15"))
@@ -34,7 +41,6 @@ REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
 
 COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() == "true"
 INACTIVITY_MINUTES = int(os.getenv("INACTIVITY_MINUTES", "30"))
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
 # -----------------------------------
 # CREAR TOKEN
@@ -164,28 +170,6 @@ def verificar_token(token):
 
         return payload
 
-        usuario = payload.get("sub")
-
-        usuario_db = (
-        
-            db.query(Usuario)
-
-            .filter(
-                Usuario.usuario == usuario
-            )
-
-            .first()
-        )
-
-        if not usuario_db:
-        
-            raise HTTPException(
-            
-                status_code=401,
-
-                detail="Usuario inexistente."
-            )
-
     except JWTError:
 
         return None
@@ -279,7 +263,7 @@ def crear_refresh_token(data):
 
     expire = (
 
-        datetime.utcnow()
+        datetime.now(timezone.utc)
 
         +
 

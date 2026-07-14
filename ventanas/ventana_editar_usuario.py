@@ -12,13 +12,7 @@ from ui.editar_usuario_ui import (
 
 from PySide6.QtCore import Signal
 
-from services.usuario_service import (
-    actualizar_usuario
-)
-
-from services.usuario_service import (
-    cambiar_password
-)
+from core.session_manager import SessionManager
 
 from config.app_config import (
     MODO_DESARROLLO
@@ -80,9 +74,10 @@ class VentanaEditarUsuario(QDialog):
 
         nueva_password = "Temp1234"
 
-        resultado = cambiar_password(
+        client = SessionManager.get_usuarios_client()
+        resultado = client.actualizar_usuario(
             get_usuario_attr(self.usuario, "id"),
-            nueva_password
+            {"password": nueva_password}
         )
 
         if resultado["success"]:
@@ -150,6 +145,7 @@ class VentanaEditarUsuario(QDialog):
         nombre = self.ui.lineEdit_nombre.text().strip()
         apellido = self.ui.lineEdit_apellido.text().strip()
         usuario_texto = self.ui.lineEdit_usuario.text().strip()
+        email = self.ui.lineEdit_email.text().strip()
         rol = self.ui.comboBox_rol.currentText()
         nivel = self.ui.spinBox_nivel.value()
         activo = self.ui.checkBox_activo.isChecked()
@@ -183,17 +179,23 @@ class VentanaEditarUsuario(QDialog):
         # ACTUALIZAR
         # -----------------------------------
 
-        resultado = actualizar_usuario(
+        client = SessionManager.get_usuarios_client()
+        data = {
+            "nombre": nombre,
+            "apellido": apellido,
+            "usuario": usuario_texto,
+            "rol": rol,
+            "nivel_seguridad": nivel,
+            "activo": activo
+        }
+        if email:
+            data["email"] = email
+        if password:
+            data["password"] = password
 
-            usuario_id=get_usuario_attr(self.usuario, "id"),
-
-            nombre=nombre,
-            apellido=apellido,
-            usuario=usuario_texto,
-            rol=rol,
-            nivel_seguridad=nivel,
-            activo=activo,
-            password=password
+        resultado = client.actualizar_usuario(
+            get_usuario_attr(self.usuario, "id"),
+            data
         )
 
         # -----------------------------------
@@ -241,6 +243,7 @@ class VentanaEditarUsuario(QDialog):
         self.ui.lineEdit_nombre.setText(get_usuario_attr(u, "nombre", ""))
         self.ui.lineEdit_apellido.setText(get_usuario_attr(u, "apellido", ""))
         self.ui.lineEdit_usuario.setText(get_usuario_attr(u, "usuario", ""))
+        self.ui.lineEdit_email.setText(get_usuario_attr(u, "email", ""))
         self.ui.comboBox_rol.setCurrentText(get_usuario_attr(u, "rol", ""))
         self.ui.spinBox_nivel.setValue(get_usuario_attr(u, "nivel_seguridad", 0))
         self.ui.checkBox_activo.setChecked(get_usuario_attr(u, "activo", True))

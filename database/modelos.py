@@ -24,11 +24,13 @@ from database.conexion import Base
 from database.modelos_refresh import (
     RefreshToken
 )
+from database.modelos_reset import (
+    PasswordResetToken
+)
 
-permisos = relationship(
-    "UsuarioPermiso",
-    back_populates="usuario",
-    cascade="all, delete-orphan"
+from database.modelos_roles import (
+    Rol,
+    UsuarioRol
 )
 
 # -----------------------------------
@@ -91,6 +93,32 @@ class Usuario(Base):
         default=False
     )
 
+    email = Column(
+        String(255),
+        unique=True,
+        nullable=True
+    )
+
+    ultimo_login = Column(
+        TIMESTAMP,
+        nullable=True
+    )
+
+    ultimo_cambio_password = Column(
+        TIMESTAMP,
+        nullable=True
+    )
+
+    intentos_fallidos = Column(
+        Integer,
+        default=0
+    )
+
+    bloqueado_hasta = Column(
+        TIMESTAMP,
+        nullable=True
+    )
+
     fecha_creacion = Column(
         TIMESTAMP,
         server_default=text("CURRENT_TIMESTAMP")
@@ -105,6 +133,11 @@ class Usuario(Base):
     usuario_permisos = relationship(
         "UsuarioPermiso",
         back_populates="usuario",
+        cascade="all, delete-orphan"
+    )
+
+    roles = relationship(
+        "UsuarioRol",
         cascade="all, delete-orphan"
     )
     

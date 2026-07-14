@@ -8,6 +8,7 @@ from utils.user_helpers import get_usuario_attr
 from core.api_client import ApiClient
 from core.api_database_client import ApiDatabaseClient
 from core.api_reportes_client import ApiReportesClient
+from core.api_usuarios_client import ApiUsuariosClient
 
 
 class SessionManager:
@@ -19,6 +20,7 @@ class SessionManager:
     _api_client = None
     _db_client = None
     _reportes_client = None
+    _usuarios_client = None
 
     # -----------------------------------
     # LOGIN
@@ -187,6 +189,7 @@ class SessionManager:
         cls._api_client = client
         cls._db_client = ApiDatabaseClient(client)
         cls._reportes_client = ApiReportesClient(client)
+        cls._usuarios_client = ApiUsuariosClient(client)
 
     @classmethod
     def get_api_client(cls) -> ApiClient:
@@ -199,3 +202,7 @@ class SessionManager:
     @classmethod
     def get_reportes_client(cls) -> ApiReportesClient:
         return cls._reportes_client
+
+    @classmethod
+    def get_usuarios_client(cls) -> ApiUsuariosClient:
+        return cls._usuarios_client

@@ -6,6 +6,8 @@ from sqlalchemy.exc import (
 
 from database.modelos import Usuario
 
+from database.modelos_roles import UsuarioRol
+
 from utils.hash import hash_password
 
 from backend.core.logger import logger
@@ -337,6 +339,8 @@ def crear_usuario_web(
                 datos.password
             ),
 
+            email=getattr(datos, 'email', None),
+
             rol=datos.rol,
 
             nivel_seguridad=(
@@ -347,6 +351,27 @@ def crear_usuario_web(
         )
 
         db.add(nuevo_usuario)
+
+        db.flush()
+
+        # -------------------------
+        # ROLES (normalizados)
+        # -------------------------
+
+        from backend.services.roles_service import (
+            asignar_rol_usuario
+        )
+
+        asignar_rol_usuario(
+            db, nuevo_usuario.id, datos.rol
+        )
+
+        if datos.roles_nombre:
+            for r in datos.roles_nombre:
+                if r != datos.rol:
+                    asignar_rol_usuario(
+                        db, nuevo_usuario.id, r
+                    )
 
         db.commit()
 
@@ -557,6 +582,10 @@ def actualizar_usuario_web(
 
         logger.warning(update_data)
 
+        roles_nombre = update_data.pop(
+            "roles_nombre", None
+        )
+
         for campo, valor in (
             update_data.items()
         ):
@@ -588,6 +617,38 @@ def actualizar_usuario_web(
                     usuario_db,
                     campo,
                     valor
+                )
+
+        # -------------------------
+        # ROLES (normalizados)
+        # -------------------------
+
+        if "rol" in update_data or roles_nombre:
+
+            from backend.services.roles_service import (
+                asignar_rol_usuario
+            )
+
+            roles_a_asignar = set()
+
+            if "rol" in update_data:
+                roles_a_asignar.add(
+                    update_data["rol"]
+                )
+
+            if roles_nombre:
+                roles_a_asignar.update(
+                    roles_nombre
+                )
+
+            db.query(UsuarioRol).filter(
+                UsuarioRol.usuario_id ==
+                usuario_db.id
+            ).delete()
+
+            for r in roles_a_asignar:
+                asignar_rol_usuario(
+                    db, usuario_db.id, r
                 )
 
         # -------------------------
@@ -1016,4 +1077,99 @@ def desactivar_usuario_web(
             "mensaje": (
                 "Error interno."
             )
+        }
+
+
+# -----------------------------------
+# REACTIVAR USUARIO
+# -----------------------------------
+
+def reactivar_usuario_web(
+
+    db: Session,
+
+    usuario_id: int,
+
+    usuario_actual: str
+):
+
+    logger.info(
+        f"Reactivando usuario "
+        f"ID={usuario_id}"
+    )
+
+    try:
+
+        usuario = db.query(Usuario).filter(
+            Usuario.id == usuario_id
+        ).first()
+
+        if not usuario:
+
+            logger.warning(
+                f"Usuario inexistente "
+                f"ID={usuario_id}"
+            )
+
+            return {
+                "success": False,
+                "mensaje": "Usuario no existe."
+            }
+
+        if usuario.activo:
+
+            logger.warning(
+                f"Usuario ya activo "
+                f"ID={usuario_id}"
+            )
+
+            return {
+                "success": False,
+                "mensaje": "Usuario ya esta activo."
+            }
+
+        usuario.activo = True
+
+        db.commit()
+
+        registrar_auditoria(
+
+            db=db,
+
+            usuario=usuario_actual,
+
+            accion="REACTIVATE",
+
+            tabla="usuarios",
+
+            registro_id=usuario.id,
+
+            detalle=(
+                f"Usuario reactivado: "
+                f"{usuario.usuario}"
+            )
+        )
+
+        logger.info(
+            f"Usuario reactivado "
+            f"ID={usuario_id}"
+        )
+
+        return {
+            "success": True,
+            "mensaje": "Usuario reactivado."
+        }
+
+    except Exception as e:
+
+        db.rollback()
+
+        logger.exception(
+            f"Error reactivar "
+            f"usuario: {e}"
+        )
+
+        return {
+            "success": False,
+            "mensaje": "Error interno."
         }

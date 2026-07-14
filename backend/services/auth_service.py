@@ -39,6 +39,8 @@ from backend.services.blacklist_service import (
     token_esta_revocado
 )
 
+from datetime import datetime, timezone, timedelta
+
 def login_usuario(
     usuario,
     password
@@ -64,11 +66,10 @@ def login_usuario(
 
             return {
                 "success": False,
-                "mensaje": "Usuario incorrecto."
+                "mensaje": "Credenciales inválidas."
             }
 
         logger.debug(f"USUARIO_DB_ID={usuario_db.id}")
-        #logger.debug(f"USUARIO_DB_USER={usuario_db.usuario}")
 
         logger.debug(
             f"ACTIVO={usuario_db.activo}"
@@ -81,6 +82,22 @@ def login_usuario(
                 "mensaje": "Usuario inactivo."
             }
 
+        # -----------------------------------
+        # BLOQUEO POR INTENTOS FALLIDOS
+        # -----------------------------------
+
+        MAX_ATTEMPTS = 5
+        BLOCK_MINUTES = 15
+
+        ahora = datetime.now(timezone.utc)
+
+        if usuario_db.bloqueado_hasta and usuario_db.bloqueado_hasta > ahora:
+            logger.warning(f"Cuenta bloqueada: {usuario_db.usuario}")
+            return {
+                "success": False,
+                "mensaje": "Cuenta bloqueada temporalmente por intentos fallidos."
+            }
+
         password_ok = verificar_password(
             password,
             usuario_db.password_hash
@@ -91,11 +108,27 @@ def login_usuario(
         )
 
         if not password_ok:
+            usuario_db.intentos_fallidos = (usuario_db.intentos_fallidos or 0) + 1
+            if usuario_db.intentos_fallidos >= MAX_ATTEMPTS:
+                usuario_db.bloqueado_hasta = ahora + timedelta(minutes=BLOCK_MINUTES)
+                logger.warning(f"Cuenta bloqueada tras {MAX_ATTEMPTS} intentos: {usuario_db.usuario}")
+                try:
+                    registrar_auditoria(db=session, usuario=usuario_db.usuario,
+                                       accion="CUENTA_BLOQUEADA",
+                                       tabla="auth",
+                                       detalle=f"Bloqueada por {BLOCK_MINUTES} min tras {MAX_ATTEMPTS} intentos fallidos")
+                except Exception:
+                    pass
+            session.commit()
 
             return {
                 "success": False,
-                "mensaje": "Password incorrecta."
+                "mensaje": "Credenciales inválidas."
             }
+
+        # éxito → resetear contador
+        usuario_db.intentos_fallidos = 0
+        usuario_db.bloqueado_hasta = None
 
         # -----------------------------------
         # ACCESS TOKEN
@@ -156,8 +189,16 @@ def login_usuario(
 
             expires_at=resultado_refresh[
                 "expires_at"
-            ]
+            ],
+
+            access_jti=resultado_token[
+                "jti"
+            ],
+
+            last_activity=datetime.now(timezone.utc)
         )
+
+        usuario_db.ultimo_login = datetime.now(timezone.utc)
 
         session.add(
             nuevo_refresh
@@ -400,7 +441,13 @@ def refresh_access_token(
 
             expires_at=nuevo_refresh[
                 "expires_at"
-            ]
+            ],
+
+            access_jti=nuevo_access[
+                "jti"
+            ],
+
+            last_activity=datetime.now(timezone.utc)
         )
 
         db.add(refresh_db)

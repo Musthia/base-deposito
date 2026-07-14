@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>306</height>
+    <width>420</width>
+    <height>340</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>20</x>
      <y>10</y>
-     <width>291</width>
-     <height>284</height>
+     <width>381</width>
+     <height>314</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -50,7 +50,7 @@
     <item row="7" column="1">
      <widget class="QLineEdit" name="lineEdit_usuario"/>
     </item>
-    <item row="12" column="3">
+    <item row="13" column="3">
      <widget class="QPushButton" name="pushButton_cancelar">
       <property name="text">
        <string>CANCELAR</string>
@@ -88,14 +88,14 @@
       </property>
      </widget>
     </item>
-    <item row="13" column="3">
+    <item row="14" column="3">
      <widget class="QPushButton" name="pushButton_reset_pass">
       <property name="text">
        <string>Reset Password</string>
       </property>
      </widget>
     </item>
-    <item row="12" column="1">
+    <item row="13" column="1">
      <widget class="QPushButton" name="pushButton_guardar">
       <property name="text">
        <string>GUARDAR</string>
@@ -128,6 +128,16 @@
     </item>
     <item row="7" column="3">
      <widget class="QComboBox" name="comboBox_rol"/>
+    </item>
+    <item row="4" column="1">
+     <widget class="QLabel" name="label_email_t">
+      <property name="text">
+       <string>Email</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="3">
+     <widget class="QLineEdit" name="lineEdit_email"/>
     </item>
    </layout>
   </widget>

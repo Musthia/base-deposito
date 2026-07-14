@@ -12,9 +12,7 @@ from ui.alta_usuario_ui import (
     Ui_Dialog
 )
 
-from services.usuario_service import (
-    crear_usuario
-)
+from core.session_manager import SessionManager
 
 
 class VentanaAltaUsuario(QDialog):
@@ -101,6 +99,12 @@ class VentanaAltaUsuario(QDialog):
             .strip()
         )
 
+        email = (
+            self.ui.lineEdit_email_alta
+            .text()
+            .strip()
+        )
+
         rol = (
             self.ui.comboBox_rol_alta
             .currentText()
@@ -150,26 +154,33 @@ class VentanaAltaUsuario(QDialog):
 
             return
 
+        if email and "@" not in email:
+
+            QMessageBox.warning(
+                self,
+                "Validación",
+                "Ingrese un email válido."
+            )
+
+            return
+
         # -----------------------------------
         # CREAR
         # -----------------------------------
 
-        resultado = crear_usuario(
-
-            nombre=nombre,
-
-            apellido=apellido,
-
-            usuario=usuario,
-
-            password=password,
-
-            rol=rol,
-
-            nivel_seguridad=nivel,
-
-            activo=activo
-        )
+        client = SessionManager.get_usuarios_client()
+        data = {
+            "nombre": nombre,
+            "apellido": apellido,
+            "usuario": usuario,
+            "password": password,
+            "rol": rol,
+            "nivel_seguridad": nivel,
+            "activo": activo
+        }
+        if email:
+            data["email"] = email
+        resultado = client.crear_usuario(data)
 
         # -----------------------------------
         # RESPUESTA

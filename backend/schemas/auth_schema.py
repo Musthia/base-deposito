@@ -91,7 +91,22 @@ class MeResponse(BaseModel):
     usuario: str
     nombre: str
     apellido: str
+    email: Optional[str] = None
     rol: str
     nivel_seguridad: int
     es_superusuario: bool
     permisos: List[str]
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    nueva_password: str
+
+
+class ChangePasswordRequest(BaseModel):
+    actual: str
+    nueva: str

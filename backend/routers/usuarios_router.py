@@ -18,11 +18,16 @@ from backend.schemas.usuario_schema import (
     UsuarioUpdateResponse
 )
 
+from backend.schemas.roles_schema import (
+    RolResponse
+)
+
 from backend.services.usuarios_service import (
     listar_usuarios_web,
     crear_usuario_web,
     actualizar_usuario_web,
-    desactivar_usuario_web
+    desactivar_usuario_web,
+    reactivar_usuario_web
 )
 
 from backend.security.jwt_bearer import (
@@ -64,6 +69,10 @@ from backend.schemas.auth_schema import (
 
 from backend.services.auth_service import (
     refresh_access_token
+)
+
+from backend.services.roles_service import (
+    obtener_roles_usuario
 )
 
 from backend.security.permissions import (
@@ -154,6 +163,10 @@ def listar_usuarios(
 
     for usuario in usuarios_db:
 
+        roles_usuario = obtener_roles_usuario(
+            db, usuario.id
+        )
+
         usuarios_response.append(
 
             UsuarioResponse(
@@ -166,6 +179,8 @@ def listar_usuarios(
 
                 usuario=usuario.usuario,
 
+                email=usuario.email,
+
                 rol=usuario.rol,
 
                 nivel_seguridad=(
@@ -176,7 +191,17 @@ def listar_usuarios(
 
                 es_superusuario=(
                     usuario.es_superusuario
-                )
+                ),
+
+                roles=[
+                    RolResponse(
+                        id=r.id,
+                        nombre=r.nombre,
+                        descripcion=r.descripcion,
+                        nivel_minimo=r.nivel_minimo
+                    )
+                    for r in roles_usuario
+                ]
             )
         )
 
@@ -213,6 +238,67 @@ def listar_usuarios(
         pages=resultado["pages"],
 
         usuarios=usuarios_response
+    )
+
+# -----------------------------------
+# OBTENER USUARIO POR ID
+# -----------------------------------
+
+@router.get(
+    "/{usuario_id}",
+    response_model=UsuarioResponse
+)
+
+def obtener_usuario_por_id(
+
+    usuario_id: int,
+
+    usuario_actual = Depends(
+        obtener_usuario_actual
+    ),
+
+    db: Session = Depends(
+        get_db
+    )
+):
+
+    logger.info(f"Obtener usuario ID={usuario_id}")
+
+    from database.modelos import Usuario
+
+    usuario = db.query(Usuario).filter(
+        Usuario.id == usuario_id
+    ).first()
+
+    if not usuario:
+        raise HTTPException(
+            status_code=404,
+            detail="Usuario no encontrado."
+        )
+
+    roles_usuario = obtener_roles_usuario(
+        db, usuario.id
+    )
+
+    return UsuarioResponse(
+        id=usuario.id,
+        nombre=usuario.nombre,
+        apellido=usuario.apellido,
+        usuario=usuario.usuario,
+        email=usuario.email,
+        rol=usuario.rol,
+        nivel_seguridad=usuario.nivel_seguridad,
+        activo=usuario.activo,
+        es_superusuario=usuario.es_superusuario,
+        roles=[
+            RolResponse(
+                id=r.id,
+                nombre=r.nombre,
+                descripcion=r.descripcion,
+                nivel_minimo=r.nivel_minimo
+            )
+            for r in roles_usuario
+        ]
     )
 
 # -----------------------------------
@@ -463,6 +549,57 @@ def desactivar_usuario(
     # -----------------------------
     # OK
     # -----------------------------
+
+    return resultado
+
+# -----------------------------------
+# REACTIVAR USUARIO
+# -----------------------------------
+
+@router.post(
+    "/{usuario_id}/reactivar"
+)
+
+def reactivar_usuario(
+
+    usuario_id: int,
+
+    usuario_actual=Depends(
+        obtener_usuario_actual
+    ),
+
+    db: Session = Depends(
+        get_db
+    )
+):
+
+    if (
+        not usuario_actual.es_superusuario
+        and
+        usuario_actual.nivel_seguridad < 10
+    ):
+
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Sin permisos "
+                "para reactivar usuarios."
+            )
+        )
+
+    resultado = reactivar_usuario_web(
+
+        db=db,
+        usuario_id=usuario_id,
+        usuario_actual=usuario_actual.usuario
+    )
+
+    if not resultado["success"]:
+
+        raise HTTPException(
+            status_code=400,
+            detail=resultado["mensaje"]
+        )
 
     return resultado
 

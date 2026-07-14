@@ -28,9 +28,10 @@ export default function UsuarioModal({
 
     const [form, setForm] = useState({
         usuario: "",
-        password: "",   // 👈 IMPORTANTE
+        password: "",
         nombre: "",
         apellido: "",
+        email: "",
         rol: "",
         nivel_seguridad: ""
     });
@@ -44,6 +45,7 @@ export default function UsuarioModal({
                 password: "",
                 nombre: usuario.nombre || "",
                 apellido: usuario.apellido || "",
+                email: usuario.email || "",
                 rol: usuario.rol || "",
                 nivel_seguridad: usuario.nivel_seguridad || ""
             });
@@ -55,6 +57,7 @@ export default function UsuarioModal({
                 password: "",
                 nombre: "",
                 apellido: "",
+                email: "",
                 rol: "",
                 nivel_seguridad: ""
             });
@@ -70,6 +73,7 @@ export default function UsuarioModal({
                 usuario: form.usuario,
                 nombre: form.nombre,
                 apellido: form.apellido,
+                email: form.email,
                 rol: form.rol,
                 nivel_seguridad: Number(form.nivel_seguridad)
             };
@@ -147,6 +151,16 @@ export default function UsuarioModal({
                     name="apellido"
                     fullWidth
                     value={form.apellido}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    margin="dense"
+                    label="Email"
+                    name="email"
+                    type="email"
+                    fullWidth
+                    value={form.email || ""}
                     onChange={handleChange}
                 />
 

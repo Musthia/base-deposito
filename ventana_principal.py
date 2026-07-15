@@ -1033,6 +1033,10 @@ class VentanaPrincipal(QMainWindow):
                             idx = model.index(row, col)
                             model.setData(idx, datos[key])
     
+                    proxy = tab["proxy"]
+                    proxy.invalidate()
+                    tab["tree"].viewport().update()
+    
                     return
 
     def actualizar_resaltado(self, texto):

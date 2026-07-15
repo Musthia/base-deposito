@@ -8,6 +8,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    Alert,
 } from "@mui/material";
 
 import { useState, useEffect } from "react";
@@ -16,6 +17,19 @@ import {
     actualizarUsuario,
     crearUsuario
 } from "../../services/usuariosService";
+
+const extraerMensaje = (err) => {
+    const data = err?.response?.data;
+    if (data) {
+        if (typeof data.detail === "string") {
+            return data.detail;
+        }
+        if (data.mensaje) {
+            return data.mensaje;
+        }
+    }
+    return err?.message || "Ocurrió un error al guardar el usuario.";
+};
 
 
 
@@ -35,6 +49,8 @@ export default function UsuarioModal({
         rol: "",
         nivel_seguridad: ""
     });
+
+    const [error, setError] = useState("");
 
     useEffect(() => {
 
@@ -63,6 +79,8 @@ export default function UsuarioModal({
             });
 
         }
+
+        setError("");
 
     }, [usuario]);
 
@@ -93,9 +111,10 @@ export default function UsuarioModal({
         
             onSave();   // solo refresca grid
             onClose();  // cierra modal
-        
+
         } catch (err) {
             console.error("ERROR CREANDO USUARIO:", err);
+            setError(extraerMensaje(err));
         }
     };
     
@@ -116,6 +135,16 @@ export default function UsuarioModal({
                 <Typography variant="h6">
                     {usuario ? "Editar Usuario" : "Nuevo Usuario"}
                 </Typography>
+
+                {error && (
+                    <Alert
+                        severity="error"
+                        sx={{ mt: 1, mb: 1 }}
+                        onClose={() => setError("")}
+                    >
+                        {error}
+                    </Alert>
+                )}
 
                 <TextField
                     margin="dense"

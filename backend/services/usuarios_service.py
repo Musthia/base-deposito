@@ -324,6 +324,41 @@ def crear_usuario_web(
             }
 
         # -------------------------
+        # EMAIL EXISTENTE
+        # -------------------------
+
+        if datos.email:
+
+            email_existente = (
+
+                db.query(Usuario)
+
+                .filter(
+                    Usuario.email ==
+                    datos.email
+                )
+
+                .first()
+            )
+
+            if email_existente:
+
+                logger.warning(
+                    f"Email duplicado: "
+                    f"{datos.email}"
+                )
+
+                return {
+
+                    "success": False,
+
+                    "mensaje": (
+                        "El correo ya está "
+                        "registrado."
+                    )
+                }
+
+        # -------------------------
         # CREAR USUARIO
         # -------------------------
 
@@ -536,7 +571,7 @@ def actualizar_usuario_web(
         } 
 
         # -------------------------
-        # VALIDAR DUPLICADO
+        # VALIDAR DUPLICADO USUARIO
         # -------------------------
 
         if datos.usuario:
@@ -569,6 +604,44 @@ def actualizar_usuario_web(
                     "mensaje": (
                         "Nombre usuario "
                         "ya existe."
+                    )
+                }
+
+        # -------------------------
+        # VALIDAR DUPLICADO EMAIL
+        # -------------------------
+
+        if datos.email:
+
+            email_existente = (
+
+                db.query(Usuario)
+
+                .filter(
+                    Usuario.email ==
+                    datos.email,
+
+                    Usuario.id != usuario_id
+                )
+
+                .first()
+            )
+
+            if email_existente:
+
+                logger.warning(
+                    f"Email duplicado: "
+                    f"{datos.email}"
+                )
+
+                return {
+
+                    "success": False,
+
+                    "mensaje": (
+                        "El correo ya está "
+                        "registrado por otro "
+                        "usuario."
                     )
                 }
 

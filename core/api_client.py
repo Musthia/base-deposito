@@ -130,4 +130,15 @@ class ApiClient:
                     method=original_req.method
                 )
                 return self._open(new_req)
+
+        if not isinstance(data, dict) or "success" not in data:
+            detail = data.get("detail") if isinstance(data, dict) else None
+            if detail is None:
+                detail = data if isinstance(data, str) else f"HTTP {status}"
+            data = {
+                "success": False,
+                "mensaje": detail,
+                "status": status
+            }
+
         return data

@@ -265,9 +265,7 @@ class VentanaUsuarios(QDialog):
         resultado = client.obtener_usuario(
             self.usuario_seleccionado_id
         )
-        self.usuario_seleccionado = resultado.get(
-            "usuario", resultado
-        )
+        self.usuario_seleccionado = resultado
     
         if not self.usuario_seleccionado:
         

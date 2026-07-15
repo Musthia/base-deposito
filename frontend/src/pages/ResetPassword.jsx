@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import api from "../api/axiosClient";
 import "./Login.css";
 
 export default function ResetPassword() {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
     const token = searchParams.get("token") || "";
 
     const [password, setPassword] = useState("");
@@ -13,6 +12,8 @@ export default function ResetPassword() {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -40,11 +41,21 @@ export default function ResetPassword() {
 
     if (!token) {
         return (
-            <div className="login-page">
+            <div className="login-page" role="main">
+                {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="slideshow-slide" />
+                ))}
                 <div className="glass-card" style={{ textAlign: "center" }}>
-                    <h2>Enlace inválido</h2>
-                    <p>El enlace no contiene un token de recuperación.</p>
-                    <Link to="/forgot-password">Solicitar nuevo</Link>
+                    <div className="login-header">
+                        <h1>Enlace inválido</h1>
+                        <p className="login-subtitle">El enlace no contiene un token de recuperación.</p>
+                    </div>
+                    <Link to="/forgot-password" className="forgot-link">Solicitar nuevo</Link>
+                    <div className="trust-footer">
+                        <span>Conexión cifrada (TLS)</span>
+                        <span>&bull;</span>
+                        <span>Datos protegidos</span>
+                    </div>
                 </div>
             </div>
         );
@@ -52,42 +63,118 @@ export default function ResetPassword() {
 
     if (success) {
         return (
-            <div className="login-page">
+            <div className="login-page" role="main">
+                {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="slideshow-slide" />
+                ))}
                 <div className="glass-card" style={{ textAlign: "center" }}>
-                    <h2>Contraseña actualizada</h2>
-                    <p>Ya puedes iniciar sesión con tu nueva contraseña.</p>
-                    <Link to="/">Ir al inicio</Link>
+                    <div className="login-header">
+                        <h1>Contraseña actualizada</h1>
+                        <p className="login-subtitle">Ya podés iniciar sesión con tu nueva contraseña.</p>
+                    </div>
+                    <Link to="/" className="forgot-link">Ir al inicio</Link>
+                    <div className="trust-footer">
+                        <span>Conexión cifrada (TLS)</span>
+                        <span>&bull;</span>
+                        <span>Datos protegidos</span>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="login-page">
-            <form className="glass-card" onSubmit={handleSubmit}>
-                <h2>Nueva contraseña</h2>
-                <label htmlFor="pw-input">Nueva contraseña</label>
-                <input
-                    id="pw-input"
-                    type="password"
-                    placeholder="mín. 6 caracteres"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <label htmlFor="confirm-input">Confirmar contraseña</label>
-                <input
-                    id="confirm-input"
-                    type="password"
-                    placeholder="repetir contraseña"
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                    required
-                />
-                {error && <div className="login-error">{error}</div>}
-                <button type="submit" disabled={loading}>
-                    {loading ? "Actualizando…" : "Actualizar contraseña"}
+        <div className="login-page" role="main">
+            {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="slideshow-slide" />
+            ))}
+
+            <form className="glass-card" onSubmit={handleSubmit} noValidate>
+                <div className="login-header">
+                    <h1>Nueva contraseña</h1>
+                    <p className="login-subtitle">Ingresá tu nueva contraseña</p>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="pw-input">Nueva contraseña</label>
+                    <div className="password-wrapper">
+                        <input
+                            id="pw-input"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="mín. 6 caracteres"
+                            autoComplete="new-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            aria-required="true"
+                            aria-invalid={!!error}
+                            disabled={loading}
+                        />
+                        <button
+                            type="button"
+                            className="toggle-password"
+                            onClick={() => setShowPassword(!showPassword)}
+                            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        >
+                            {showPassword ? "\u{1F441}" : "\u{1F441}\u200D\u{1F5E8}\uFE0F"}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="confirm-input">Confirmar contraseña</label>
+                    <div className="password-wrapper">
+                        <input
+                            id="confirm-input"
+                            name="confirm"
+                            type={showConfirm ? "text" : "password"}
+                            placeholder="repetir contraseña"
+                            autoComplete="new-password"
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
+                            required
+                            aria-required="true"
+                            aria-invalid={!!error}
+                            disabled={loading}
+                        />
+                        <button
+                            type="button"
+                            className="toggle-password"
+                            onClick={() => setShowConfirm(!showConfirm)}
+                            aria-label={showConfirm ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        >
+                            {showConfirm ? "\u{1F441}" : "\u{1F441}\u200D\u{1F5E8}\uFE0F"}
+                        </button>
+                    </div>
+                </div>
+
+                {error && (
+                    <div className="login-error" role="alert" aria-live="polite">
+                        {error}
+                    </div>
+                )}
+
+                <button
+                    type="submit"
+                    disabled={loading || !password.trim() || !confirm.trim()}
+                    className="login-button"
+                >
+                    {loading ? (
+                        <span className="spinner" aria-hidden="true" />
+                    ) : null}
+                    {loading ? "Actualizando\u2026" : "Actualizar contraseña"}
                 </button>
+
+                <div className="login-links">
+                    <Link to="/" className="forgot-link">Volver al inicio</Link>
+                </div>
+
+                <div className="trust-footer">
+                    <span>Conexión cifrada (TLS)</span>
+                    <span>&bull;</span>
+                    <span>Datos protegidos</span>
+                </div>
             </form>
         </div>
     );

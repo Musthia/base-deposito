@@ -39,7 +39,7 @@ from backend.services.blacklist_service import (
     token_esta_revocado
 )
 
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 
 def login_usuario(
     usuario,
@@ -53,7 +53,7 @@ def login_usuario(
         usuario_db = (
             session.query(Usuario)
             .filter(
-                Usuario.usuario == usuario
+                Usuario.usuario.ilike(usuario)
             )
             .first()
         )
@@ -89,7 +89,7 @@ def login_usuario(
         MAX_ATTEMPTS = 5
         BLOCK_MINUTES = 15
 
-        ahora = datetime.now(timezone.utc)
+        ahora = datetime.now()
 
         if usuario_db.bloqueado_hasta and usuario_db.bloqueado_hasta > ahora:
             logger.warning(f"Cuenta bloqueada: {usuario_db.usuario}")
@@ -195,10 +195,10 @@ def login_usuario(
                 "jti"
             ],
 
-            last_activity=datetime.now(timezone.utc)
+            last_activity=datetime.now()
         )
 
-        usuario_db.ultimo_login = datetime.now(timezone.utc)
+        usuario_db.ultimo_login = datetime.now()
 
         session.add(
             nuevo_refresh
@@ -447,7 +447,7 @@ def refresh_access_token(
                 "jti"
             ],
 
-            last_activity=datetime.now(timezone.utc)
+            last_activity=datetime.now()
         )
 
         db.add(refresh_db)

@@ -377,10 +377,15 @@ def forgot_password(
     db: Session = Depends(get_db),
 ):
     ip = request.client.host if request.client else None
+    import os
     token = solicitar_reset(db, body.email, ip)
     if token:
-        enlace = f"{request.base_url}reset-password?token={token}"
-        enviar_email_reset(body.email, enlace)
+        frontend_url = os.getenv("FRONTEND_URL", str(request.base_url).rstrip("/"))
+        enlace = f"{frontend_url}/reset-password?token={token}"
+        try:
+            enviar_email_reset(body.email, enlace)
+        except Exception:
+            pass
     return {"success": True, "mensaje": "Si el correo existe, recibirá instrucciones."}
 
 

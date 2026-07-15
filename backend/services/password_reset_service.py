@@ -82,13 +82,16 @@ def enviar_email_reset(destinatario: str, enlace: str):
     import smtplib
     from email.mime.text import MIMEText
 
+    # Siempre loguear el link (útil en desarrollo/producción como fallback)
+    logger.info(f"Reset link para {destinatario}: {enlace}")
+
     smtp_host = os.getenv("SMTP_HOST")
     smtp_port = os.getenv("SMTP_PORT", "587")
     smtp_user = os.getenv("SMTP_USER")
     smtp_pass = os.getenv("SMTP_PASS")
 
     if not smtp_host or not smtp_user:
-        logger.warning(f"SMTP no configurado. Reset link: {enlace}")
+        logger.warning(f"SMTP no configurado. El link solo está disponible en logs.")
         return
 
     msg = MIMEText(
@@ -108,4 +111,3 @@ def enviar_email_reset(destinatario: str, enlace: str):
         logger.info(f"Email de reset enviado a {destinatario}")
     except Exception as e:
         logger.error(f"Error enviando email a {destinatario}: {e}")
-        raise

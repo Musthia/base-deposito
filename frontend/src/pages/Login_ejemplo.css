@@ -121,6 +121,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   font-size: 22px;
   font-weight: 700;
   color: var(--color-primary);
@@ -173,17 +174,6 @@
   box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
 
-.metric-value {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-inverse);
-}
-
-.metric-label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-inverse-muted);
-}
-
 .metric-icon {
   font-size: 16px;
   opacity: 0.7;
@@ -193,6 +183,17 @@
 .metric-item:hover .metric-icon {
   opacity: 1;
   transform: scale(1.15);
+}
+
+.metric-value {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-inverse);
+}
+
+.metric-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-inverse-muted);
 }
 
 .brand-footer {

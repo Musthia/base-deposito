@@ -26,9 +26,18 @@ export default function Login() {
         setLoading(true);
 
         try {
-            const res = await api.post("/auth/login", { usuario, password });
-            setTokens(res.data.token);
-            navigate("/dashboard", { replace: true });
+            const res = await api.post("/auth/login", {
+                username: usuario,
+                password
+            });
+            const role = (res.data.user?.role || "").toLowerCase();
+            if (role === "consulta") {
+                const token = res.data.access_token;
+                window.location.href = "http://localhost:8000/simco/?token=" + encodeURIComponent(token);
+            } else {
+                setTokens(res.data.access_token);
+                navigate("/dashboard", { replace: true });
+            }
         } catch (err) {
             const mensaje = err.response?.data?.detail
                 || err.response?.data?.mensaje

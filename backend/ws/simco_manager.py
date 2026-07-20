@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import Optional, List
 from fastapi import WebSocket
 
 logger = logging.getLogger("datcorr")
@@ -24,7 +25,7 @@ class SimcoConnectionManager:
                 del self._connections[usuario_id]
         logger.debug(f"WS desconectado: usuario_id={usuario_id}")
 
-    async def broadcast_event(self, event: dict, roles: list[str] | None = None):
+    async def broadcast_event(self, event: dict, roles: Optional[List[str]] = None):
         """Envía un evento a todos los conectados, opcionalmente filtrado por roles."""
         disconnected = []
         for uid, conns in list(self._connections.items()):

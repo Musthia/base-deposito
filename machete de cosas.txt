@@ -1,3 +1,5 @@
+	permisos
+
 	"CONSULTAR"	"Consultar registros"
 	"EDITAR"	"Editar registros"
 	"ELIMINAR"	"Eliminar registros"
@@ -5,6 +7,7 @@
 	"IMPORTAR"	"Importar archivos"
 	"ADMIN_USUARIOS"	"Administrar usuarios"
 
+usuarios_permisos
 
 	1	1
 	1	6

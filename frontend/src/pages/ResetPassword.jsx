@@ -41,16 +41,11 @@ export default function ResetPassword() {
 
     if (!token) {
         return (
-            <div className="login-page" role="main">
-                {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="slideshow-slide" />
-                ))}
-                <div className="glass-card" style={{ textAlign: "center" }}>
-                    <div className="login-header">
-                        <h1>Enlace inválido</h1>
-                        <p className="login-subtitle">El enlace no contiene un token de recuperación.</p>
-                    </div>
-                    <Link to="/forgot-password" className="forgot-link">Solicitar nuevo</Link>
+            <div className="login-page">
+                <div className="glass-card">
+                    <h2>Enlace inválido</h2>
+                    <p>El enlace no contiene un token de recuperación.</p>
+                    <Link to="/forgot-password" className="form-link">Solicitar nuevo</Link>
                     <div className="trust-footer">
                         <span>Conexión cifrada (TLS)</span>
                         <span>&bull;</span>
@@ -63,16 +58,11 @@ export default function ResetPassword() {
 
     if (success) {
         return (
-            <div className="login-page" role="main">
-                {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="slideshow-slide" />
-                ))}
-                <div className="glass-card" style={{ textAlign: "center" }}>
-                    <div className="login-header">
-                        <h1>Contraseña actualizada</h1>
-                        <p className="login-subtitle">Ya podés iniciar sesión con tu nueva contraseña.</p>
-                    </div>
-                    <Link to="/" className="forgot-link">Ir al inicio</Link>
+            <div className="login-page">
+                <div className="glass-card">
+                    <h2>Contraseña actualizada</h2>
+                    <p>Ya podés iniciar sesión con tu nueva contraseña.</p>
+                    <Link to="/" className="form-link">Ir al inicio</Link>
                     <div className="trust-footer">
                         <span>Conexión cifrada (TLS)</span>
                         <span>&bull;</span>
@@ -84,98 +74,120 @@ export default function ResetPassword() {
     }
 
     return (
-        <div className="login-page" role="main">
-            {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="slideshow-slide" />
-            ))}
+        <div className="login-page">
+            <div className="login-container" role="main" aria-label="Nueva contraseña">
 
-            <form className="glass-card" onSubmit={handleSubmit} noValidate>
-                <div className="login-header">
-                    <h1>Nueva contraseña</h1>
-                    <p className="login-subtitle">Ingresá tu nueva contraseña</p>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="pw-input">Nueva contraseña</label>
-                    <div className="password-wrapper">
-                        <input
-                            id="pw-input"
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="mín. 6 caracteres"
-                            autoComplete="new-password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            aria-required="true"
-                            aria-invalid={!!error}
-                            disabled={loading}
-                        />
-                        <button
-                            type="button"
-                            className="toggle-password"
-                            onClick={() => setShowPassword(!showPassword)}
-                            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                        >
-                            {showPassword ? "\u{1F441}" : "\u{1F441}\u200D\u{1F5E8}\uFE0F"}
-                        </button>
+                <section className="login-brand" aria-label="Información institucional">
+                    <div className="brand-content">
+                        <div className="brand-logo" aria-hidden="true">D</div>
+                        <h1 className="brand-title">DatCorr</h1>
+                        <p className="brand-description">
+                            Digitalización, archivo y custodia segura de documentos institucionales.
+                        </p>
+                        <div className="brand-footer">
+                            <span className="status-dot" aria-hidden="true"></span>
+                            <span className="status-text">Sistema operativo</span>
+                        </div>
                     </div>
-                </div>
+                </section>
 
-                <div className="form-group">
-                    <label htmlFor="confirm-input">Confirmar contraseña</label>
-                    <div className="password-wrapper">
-                        <input
-                            id="confirm-input"
-                            name="confirm"
-                            type={showConfirm ? "text" : "password"}
-                            placeholder="repetir contraseña"
-                            autoComplete="new-password"
-                            value={confirm}
-                            onChange={(e) => setConfirm(e.target.value)}
-                            required
-                            aria-required="true"
-                            aria-invalid={!!error}
-                            disabled={loading}
-                        />
-                        <button
-                            type="button"
-                            className="toggle-password"
-                            onClick={() => setShowConfirm(!showConfirm)}
-                            aria-label={showConfirm ? "Ocultar contraseña" : "Mostrar contraseña"}
-                        >
-                            {showConfirm ? "\u{1F441}" : "\u{1F441}\u200D\u{1F5E8}\uFE0F"}
-                        </button>
+                <section className="login-form-panel" aria-label="Formulario de nueva contraseña">
+                    <div className="form-wrapper">
+
+                        <header className="form-header">
+                            <h2 className="form-title">Nueva contraseña</h2>
+                            <p className="form-subtitle">Ingresá tu nueva contraseña</p>
+                        </header>
+
+                        {error && (
+                            <div className="form-error" role="alert" aria-live="polite">
+                                <span className="form-error-icon" aria-hidden="true">&#9888;</span>
+                                {error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit} noValidate>
+
+                            <div className="form-group">
+                                <label htmlFor="pw-input" className="form-label">Nueva contraseña</label>
+                                <div className="password-wrapper">
+                                    <input
+                                        id="pw-input"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        className="form-input"
+                                        placeholder="mín. 6 caracteres"
+                                        autoComplete="new-password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        aria-required="true"
+                                        aria-invalid={!!error}
+                                        disabled={loading}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="toggle-password"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                    >
+                                        {showPassword ? "\u{1F441}" : "\u{1F441}\u200D\u{1F5E8}\uFE0F"}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="confirm-input" className="form-label">Confirmar contraseña</label>
+                                <div className="password-wrapper">
+                                    <input
+                                        id="confirm-input"
+                                        name="confirm"
+                                        type={showConfirm ? "text" : "password"}
+                                        className="form-input"
+                                        placeholder="repetir contraseña"
+                                        autoComplete="new-password"
+                                        value={confirm}
+                                        onChange={(e) => setConfirm(e.target.value)}
+                                        required
+                                        aria-required="true"
+                                        aria-invalid={!!error}
+                                        disabled={loading}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="toggle-password"
+                                        onClick={() => setShowConfirm(!showConfirm)}
+                                        aria-label={showConfirm ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                    >
+                                        {showConfirm ? "\u{1F441}" : "\u{1F441}\u200D\u{1F5E8}\uFE0F"}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="login-button"
+                                disabled={loading || !password.trim() || !confirm.trim()}
+                            >
+                                {loading ? <span className="spinner" aria-hidden="true" /> : null}
+                                {loading ? "Actualizando\u2026" : "Actualizar contraseña"}
+                            </button>
+                        </form>
+
+                        <div className="form-links">
+                            <Link to="/" className="form-link">Volver al inicio</Link>
+                        </div>
+
+                        <footer className="trust-footer">
+                            <span>Conexión cifrada (TLS)</span>
+                            <span>&bull;</span>
+                            <span>Datos protegidos</span>
+                        </footer>
+
                     </div>
-                </div>
+                </section>
 
-                {error && (
-                    <div className="login-error" role="alert" aria-live="polite">
-                        {error}
-                    </div>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={loading || !password.trim() || !confirm.trim()}
-                    className="login-button"
-                >
-                    {loading ? (
-                        <span className="spinner" aria-hidden="true" />
-                    ) : null}
-                    {loading ? "Actualizando\u2026" : "Actualizar contraseña"}
-                </button>
-
-                <div className="login-links">
-                    <Link to="/" className="forgot-link">Volver al inicio</Link>
-                </div>
-
-                <div className="trust-footer">
-                    <span>Conexión cifrada (TLS)</span>
-                    <span>&bull;</span>
-                    <span>Datos protegidos</span>
-                </div>
-            </form>
+            </div>
         </div>
     );
 }

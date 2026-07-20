@@ -25,16 +25,11 @@ export default function ForgotPassword() {
 
     if (sent) {
         return (
-            <div className="login-page" role="main">
-                {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="slideshow-slide" />
-                ))}
-                <div className="glass-card" style={{ textAlign: "center" }}>
-                    <div className="login-header">
-                        <h1>Revisa tu correo</h1>
-                        <p className="login-subtitle">Si el correo existe, recibirás instrucciones para restablecer tu contraseña.</p>
-                    </div>
-                    <Link to="/" className="forgot-link">Volver al inicio</Link>
+            <div className="login-page">
+                <div className="glass-card">
+                    <h2>Revisa tu correo</h2>
+                    <p>Si el correo existe, recibirás instrucciones para restablecer tu contraseña.</p>
+                    <Link to="/" className="form-link">Volver al inicio</Link>
                     <div className="trust-footer">
                         <span>Conexión cifrada (TLS)</span>
                         <span>&bull;</span>
@@ -46,60 +41,80 @@ export default function ForgotPassword() {
     }
 
     return (
-        <div className="login-page" role="main">
-            {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="slideshow-slide" />
-            ))}
+        <div className="login-page">
+            <div className="login-container" role="main" aria-label="Recuperación de contraseña">
 
-            <form className="glass-card" onSubmit={handleSubmit} noValidate>
-                <div className="login-header">
-                    <h1>Recuperar contraseña</h1>
-                    <p className="login-subtitle">Ingresá tu correo electrónico</p>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="email-input">Correo electrónico</label>
-                    <input
-                        id="email-input"
-                        name="email"
-                        type="email"
-                        placeholder="correo@empresa.com"
-                        autoComplete="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        aria-required="true"
-                        disabled={loading}
-                    />
-                </div>
-
-                {error && (
-                    <div className="login-error" role="alert" aria-live="polite">
-                        {error}
+                <section className="login-brand" aria-label="Información institucional">
+                    <div className="brand-content">
+                        <div className="brand-logo" aria-hidden="true">D</div>
+                        <h1 className="brand-title">DatCorr</h1>
+                        <p className="brand-description">
+                            Digitalización, archivo y custodia segura de documentos institucionales.
+                        </p>
+                        <div className="brand-footer">
+                            <span className="status-dot" aria-hidden="true"></span>
+                            <span className="status-text">Sistema operativo</span>
+                        </div>
                     </div>
-                )}
+                </section>
 
-                <button
-                    type="submit"
-                    disabled={loading || !email.trim()}
-                    className="login-button"
-                >
-                    {loading ? (
-                        <span className="spinner" aria-hidden="true" />
-                    ) : null}
-                    {loading ? "Enviando\u2026" : "Enviar"}
-                </button>
+                <section className="login-form-panel" aria-label="Formulario de recuperación">
+                    <div className="form-wrapper">
 
-                <div className="login-links">
-                    <Link to="/" className="forgot-link">Volver al inicio</Link>
-                </div>
+                        <header className="form-header">
+                            <h2 className="form-title">Recuperar contraseña</h2>
+                            <p className="form-subtitle">Ingresá tu correo electrónico</p>
+                        </header>
 
-                <div className="trust-footer">
-                    <span>Conexión cifrada (TLS)</span>
-                    <span>&bull;</span>
-                    <span>Datos protegidos</span>
-                </div>
-            </form>
+                        {error && (
+                            <div className="form-error" role="alert" aria-live="polite">
+                                <span className="form-error-icon" aria-hidden="true">&#9888;</span>
+                                {error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit} noValidate>
+                            <div className="form-group">
+                                <label htmlFor="email-input" className="form-label">Correo electrónico</label>
+                                <input
+                                    id="email-input"
+                                    name="email"
+                                    type="email"
+                                    className="form-input"
+                                    placeholder="correo@empresa.com"
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    aria-required="true"
+                                    disabled={loading}
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="login-button"
+                                disabled={loading || !email.trim()}
+                            >
+                                {loading ? <span className="spinner" aria-hidden="true" /> : null}
+                                {loading ? "Enviando\u2026" : "Enviar"}
+                            </button>
+                        </form>
+
+                        <div className="form-links">
+                            <Link to="/" className="form-link">Volver al inicio</Link>
+                        </div>
+
+                        <footer className="trust-footer">
+                            <span>Conexión cifrada (TLS)</span>
+                            <span>&bull;</span>
+                            <span>Datos protegidos</span>
+                        </footer>
+
+                    </div>
+                </section>
+
+            </div>
         </div>
     );
 }

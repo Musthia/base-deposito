@@ -1,0 +1,188 @@
+import { useState, useEffect, useCallback, Fragment } from "react";
+import {
+    Box, Typography, Button, Dialog, DialogTitle, DialogContent,
+    DialogActions, TextField, MenuItem, Chip, Paper,
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    CircularProgress, Snackbar, Alert,
+} from "@mui/material";
+import ReplyIcon from "@mui/icons-material/Reply";
+import { usePermissions } from "../../auth/usePermissions";
+import { listarPendientes, responderSolicitud } from "../../services/simco/respuestasService";
+
+const PALETTE = {
+    bgPage: "#f8fafc",
+    border: "#e2e8f0",
+    textMain: "#0f172a",
+    textMuted: "#64748b",
+    primary: "#0284c7",
+    success: "#16a34a",
+    warning: "#f59e0b",
+    danger: "#dc2626",
+};
+
+const ESTADOS_DOCUMENTO = [
+    { value: "existe", label: "Existe" },
+    { value: "no_existe", label: "No existe" },
+    { value: "retirado", label: "Retirado" },
+    { value: "no_localizado", label: "No localizado" },
+];
+
+export default function RespuestasTab() {
+    const perms = usePermissions();
+    const [pendientes, setPendientes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [openResponder, setOpenResponder] = useState(false);
+    const [selected, setSelected] = useState(null);
+    const [form, setForm] = useState({ estado_documento: "", observacion: "" });
+    const [snack, setSnack] = useState({ open: false, msg: "", severity: "info" });
+    const [sending, setSending] = useState(false);
+
+    const puedeResponder = perms.canViewReportes;
+
+    const cargar = useCallback(async () => {
+        try {
+            setLoading(true);
+            const data = await listarPendientes();
+            setPendientes(data.solicitudes || data);
+        } catch {
+            setPendientes([]);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => { cargar(); }, [cargar]);
+
+    const abrirResponder = (sol) => {
+        setSelected(sol);
+        setForm({ estado_documento: "", observacion: "" });
+        setOpenResponder(true);
+    };
+
+    const handleResponder = async () => {
+        if (!form.estado_documento) return;
+        try {
+            setSending(true);
+            await responderSolicitud({
+                solicitud_id: selected.id,
+                estado_documento: form.estado_documento,
+                observacion: form.observacion,
+            });
+            setSnack({ open: true, msg: "Respuesta registrada correctamente", severity: "success" });
+            setOpenResponder(false);
+            cargar();
+        } catch {
+            setSnack({ open: true, msg: "Error al registrar respuesta", severity: "error" });
+        } finally {
+            setSending(false);
+        }
+    };
+
+    return (
+        <Box>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+                Solicitudes Pendientes
+            </Typography>
+
+            {loading ? (
+                <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+                    <CircularProgress />
+                </Box>
+            ) : pendientes.length === 0 ? (
+                <Paper sx={{ p: 4, textAlign: "center", borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
+                    <Typography sx={{ color: PALETTE.textMuted }}>No hay solicitudes pendientes</Typography>
+                </Paper>
+            ) : (
+                <TableContainer component={Paper} sx={{ borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>CÓDIGO</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>TIPO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>IDENTIFICADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>DETALLE</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>SOLICITÓ</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>FECHA</TableCell>
+                                {puedeResponder && <TableCell sx={{ width: 100 }} />}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {pendientes.map((sol) => (
+                                <TableRow key={sol.id} hover>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 13 }}>{sol.codigo}</TableCell>
+                                    <TableCell sx={{ fontSize: 13 }}>{sol.tipo_documento}</TableCell>
+                                    <TableCell sx={{ fontSize: 13 }}>{sol.identificador_documento}</TableCell>
+                                    <TableCell sx={{ fontSize: 13, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sol.detalle}</TableCell>
+                                    <TableCell sx={{ fontSize: 13 }}>{sol.creado_por || "-"}</TableCell>
+                                    <TableCell sx={{ fontSize: 13, color: PALETTE.textMuted }}>
+                                        {sol.fecha_creacion ? new Date(sol.fecha_creacion).toLocaleDateString("es-AR") : "-"}
+                                    </TableCell>
+                                    {puedeResponder && (
+                                        <TableCell>
+                                            <Button
+                                                variant="contained"
+                                                size="small"
+                                                startIcon={<ReplyIcon />}
+                                                onClick={() => abrirResponder(sol)}
+                                                sx={{ fontSize: 12, textTransform: "none" }}
+                                            >
+                                                Responder
+                                            </Button>
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
+
+            <Dialog open={openResponder} onClose={() => setOpenResponder(false)} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ fontWeight: 600 }}>
+                    Responder Solicitud
+                    {selected && (
+                        <Typography variant="body2" sx={{ color: PALETTE.textMuted, mt: 0.5 }}>
+                            {selected.codigo} — {selected.detalle}
+                        </Typography>
+                    )}
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+                        <TextField
+                            select
+                            label="Estado del Documento"
+                            value={form.estado_documento}
+                            onChange={(e) => setForm({ ...form, estado_documento: e.target.value })}
+                            fullWidth
+                            required
+                        >
+                            {ESTADOS_DOCUMENTO.map((opt) => (
+                                <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            label="Observación"
+                            value={form.observacion}
+                            onChange={(e) => setForm({ ...form, observacion: e.target.value })}
+                            multiline
+                            rows={4}
+                            fullWidth
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenResponder(false)} color="inherit">Cancelar</Button>
+                    <Button variant="contained" onClick={handleResponder} disabled={!form.estado_documento || sending}>
+                        {sending ? "Guardando..." : "Confirmar Respuesta"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack({ ...snack, open: false })} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+                <Alert severity={snack.severity} variant="filled" sx={{ width: "100%" }}>
+                    {snack.msg}
+                </Alert>
+            </Snackbar>
+        </Box>
+    );
+}

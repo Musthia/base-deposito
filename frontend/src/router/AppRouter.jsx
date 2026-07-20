@@ -9,6 +9,8 @@ import DatabasePage from "../pages/DatabasePage";
 import CargaDatosPage from "../pages/CargaDatosPage";
 import AuditoriaPage from "../pages/AuditoriaPage";
 import ReportesPage from "../pages/ReportesPage";
+import SimcoPage from "../pages/simco/SimcoPage";
+import MensajesPage from "../pages/MensajesPage";
 
 import PrivateRoute from "../auth/PrivateRoute";
 import MainLayout from "../layouts/MainLayout";
@@ -37,6 +39,8 @@ export default function AppRouter() {
                     <Route path="/database" element={<DatabasePage />} />
                     <Route path="/carga-datos" element={<CargaDatosPage />} />
                     <Route path="/auditoria" element={<AuditoriaPage />} />
+                    <Route path="/simco" element={<SimcoPage />} />
+                    <Route path="/mensajes" element={<MensajesPage />} />
 
                 {/* fallback */}
                 <Route path="*" element={<Login />} />

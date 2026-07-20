@@ -12,13 +12,17 @@ export default function Sidebar() {
     const logout = useAuthStore((s) => s.logout);
     const perms = usePermissions();
 
-    const menu = [
+    const datcorrMenu = [
         { label: "Dashboard", path: "/dashboard" },
         ...(perms.canViewUsers ? [{ label: "Usuarios", path: "/usuarios" }] : []),
-        { label: "Consultar Bases", path: "/database" },
-        { label: "Carga de Datos", path: "/carga-datos" },
+        ...(perms.canViewDatabase ? [{ label: "Consultar Bases", path: "/database" }] : []),
+        ...(perms.canViewCargaDatos ? [{ label: "Carga de Datos", path: "/carga-datos" }] : []),
         ...(perms.canViewAuditoria ? [{ label: "Auditoria", path: "/auditoria" }] : []),
         ...(perms.canViewReportes ? [{ label: "Reportes", path: "/reportes" }] : []),
+    ];
+
+    const simcoMenu = [
+        ...(perms.canViewSimco ? [{ label: "Dashboard", path: "/simco" }] : []),
     ];
 
     const handleLogout = async () => {
@@ -35,6 +39,16 @@ export default function Sidebar() {
     const inicial = nombre.charAt(0).toUpperCase();
     const rol = user?.rol || "";
     const nivel = user?.nivel !== null && user?.nivel !== undefined ? `Nivel ${user.nivel}` : "";
+
+    const activeStyle = (path) => ({
+        padding: "10px 12px",
+        cursor: "pointer",
+        borderRadius: "6px",
+        marginBottom: "2px",
+        fontSize: 14,
+        background: location.pathname === path ? "#3f51b5" : "transparent",
+        transition: "background 0.15s",
+    });
 
     return (
         <aside style={{
@@ -53,23 +67,40 @@ export default function Sidebar() {
             }}>
                 <h3 style={{ margin: "0 0 16px 0", fontSize: 16, letterSpacing: "0.5px" }}>DATCORR ERP</h3>
 
-                {menu.map(item => (
+                {datcorrMenu.map(item => (
                     <div
                         key={item.path}
                         onClick={() => navigate(item.path)}
-                        style={{
-                            padding: "10px 12px",
-                            cursor: "pointer",
-                            borderRadius: "6px",
-                            marginBottom: "2px",
-                            fontSize: 14,
-                            background: location.pathname === item.path ? "#3f51b5" : "transparent",
-                            transition: "background 0.15s",
-                        }}
+                        style={activeStyle(item.path)}
                     >
                         {item.label}
                     </div>
                 ))}
+
+                {perms.canViewSimco && <>
+                    <div style={{ height: 1, background: "#333", margin: "12px 0" }} />
+                    <h4 style={{ margin: "0 0 10px 0", fontSize: 12, letterSpacing: "1px", color: "#94a3b8", textTransform: "uppercase" }}>SiMCo</h4>
+
+                    {simcoMenu.map(item => (
+                        <div
+                            key={item.path}
+                            onClick={() => navigate(item.path)}
+                            style={activeStyle(item.path)}
+                        >
+                            {item.label}
+                        </div>
+                    ))}
+                </>}
+
+                {perms.canViewMensajes && <>
+                    <div style={{ height: 1, background: "#333", margin: "12px 0" }} />
+                    <div
+                        onClick={() => navigate("/mensajes")}
+                        style={activeStyle("/mensajes")}
+                    >
+                        Mensajes
+                    </div>
+                </>}
             </div>
 
             <div style={{

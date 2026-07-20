@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../auth/authStore";
+import { usePermissions } from "../auth/usePermissions";
 import api from "../api/axiosClient";
 import { getDashboardStats } from "../services/dashboardService";
 
 export default function Dashboard() {
     const navigate = useNavigate();
     const logout = useAuthStore((s) => s.logout);
+    const perms = usePermissions();
     const [stats, setStats] = useState(null);
 
     useEffect(() => {
@@ -140,7 +142,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div style={bottomStyles.right}>
+                {!perms.isConsulta && <div style={bottomStyles.right}>
                     <div style={cardStyles.card}>
                         <h2 style={sectionTitle}>Actividad reciente</h2>
                         <div style={{ marginTop: 8 }}>
@@ -168,7 +170,7 @@ export default function Dashboard() {
                             ))}
                         </div>
                     </div>
-                </div>
+                </div>}
             </div>
         </div>
     );

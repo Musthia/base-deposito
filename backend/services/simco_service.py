@@ -10,6 +10,7 @@ from backend.services.notificaciones_service import (
     crear_notificaciones_nueva_solicitud,
     crear_notificaciones_respuesta,
 )
+from backend.services.auditoria_service import registrar_auditoria
 
 logger = logging.getLogger("datcorr")
 
@@ -75,6 +76,11 @@ def crear_solicitud(db: Session, data: SolicitudCreate, usuario):
     db.add(sol)
     db.commit()
     db.refresh(sol)
+    registrar_auditoria(
+        db=db, usuario=usuario.usuario, accion="CREAR_SOLICITUD",
+        tabla="simco.solicitudes", registro_id=sol.id,
+        detalle="Solicitud {} - {}: {}".format(sol.codigo, sol.tipo_documento, sol.detalle or ""),
+    )
     crear_notificaciones_nueva_solicitud(db, sol, usuario.id)
     _safe_create_task(manager.notify_nueva_solicitud(sol.codigo, sol.creado_por or "—"))
     return sol
@@ -208,6 +214,13 @@ def responder_solicitud(db: Session, data: RespuestaCreate, usuario):
     db.add(resp)
     db.commit()
     db.refresh(resp)
+    registrar_auditoria(
+        db=db, usuario=usuario.usuario, accion="RESPONDER_SOLICITUD",
+        tabla="simco.respuestas", registro_id=resp.id,
+        detalle="Solicitud {} - Estado: {} - Observación: {}".format(
+            sol.codigo, data.estado_documento, data.observacion or ""
+        ),
+    )
     crear_notificaciones_respuesta(db, sol)
     _safe_create_task(manager.notify_solicitud_respondida(sol.codigo))
     return resp

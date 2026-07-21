@@ -28,7 +28,7 @@ class JWTMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         # ===================================
-        # 2. RUTAS PÚBLICAS
+        # 2. RUTAS PÚBLICAS / WEBSOCKET
         # ===================================
 
         public_paths = {
@@ -36,6 +36,7 @@ class JWTMiddleware(BaseHTTPMiddleware):
             "/openapi.json",
             "/auth/login",
             "/auth/refresh",
+            "/api/simco/ws",
         }
 
         if request.url.path in public_paths:

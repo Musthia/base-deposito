@@ -86,7 +86,7 @@ export default function NotificationProvider({ children }) {
                             <Button
                                 size="small"
                                 variant="outlined"
-                                sx={{ mt: 1, fontSize: 11, textTransform: "none", borderColor: "#3b82f6", color: "#3b82f6" }}
+                                sx={{ mt: 1, fontSize: 11, textTransform: "none", borderColor: "#2d4a6f", color: "#2d4a6f" }}
                                 onClick={(e) => { e.stopPropagation(); handleClick(n); }}
                             >
                                 Ver solicitud

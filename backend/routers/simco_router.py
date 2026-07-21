@@ -12,6 +12,7 @@ from backend.services.simco_service import (
     dashboard_hoy,
     buscar,
 )
+from backend.services.auditoria_service import registrar_auditoria
 
 router = APIRouter(
     prefix="/api/simco",
@@ -32,7 +33,13 @@ def api_listar_solicitudes(
     db: Session = Depends(get_db),
     usuario=Depends(obtener_usuario_actual),
 ):
-    return {"solicitudes": listar_solicitudes(db)}
+    solicitudes = listar_solicitudes(db)
+    registrar_auditoria(
+        db=db, usuario=usuario.usuario, accion="CONSULTA",
+        tabla="simco.solicitudes",
+        detalle="Listó {} solicitudes".format(len(solicitudes)),
+    )
+    return {"solicitudes": solicitudes}
 
 
 @router.post("/solicitudes")
@@ -64,6 +71,11 @@ def api_listar_pendientes(
     usuario=Depends(obtener_usuario_actual),
 ):
     solicitudes = listar_pendientes(db)
+    registrar_auditoria(
+        db=db, usuario=usuario.usuario, accion="CONSULTA",
+        tabla="simco.respuestas",
+        detalle="Consultó {} solicitudes pendientes".format(len(solicitudes)),
+    )
     return {"solicitudes": [
         {
             "id": s.id,
@@ -86,7 +98,15 @@ def api_buscar(
 ):
     if not q.strip():
         return {"solicitudes": [], "respuestas": []}
-    return buscar(db, q.strip())
+    resultados = buscar(db, q.strip())
+    registrar_auditoria(
+        db=db, usuario=usuario.usuario, accion="BUSCAR",
+        tabla="simco",
+        detalle="Búsqueda: '{}' - {} solicitudes, {} respuestas".format(
+            q.strip(), len(resultados["solicitudes"]), len(resultados["respuestas"])
+        ),
+    )
+    return resultados
 
 
 @router.post("/respuestas")

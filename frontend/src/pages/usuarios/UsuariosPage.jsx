@@ -18,14 +18,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { usePermissions } from "../../auth/usePermissions";
-import { useAuthStore } from "../../auth/authStore";
 import { eliminarUsuario } from "../../services/usuariosService";
 
 
 
 export default function UsuariosPage() {
 
-    const user = useAuthStore(s => s.user);
     const permissions = usePermissions();
 
     const [openModal, setOpenModal] = useState(false);
@@ -107,7 +105,7 @@ export default function UsuariosPage() {
     return (
         <Box sx={{ p: 3 }}>
 
-            <Typography variant="h5" gutterBottom>ERP Usuarios</Typography>
+            <Typography variant="h5" gutterBottom>Usuarios</Typography>
 
             {permissions.canCreateUser && (
                 <Button

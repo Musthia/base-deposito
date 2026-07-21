@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Info } from "@mui/icons-material";
 import { useAuthStore } from "../auth/authStore";
 import { usePermissions } from "../auth/usePermissions";
 import api from "../api/axiosClient";
@@ -47,7 +46,7 @@ export default function Sidebar() {
         borderRadius: "6px",
         marginBottom: "2px",
         fontSize: 14,
-        background: location.pathname === path ? "#3f51b5" : "transparent",
+        background: location.pathname === path ? "#3f51b53b" : "transparent",
         transition: "background 0.15s",
     });
 
@@ -67,7 +66,7 @@ export default function Sidebar() {
         <aside style={{
             width: "220px",
             height: "100vh",
-            background: "#1e1e2f",
+            background: "#4e4e4e",
             color: "white",
             display: "flex",
             flexDirection: "column",

@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent,
-    DialogActions, TextField, MenuItem, Chip, Paper,
+    DialogActions, TextField, MenuItem, Paper,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     CircularProgress, Snackbar, Alert,
 } from "@mui/material";
@@ -14,7 +14,7 @@ const PALETTE = {
     border: "#1e3a8a",
     textMain: "#f1f5f9",
     textMuted: "#94a3b8",
-    primary: "#3b82f6",
+    primary: "#2d4a6f",
     success: "#22c55e",
     warning: "#eab308",
     danger: "#ef4444",
@@ -40,25 +40,30 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
 
     const puedeResponder = perms.canViewReportes;
 
-    const cargar = useCallback(async () => {
-        try {
-            setLoading(true);
-            const data = await listarPendientes();
-            const lista = data.solicitudes || data;
-            lista.sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion));
-            setPendientes(lista);
-        } catch {
-            setPendientes([]);
-        } finally {
-            setLoading(false);
-        }
+    useEffect(() => {
+        let cancelled = false;
+        const doCargar = async () => {
+            try {
+                setLoading(true);
+                const data = await listarPendientes();
+                const lista = data.solicitudes || data;
+                lista.sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion));
+                if (!cancelled) setPendientes(lista);
+            } catch {
+                if (!cancelled) setPendientes([]);
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        doCargar();
+        return () => { cancelled = true; };
     }, []);
 
-    useEffect(() => { cargar(); }, [cargar]);
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (propHighlightId) {
-            setHighlightId(propHighlightId);
+            (async () => {
+                setHighlightId(propHighlightId);
+            })();
             const timer = setTimeout(() => setHighlightId(null), 2000);
             return () => clearTimeout(timer);
         }
@@ -86,6 +91,20 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
         } finally {
             setOpenResponder(false);
             setSending(false);
+        }
+    };
+
+    const cargar = async () => {
+        try {
+            setLoading(true);
+            const data = await listarPendientes();
+            const lista = data.solicitudes || data;
+            lista.sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion));
+            setPendientes(lista);
+        } catch {
+            setPendientes([]);
+        } finally {
+            setLoading(false);
         }
     };
 

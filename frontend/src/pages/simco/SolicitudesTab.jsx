@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Fragment, useRef } from "react";
+import { useState, useEffect, Fragment } from "react";
 import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, MenuItem, IconButton, Chip, Paper,
@@ -17,7 +17,7 @@ const PALETTE = {
     border: "#1e3a8a",
     textMain: "#f1f5f9",
     textMuted: "#94a3b8",
-    primary: "#3b82f6",
+    primary: "#2d4a6f",
     success: "#22c55e",
     warning: "#eab308",
 };
@@ -59,13 +59,36 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
 
     useEffect(() => {
         if (propHighlightId) {
-            setHighlightId(propHighlightId);
+            (async () => {
+                setHighlightId(propHighlightId);
+            })();
             const timer = setTimeout(() => setHighlightId(null), 2000);
             return () => clearTimeout(timer);
         }
     }, [propHighlightId]);
 
-    const cargar = useCallback(async () => {
+    useEffect(() => {
+        let cancelled = false;
+        const doCargar = async () => {
+            try {
+                setLoading(true);
+                const data = await listarSolicitudes();
+                const lista = data.solicitudes || data;
+                if (!cancelled) setSolicitudes(lista);
+            } catch (err) {
+                if (!cancelled) {
+                    console.error("Error al cargar solicitudes:", err);
+                    setSolicitudes([]);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        doCargar();
+        return () => { cancelled = true; };
+    }, []);
+
+    const cargar = async () => {
         try {
             setLoading(true);
             const data = await listarSolicitudes();
@@ -76,9 +99,7 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
         } finally {
             setLoading(false);
         }
-    }, []);
-
-    useEffect(() => { cargar(); }, [cargar]);
+    };
 
     const handleCreate = async () => {
         try {

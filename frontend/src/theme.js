@@ -1,13 +1,13 @@
 import { createTheme } from "@mui/material/styles";
 
 export const COLORS = {
-    bgPage: "#0f172a",
-    bgCard: "#042164",
-    border: "#1e3a8a",
-    textMain: "#fdfdfd",
+    bgPage: "#1a3f22",
+    bgCard: "#58595aff",
+    border: "#515255",
+    textMain: "#a0e0fa",
     textMainsort: "#000000",
     textMuted: "#94a3b8",
-    primary: "#3b82f6",
+    primary: "#2d4a6f",
     success: "#22c55e",
     warning: "#eab308",
     danger: "#ef4444",
@@ -175,13 +175,13 @@ export const theme = createTheme({
                         color: COLORS.textMain,
                     },
                     "& .MuiDataGrid-row:hover": {
-                        backgroundColor: "rgba(59, 130, 246, 0.08)",
+                        backgroundColor: "rgba(95, 96, 97, 0.08)",
                     },
                     "& .MuiDataGrid-row.Mui-selected": {
-                        backgroundColor: "rgba(59, 130, 246, 0.15)",
+                        backgroundColor: "rgba(93, 93, 94, 0.15)",
                     },
                     "& .MuiDataGrid-sortIcon": {
-                        color: COLORS.textMain,
+                        color: COLORS.textMainsort,
                         opacity: 1,
                         fontSize: 18,
                     },
@@ -194,20 +194,20 @@ export const theme = createTheme({
                     },
                 },
                 columnHeaders: {
-                    backgroundColor: "#1e2a5a",
+                    backgroundColor: "#505052",
                     color: COLORS.textMain,
                     fontWeight: 700,
                     fontSize: 13,
                     borderBottom: `2px solid ${COLORS.primary}`,
                 },
                 columnHeader: {
-                    backgroundColor: "#1e2a5a",
+                    backgroundColor: "#4f4f52",
                     color: COLORS.textMain,
                     "&:hover": {
-                        backgroundColor: "#253a6a",
+                        backgroundColor: "#646566",
                     },
                     "&.MuiDataGrid-columnHeader--sorted": {
-                        backgroundColor: "#253a6a",
+                        backgroundColor: "#626263",
                     },
                 },
                 columnHeaderTitle: {
@@ -215,7 +215,7 @@ export const theme = createTheme({
                     fontWeight: 700,
                 },
                 footerContainer: {
-                    backgroundColor: "#1e2a5a",
+                    backgroundColor: "#2f3030",
                     borderTop: `2px solid ${COLORS.border}`,
                     color: COLORS.textMain,
                 },

@@ -260,7 +260,7 @@ const PALETTE = {
     border: "#1e3a8a",
     textMain: "#f1f5f9",
     textMuted: "#94a3b8",
-    primary: "#3b82f6",
+    primary: "#2d4a6f",
     success: "#22c55e",
     danger: "#dc2626",
     dangerHover: "#b91c1c",

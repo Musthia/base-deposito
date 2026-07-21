@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import {
     Box, Typography, Paper, Tabs, Tab, Snackbar, Alert, Chip,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -20,7 +20,7 @@ const PALETTE = {
     border: "#1e3a8a",
     textMain: "#f1f5f9",
     textMuted: "#94a3b8",
-    primary: "#3b82f6",
+    primary: "#2d4a6f",
     success: "#22c55e",
     warning: "#eab308",
 };
@@ -142,22 +142,26 @@ export default function SimcoPage() {
     useEffect(() => { keepNewTabRef.current = keepNewTab; }, [keepNewTab]);
 
     useEffect(() => {
+        let cleanup = undefined;
         if (!searchInput.trim()) {
-            setSearchResults(null);
-            return;
+            (async () => {
+                setSearchResults(null);
+            })();
+        } else {
+            const timer = setTimeout(async () => {
+                setSearching(true);
+                try {
+                    const data = await buscarSimco(searchInput.trim());
+                    setSearchResults(data);
+                } catch {
+                    setSearchResults({ solicitudes: [], respuestas: [] });
+                } finally {
+                    setSearching(false);
+                }
+            }, 400);
+            cleanup = () => clearTimeout(timer);
         }
-        const timer = setTimeout(async () => {
-            setSearching(true);
-            try {
-                const data = await buscarSimco(searchInput.trim());
-                setSearchResults(data);
-            } catch {
-                setSearchResults({ solicitudes: [], respuestas: [] });
-            } finally {
-                setSearching(false);
-            }
-        }, 400);
-        return () => clearTimeout(timer);
+        return cleanup;
     }, [searchInput]);
 
     const commitSearch = useCallback(() => {
@@ -199,16 +203,20 @@ export default function SimcoPage() {
         ];
     }, [nivel, esAdmin, searchTabs]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (searchTabs.length > 0) {
-            const baseCount = tabsVisibles.length - searchTabs.length;
-            setTab(baseCount + searchTabs.length - 1);
+            (async () => {
+                const baseCount = tabsVisibles.length - searchTabs.length;
+                setTab(baseCount + searchTabs.length - 1);
+            })();
         }
     }, [searchTabs.length, tabsVisibles.length]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (tab >= tabsVisibles.length) {
-            setTab(Math.max(0, tabsVisibles.length - 1));
+            (async () => {
+                setTab(Math.max(0, tabsVisibles.length - 1));
+            })();
         }
     }, [tab, tabsVisibles.length]);
 
@@ -222,13 +230,15 @@ export default function SimcoPage() {
 
     useSimcoWS(onWSEvent);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const state = location.state;
         if (state?.highlightTab && state?.highlightId) {
-            const idx = tabsVisibles.findIndex((t) => t.key === state.highlightTab);
-            if (idx >= 0) setTab(idx);
-            setHighlightId(state.highlightId);
-            window.history.replaceState({}, document.title);
+            (async () => {
+                const idx = tabsVisibles.findIndex((t) => t.key === state.highlightTab);
+                if (idx >= 0) setTab(idx);
+                setHighlightId(state.highlightId);
+                window.history.replaceState({}, document.title);
+            })();
         }
     }, [location.state, tabsVisibles]);
 

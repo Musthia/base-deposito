@@ -365,7 +365,7 @@ export default function DatabasePage() {
                         justifyContent: "center",
                         alignItems: "center",
                         height: 300,
-                        color: "text.secondary",
+                        color: "white",
                     }}
                 >
                     Seleccione una base y realice una búsqueda o consulta

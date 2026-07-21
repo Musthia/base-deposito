@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     Drawer,
     Box,
@@ -7,6 +7,15 @@ import {
     TextField,
 } from "@mui/material";
 import { actualizarRegistro } from "../../services/databaseService";
+
+function formFromProps(columnas, valores) {
+    if (!columnas || !valores) return {};
+    const initial = {};
+    columnas.forEach((col, i) => {
+        initial[col] = valores[i] != null ? String(valores[i]) : "";
+    });
+    return initial;
+}
 
 export default function EditRecordModal({
     open,
@@ -17,18 +26,14 @@ export default function EditRecordModal({
     columnas,
     valores,
 }) {
-    const [form, setForm] = useState({});
+    const [form, setForm] = useState(() => formFromProps(columnas, valores));
     const [saving, setSaving] = useState(false);
+    const [prevId, setPrevId] = useState(null);
 
-    useEffect(() => {
-        if (open && columnas && valores) {
-            const initial = {};
-            columnas.forEach((col, i) => {
-                initial[col] = valores[i] != null ? String(valores[i]) : "";
-            });
-            setForm(initial);
-        }
-    }, [open, columnas, valores]);
+    if (open && idRegistro !== prevId) {
+        setPrevId(idRegistro);
+        setForm(formFromProps(columnas, valores));
+    }
 
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));

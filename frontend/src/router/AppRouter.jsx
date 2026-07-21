@@ -11,6 +11,8 @@ import AuditoriaPage from "../pages/AuditoriaPage";
 import ReportesPage from "../pages/ReportesPage";
 import SimcoPage from "../pages/simco/SimcoPage";
 import MensajesPage from "../pages/MensajesPage";
+import AcercaDatcorrPage from "../pages/AcercaDatcorrPage";
+import AcercaSimcoPage from "../pages/AcercaSimcoPage";
 
 import PrivateRoute from "../auth/PrivateRoute";
 import MainLayout from "../layouts/MainLayout";
@@ -41,6 +43,8 @@ export default function AppRouter() {
                     <Route path="/auditoria" element={<AuditoriaPage />} />
                     <Route path="/simco" element={<SimcoPage />} />
                     <Route path="/mensajes" element={<MensajesPage />} />
+                    <Route path="/acerca-datcorr" element={<AcercaDatcorrPage />} />
+                    <Route path="/acerca-simco" element={<AcercaSimcoPage />} />
 
                 {/* fallback */}
                 <Route path="*" element={<Login />} />

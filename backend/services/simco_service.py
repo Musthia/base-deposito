@@ -135,6 +135,61 @@ def listar_pendientes(db: Session):
     ).order_by(Solicitud.fecha_creacion.asc()).all()
 
 
+def buscar(db: Session, q: str):
+    term = "%{}%".format(q)
+    solicitudes = db.query(Solicitud).filter(
+        Solicitud.codigo.ilike(term) |
+        Solicitud.tipo_documento.ilike(term) |
+        Solicitud.identificador_documento.ilike(term) |
+        Solicitud.detalle.ilike(term)
+    ).order_by(Solicitud.fecha_creacion.desc()).all()
+
+    respuestas = db.query(Respuesta).join(
+        Solicitud, Respuesta.solicitud_id == Solicitud.id
+    ).filter(
+        Respuesta.observacion.ilike(term) |
+        Respuesta.estado_documento.ilike(term)
+    ).order_by(Respuesta.fecha_respuesta.desc()).all()
+
+    sol_list = []
+    for sol in solicitudes:
+        resp = db.query(Respuesta).filter(Respuesta.solicitud_id == sol.id).first()
+        sol_list.append({
+            "id": sol.id,
+            "codigo": sol.codigo,
+            "tipo_documento": sol.tipo_documento,
+            "identificador_documento": sol.identificador_documento,
+            "detalle": sol.detalle,
+            "estado": sol.estado,
+            "creado_por": sol.creado_por,
+            "fecha_creacion": sol.fecha_creacion.isoformat() if sol.fecha_creacion else None,
+            "respuesta": {
+                "id": resp.id,
+                "estado_documento": resp.estado_documento,
+                "observacion": resp.observacion,
+                "usuario_responde": resp.usuario_responde,
+                "fecha_respuesta": resp.fecha_respuesta.isoformat() if resp.fecha_respuesta else None,
+            } if resp else None,
+        })
+
+    resp_list = []
+    for r in respuestas:
+        sol = db.query(Solicitud).filter(Solicitud.id == r.solicitud_id).first()
+        resp_list.append({
+            "id": r.id,
+            "solicitud_id": r.solicitud_id,
+            "codigo": sol.codigo if sol else "—",
+            "tipo_documento": sol.tipo_documento if sol else "—",
+            "identificador_documento": sol.identificador_documento if sol else "—",
+            "estado_documento": r.estado_documento,
+            "observacion": r.observacion,
+            "usuario_responde": r.usuario_responde,
+            "fecha_respuesta": r.fecha_respuesta.isoformat() if r.fecha_respuesta else None,
+        })
+
+    return {"solicitudes": sol_list, "respuestas": resp_list}
+
+
 def responder_solicitud(db: Session, data: RespuestaCreate, usuario):
     sol = db.query(Solicitud).filter(Solicitud.id == data.solicitud_id).first()
     if not sol:

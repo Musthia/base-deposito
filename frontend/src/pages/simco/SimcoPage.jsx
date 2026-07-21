@@ -1,14 +1,18 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
     Box, Typography, Paper, Tabs, Tab, Snackbar, Alert, Chip,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    TextField, InputAdornment, IconButton, CircularProgress, FormControlLabel, Checkbox,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import { useAuthStore } from "../../auth/authStore";
 import { useLocation } from "react-router-dom";
 import SolicitudesTab from "./SolicitudesTab";
 import RespuestasTab from "./RespuestasTab";
 import useSimcoWS from "../../hooks/useSimcoWS";
 import api from "../../api/axiosClient";
+import { buscarSimco } from "../../services/simco/buscarService";
 
 const PALETTE = {
     bgPage: "#0f172a",
@@ -36,6 +40,89 @@ const TABS = [
     { label: "Respuestas", key: "respuestas" },
 ];
 
+const ResultTables = ({ results }) => (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+                Solicitudes ({results.solicitudes.length})
+            </Typography>
+            {results.solicitudes.length > 0 ? (
+                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${PALETTE.border}` }}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>CÓDIGO</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>TIPO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>IDENTIFICADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>DETALLE</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>ESTADO</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>CREADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>FECHA</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {results.solicitudes.map((s) => (
+                                <TableRow key={s.id} hover>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>{s.codigo}</TableCell>
+                                    <TableCell sx={{ fontSize: 12 }}>{s.tipo_documento}</TableCell>
+                                    <TableCell sx={{ fontSize: 12 }}>{s.identificador_documento}</TableCell>
+                                    <TableCell sx={{ fontSize: 12, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.detalle}</TableCell>
+                                    <TableCell>{chipEstado(s.estado)}</TableCell>
+                                    <TableCell sx={{ fontSize: 12 }}>{s.creado_por || "—"}</TableCell>
+                                    <TableCell sx={{ fontSize: 12, color: PALETTE.textMuted }}>
+                                        {s.fecha_creacion ? new Date(s.fecha_creacion).toLocaleDateString("es-AR") : "—"}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ) : (
+                <Typography variant="body2" sx={{ color: PALETTE.textMuted, fontStyle: "italic" }}>Sin resultados en solicitudes</Typography>
+            )}
+        </Box>
+        <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+                Respuestas ({results.respuestas.length})
+            </Typography>
+            {results.respuestas.length > 0 ? (
+                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${PALETTE.border}` }}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>CÓDIGO</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>TIPO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>IDENTIFICADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>ESTADO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>OBSERVACIÓN</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>RESPONDIÓ</TableCell>
+                                <TableCell sx={{ fontWeight: 600, fontSize: 11 }}>FECHA</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {results.respuestas.map((r) => (
+                                <TableRow key={r.id} hover>
+                                    <TableCell sx={{ fontWeight: 600, fontSize: 12 }}>{r.codigo}</TableCell>
+                                    <TableCell sx={{ fontSize: 12 }}>{r.tipo_documento}</TableCell>
+                                    <TableCell sx={{ fontSize: 12 }}>{r.identificador_documento}</TableCell>
+                                    <TableCell sx={{ fontSize: 12 }}>{r.estado_documento}</TableCell>
+                                    <TableCell sx={{ fontSize: 12, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.observacion || "—"}</TableCell>
+                                    <TableCell sx={{ fontSize: 12 }}>{r.usuario_responde || "—"}</TableCell>
+                                    <TableCell sx={{ fontSize: 12, color: PALETTE.textMuted }}>
+                                        {r.fecha_respuesta ? new Date(r.fecha_respuesta).toLocaleDateString("es-AR") : "—"}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            ) : (
+                <Typography variant="body2" sx={{ color: PALETTE.textMuted, fontStyle: "italic" }}>Sin resultados en respuestas</Typography>
+            )}
+        </Box>
+    </Box>
+);
+
 export default function SimcoPage() {
     const user = useAuthStore((s) => s.user);
     const [dashboardData, setDashboardData] = useState(null);
@@ -44,25 +131,96 @@ export default function SimcoPage() {
     const esAdmin = esSuper || nivel >= 10;
 
     const [notif, setNotif] = useState({ open: false, msg: "", severity: "info" });
+    const [searchInput, setSearchInput] = useState("");
+    const [searchResults, setSearchResults] = useState(null);
+    const [searching, setSearching] = useState(false);
+
+    const [keepNewTab, setKeepNewTab] = useState(false);
+    const [searchTabs, setSearchTabs] = useState([]);
+    const nextTabId = useRef(1);
+    const keepNewTabRef = useRef(keepNewTab);
+    useEffect(() => { keepNewTabRef.current = keepNewTab; }, [keepNewTab]);
+
+    useEffect(() => {
+        if (!searchInput.trim()) {
+            setSearchResults(null);
+            return;
+        }
+        const timer = setTimeout(async () => {
+            setSearching(true);
+            try {
+                const data = await buscarSimco(searchInput.trim());
+                setSearchResults(data);
+            } catch {
+                setSearchResults({ solicitudes: [], respuestas: [] });
+            } finally {
+                setSearching(false);
+            }
+        }, 400);
+        return () => clearTimeout(timer);
+    }, [searchInput]);
+
+    const commitSearch = useCallback(() => {
+        const q = searchInput.trim();
+        if (!q || !searchResults) return;
+        setSearchTabs((prev) => {
+            if (keepNewTabRef.current) {
+                const id = nextTabId.current;
+                nextTabId.current += 1;
+                return [...prev, { id, query: q, results: searchResults }];
+            }
+            if (prev.length === 0) {
+                return [{ id: 0, query: q, results: searchResults }];
+            }
+            const updated = [...prev];
+            updated[updated.length - 1] = { ...updated[updated.length - 1], query: q, results: searchResults };
+            return updated;
+        });
+    }, [searchInput, searchResults]);
+
+    const location = useLocation();
+    const [tab, setTab] = useState(0);
+    const [highlightId, setHighlightId] = useState(null);
+
+    const tabsVisibles = useMemo(() => {
+        const base = TABS.filter((t) => {
+            if (t.key === "dashboard") return true;
+            if (t.key === "solicitudes") return nivel <= 3 || esAdmin;
+            if (t.key === "respuestas") return nivel >= 5;
+            return true;
+        });
+        return [
+            ...base,
+            ...searchTabs.map((st) => ({
+                label: st.query,
+                key: `search-${st.id}`,
+                searchId: st.id,
+            })),
+        ];
+    }, [nivel, esAdmin, searchTabs]);
+
+    useEffect(() => {
+        if (searchTabs.length > 0) {
+            const baseCount = tabsVisibles.length - searchTabs.length;
+            setTab(baseCount + searchTabs.length - 1);
+        }
+    }, [searchTabs.length, tabsVisibles.length]);
+
+    useEffect(() => {
+        if (tab >= tabsVisibles.length) {
+            setTab(Math.max(0, tabsVisibles.length - 1));
+        }
+    }, [tab, tabsVisibles.length]);
+
+    const removeSearchTab = useCallback((tabId) => {
+        setSearchTabs((prev) => prev.filter((t) => t.id !== tabId));
+    }, []);
 
     const onWSEvent = useCallback((data) => {
         setNotif({ open: true, msg: data.mensaje, severity: "info" });
     }, []);
 
     useSimcoWS(onWSEvent);
-
-    const tabsVisibles = useMemo(() => {
-        return TABS.filter((t) => {
-            if (t.key === "dashboard") return true;
-            if (t.key === "solicitudes") return nivel <= 3 || esAdmin;
-            if (t.key === "respuestas") return nivel >= 5;
-            return true;
-        });
-    }, [nivel, esAdmin]);
-
-    const location = useLocation();
-    const [tab, setTab] = useState(0);
-    const [highlightId, setHighlightId] = useState(null);
 
     useEffect(() => {
         const state = location.state;
@@ -79,7 +237,15 @@ export default function SimcoPage() {
     }, []);
 
     const tabActual = tabsVisibles[tab];
+
+    const handleTabChange = (_, v) => setTab(v);
+
     const contenido = () => {
+        if (tabActual?.searchId != null) {
+            const st = searchTabs.find((t) => t.id === tabActual.searchId);
+            if (st) return <ResultTables results={st.results} />;
+            return null;
+        }
         if (!tabActual) return null;
         switch (tabActual.key) {
             case "solicitudes": return <SolicitudesTab highlightId={highlightId} />;
@@ -159,31 +325,92 @@ export default function SimcoPage() {
 
     return (
         <Box sx={{ minHeight: "100vh", p: 3 }}>
-            <Paper sx={{ p: 3, mb: 3, borderRadius: 2, border: `1px solid ${PALETTE.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, color: PALETTE.textMain, mb: 0.5 }}>
-                        SiMCo
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: PALETTE.textMuted }}>
-                        {hoy}
-                    </Typography>
-                </Box>
-                <Box sx={{ display: "flex", gap: 3 }}>
-                    <Box sx={{ textAlign: "center" }}>
-                        <Typography variant="h4" sx={{ fontWeight: 700, color: PALETTE.primary }}>{resumen?.solicitudes_hoy ?? "—"}</Typography>
-                        <Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Solicitudes hoy</Typography>
+            <Paper sx={{ p: 3, mb: 3, borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
+                    <Box>
+                        <Typography variant="h5" sx={{ fontWeight: 700, color: PALETTE.textMain, mb: 0.5 }}>
+                            SiMCo
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: PALETTE.textMuted }}>
+                            {hoy}
+                        </Typography>
                     </Box>
-                    <Box sx={{ textAlign: "center" }}>
-                        <Typography variant="h4" sx={{ fontWeight: 700, color: PALETTE.success }}>{resumen?.respuestas_hoy ?? "—"}</Typography>
-                        <Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Respuestas hoy</Typography>
+                    <Box sx={{ display: "flex", gap: 3 }}>
+                        <Box sx={{ textAlign: "center" }}>
+                            <Typography variant="h4" sx={{ fontWeight: 700, color: PALETTE.primary }}>{resumen?.solicitudes_hoy ?? "—"}</Typography>
+                            <Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Solicitudes hoy</Typography>
+                        </Box>
+                        <Box sx={{ textAlign: "center" }}>
+                            <Typography variant="h4" sx={{ fontWeight: 700, color: PALETTE.success }}>{resumen?.respuestas_hoy ?? "—"}</Typography>
+                            <Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Respuestas hoy</Typography>
+                        </Box>
                     </Box>
                 </Box>
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                    <TextField
+                        fullWidth
+                        size="small"
+                        placeholder="Buscar en solicitudes y respuestas..."
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") commitSearch(); }}
+                        sx={{
+                            "& .MuiInputBase-root": { backgroundColor: "#0f172a", borderRadius: 1 },
+                        }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    {searching ? <CircularProgress size={18} /> : <SearchIcon sx={{ color: PALETTE.textMuted }} />}
+                                </InputAdornment>
+                            ),
+                            endAdornment: searchInput ? (
+                                <InputAdornment position="end">
+                                    <IconButton size="small" onClick={() => { setSearchInput(""); setSearchResults(null); }}>
+                                        <ClearIcon sx={{ color: PALETTE.textMuted, fontSize: 18 }} />
+                                    </IconButton>
+                                </InputAdornment>
+                            ) : null,
+                        }}
+                    />
+                    <IconButton onClick={commitSearch} disabled={!searchInput.trim() || !searchResults} sx={{ color: PALETTE.primary }}>
+                        <SearchIcon />
+                    </IconButton>
+                </Box>
+                <FormControlLabel
+                    control={<Checkbox size="small" checked={keepNewTab} onChange={(e) => setKeepNewTab(e.target.checked)} sx={{ color: PALETTE.textMuted, "&.Mui-checked": { color: PALETTE.primary } }} />}
+                    label={<Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Nueva pestaña por búsqueda</Typography>}
+                    sx={{ mt: 1 }}
+                />
             </Paper>
 
             <Paper sx={{ borderRadius: 2, border: `1px solid ${PALETTE.border}`, overflow: "hidden" }}>
-                <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
+                <Tabs value={Math.min(tab, tabsVisibles.length - 1)} onChange={handleTabChange} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
                     {tabsVisibles.map((t) => (
-                        <Tab key={t.key} label={t.label} />
+                        <Tab
+                            key={t.key}
+                            label={
+                                t.searchId != null ? (
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                                        <span>{t.label}</span>
+                                        <Box
+                                            component="span"
+                                            onClick={(e) => { e.stopPropagation(); e.preventDefault(); removeSearchTab(t.searchId); }}
+                                            sx={{
+                                                ml: 0.5,
+                                                color: PALETTE.textMuted,
+                                                cursor: "pointer",
+                                                fontSize: 16,
+                                                lineHeight: 1,
+                                                "&:hover": { color: "#ef4444" },
+                                            }}
+                                        >
+                                            ×
+                                        </Box>
+                                    </Box>
+                                ) : t.label
+                            }
+                            sx={{ fontSize: 13 }}
+                        />
                     ))}
                 </Tabs>
 

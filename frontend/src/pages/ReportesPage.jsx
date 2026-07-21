@@ -2,14 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import {
     Box, Typography, Button, Select, MenuItem, FormControl, InputLabel,
     TextField, Grid, Card, CardContent, CircularProgress, Snackbar, Alert,
-    FormGroup,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { getConsultas, ejecutarConsulta, exportarConsulta, getKpis } from "../services/reportesService";
-import { usePermissions } from "../auth/usePermissions";
 
 export default function ReportesPage() {
-    const perms = usePermissions();
 
     const [consultas, setConsultas] = useState([]);
     const [consultaId, setConsultaId] = useState("");
@@ -52,7 +49,7 @@ export default function ReportesPage() {
         try {
             const result = await ejecutarConsulta(consultaId, filtros);
             setConsultaMeta({ nombre: result.nombre, descripcion: result.descripcion });
-            const cols = (result.columnas || []).map((c, i) => ({
+            const cols = (result.columnas || []).map((c) => ({
                 field: c,
                 headerName: c.charAt(0).toUpperCase() + c.slice(1).replace(/_/g, " "),
                 flex: 1,
@@ -62,7 +59,7 @@ export default function ReportesPage() {
             const dataRows = (result.datos || []).map((r, i) => ({ id: i, ...r }));
             setRows(dataRows);
             setGenerated(true);
-        } catch (err) {
+        } catch {
             setSnack({ open: true, msg: "Error al generar reporte", severity: "error" });
         } finally {
             setLoading(false);
@@ -82,7 +79,7 @@ export default function ReportesPage() {
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
             setSnack({ open: true, msg: `Exportado como ${formato.toUpperCase()}`, severity: "success" });
-        } catch (err) {
+        } catch {
             setSnack({ open: true, msg: "Error al exportar", severity: "error" });
         }
     }, [consultaId, filtros, rows]);

@@ -10,6 +10,7 @@ from backend.services.simco_service import (
     listar_pendientes,
     responder_solicitud,
     dashboard_hoy,
+    buscar,
 )
 
 router = APIRouter(
@@ -75,6 +76,17 @@ def api_listar_pendientes(
         }
         for s in solicitudes
     ]}
+
+
+@router.get("/buscar")
+def api_buscar(
+    q: str,
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    if not q.strip():
+        return {"solicitudes": [], "respuestas": []}
+    return buscar(db, q.strip())
 
 
 @router.post("/respuestas")

@@ -48,7 +48,7 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={welcomeStyles.badge}>
-                        <span style={welcomeStyles.badgeText}>v4.1.1</span>
+                        <span style={welcomeStyles.badgeText}>v5.1.1</span>
                     </div>
                     <button onClick={handleLogout} style={logoutBtnStyles}>
                         Cerrar sesion

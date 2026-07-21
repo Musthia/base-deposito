@@ -27,6 +27,14 @@ import { listarBases, consultarBase, buscarEnBase, eliminarRegistro } from "../s
 import EditRecordModal from "../components/modals/EditRecordModal";
 import { useTabs } from "../context/TabContext";
 
+const COLORS_COLUMNAS = {
+    n_lote: "#b400ff",
+    "hh.cc": "#c819c8",
+    expediente: "#c819c8",
+    documento: "#00e696",
+    denominacion: "#0014ff",
+};
+
 export default function DatabasePage() {
     const [bases, setBases] = useState([]);
     const [baseActual, setBaseActual] = useState("");
@@ -37,19 +45,11 @@ export default function DatabasePage() {
     const [deleteDialog, setDeleteDialog] = useState({ open: false, base: "", idRegistro: null, claveTab: "", row: null });
     const { tabs, tabIndex, setTabIndex, agregarTab, cerrarTab, setTabs, actualizarFila } = useTabs();
     const tabsRef = useRef(tabs);
-    tabsRef.current = tabs;
+    useEffect(() => { tabsRef.current = tabs; }, [tabs]);
 
     useEffect(() => {
         listarBases().then(setBases).catch(console.error);
     }, []);
-
-    const coloresColumnas = {
-        n_lote: "#b400ff",
-        "hh.cc": "#c819c8",
-        expediente: "#c819c8",
-        documento: "#00e696",
-        denominacion: "#0014ff",
-    };
 
     const construirTab = useCallback((base, modo, columnas, registros, total, page, pageSize) => {
         const cols = columnas
@@ -60,7 +60,7 @@ export default function DatabasePage() {
                 flex: 1,
                 minWidth: 120,
                 cellClassName: () => {
-                    const color = coloresColumnas[col.toLowerCase()];
+                    const color = COLORS_COLUMNAS[col.toLowerCase()];
                     if (!color) return "";
                     return `highlight-${col.toLowerCase().replace(/\s+/g, "-")}`;
                 },
@@ -118,9 +118,7 @@ export default function DatabasePage() {
             const tab = construirTab(base, modo, data.columnas, data.registros, data.total, 0, 50);
             if (modo === "BUSQUEDA") tab._criterio = criterio;
             const current = tabsRef.current;
-            const idx = current.findIndex((t) =>
-                t.base === base && t.modo === modo && (modo !== "BUSQUEDA" || t._criterio === criterio)
-            );
+            const idx = current.findIndex((t) => t.base === base && t.modo === modo);
             if (idx >= 0) {
                 setTabs((prev) => prev.map((t, i) => (i === idx ? { ...tab, clave: t.clave } : t)));
                 setTabIndex(idx);
@@ -219,7 +217,7 @@ export default function DatabasePage() {
                 Consultar Bases de Datos
             </Typography>
 
-            <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2, flexWrap: "wrap" }}>
+            <Box sx={{ display: "flex", fontStyle: "normal", gap: 2, alignItems: "center", mb: 2, flexWrap: "wrap" }}>
                 <FormControl sx={{ minWidth: 250 }} size="small">
                     <InputLabel>Base de datos</InputLabel>
                     <Select

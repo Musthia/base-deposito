@@ -10,14 +10,14 @@ import { usePermissions } from "../../auth/usePermissions";
 import { listarPendientes, responderSolicitud } from "../../services/simco/respuestasService";
 
 const PALETTE = {
-    bgPage: "#f8fafc",
-    border: "#e2e8f0",
-    textMain: "#0f172a",
-    textMuted: "#64748b",
-    primary: "#0284c7",
-    success: "#16a34a",
-    warning: "#f59e0b",
-    danger: "#dc2626",
+    bgPage: "#0f172a",
+    border: "#1e3a8a",
+    textMain: "#f1f5f9",
+    textMuted: "#94a3b8",
+    primary: "#3b82f6",
+    success: "#22c55e",
+    warning: "#eab308",
+    danger: "#ef4444",
 };
 
 const ESTADOS_DOCUMENTO = [
@@ -108,12 +108,12 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>CÓDIGO</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>TIPO DOC.</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>IDENTIFICADOR</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>DETALLE</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>SOLICITÓ</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>FECHA</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>CÓDIGO</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>TIPO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>IDENTIFICADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>DETALLE</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>SOLICITÓ</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>FECHA</TableCell>
                                 {puedeResponder && <TableCell sx={{ width: 100 }} />}
                             </TableRow>
                         </TableHead>

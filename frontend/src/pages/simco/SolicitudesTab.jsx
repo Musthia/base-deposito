@@ -12,14 +12,14 @@ import { usePermissions } from "../../auth/usePermissions";
 import { listarSolicitudes, crearSolicitud } from "../../services/simco/solicitudesService";
 
 const PALETTE = {
-    bgPage: "#f8fafc",
-    bgCard: "#ffffff",
-    border: "#e2e8f0",
-    textMain: "#0f172a",
-    textMuted: "#64748b",
-    primary: "#0284c7",
-    success: "#16a34a",
-    warning: "#f59e0b",
+    bgPage: "#0f172a",
+    bgCard: "#042164",
+    border: "#1e3a8a",
+    textMain: "#f1f5f9",
+    textMuted: "#94a3b8",
+    primary: "#3b82f6",
+    success: "#22c55e",
+    warning: "#eab308",
 };
 
 const TIPOS_DOCUMENTO = [
@@ -123,12 +123,12 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={{ width: 40 }} />
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>CÓDIGO</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>TIPO DOC.</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>IDENTIFICADOR</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>DETALLE</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>ESTADO</TableCell>
-                                <TableCell sx={{ fontWeight: 600, fontSize: 12, color: PALETTE.textMuted }}>FECHA</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>CÓDIGO</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>TIPO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>IDENTIFICADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>DETALLE</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>ESTADO</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>FECHA</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -143,7 +143,7 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
                                                 cursor: "pointer",
                                                 backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
                                                 transition: "background-color 0.3s",
-                                                "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#f8fafc" },
+                                                "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#1e3a8a" },
                                             }}
                                             onClick={() => setExpandedId(expanded ? null : sol.id)}
                                         >

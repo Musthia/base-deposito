@@ -101,13 +101,13 @@ export default function UsuariosPage() {
     };
 
     if (!permissions.canViewUsers) {
-        return <div>Sin permisos</div>;
+        return <Box sx={{ p: 3 }}><Typography>Sin permisos</Typography></Box>;
     }
 
     return (
-        <div style={{ padding: 20 }}>
+        <Box sx={{ p: 3 }}>
 
-            <h2>ERP Usuarios</h2>
+            <Typography variant="h5" gutterBottom>ERP Usuarios</Typography>
 
             {permissions.canCreateUser && (
                 <Button
@@ -182,6 +182,6 @@ export default function UsuariosPage() {
                 </DialogActions>
             </Dialog>
 
-        </div>
+        </Box>
     );
 }

@@ -40,7 +40,7 @@ export default function AuditoriaPage() {
     const permissions = usePermissions();
 
     if (!permissions.canViewAuditoria) {
-        return <div>Sin permisos</div>;
+        return <Box sx={{ p: 3 }}><Typography>Sin permisos</Typography></Box>;
     }
 
     const [rows, setRows] = useState([]);

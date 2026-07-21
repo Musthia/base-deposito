@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, date
 
 from database.modelos_simco import Solicitud, Respuesta
 from backend.schemas.simco_schema import SolicitudCreate, RespuestaCreate
@@ -78,6 +78,55 @@ def crear_solicitud(db: Session, data: SolicitudCreate, usuario):
     crear_notificaciones_nueva_solicitud(db, sol, usuario.id)
     _safe_create_task(manager.notify_nueva_solicitud(sol.codigo, sol.creado_por or "—"))
     return sol
+
+
+def dashboard_hoy(db: Session):
+    hoy = date.today()
+    solicitudes_hoy = db.query(Solicitud).filter(
+        Solicitud.fecha_creacion >= hoy
+    ).order_by(Solicitud.fecha_creacion.desc()).all()
+
+    respuestas_hoy = db.query(Respuesta).filter(
+        Respuesta.fecha_respuesta >= hoy
+    ).order_by(Respuesta.fecha_respuesta.desc()).all()
+
+    solicitudes_data = []
+    for s in solicitudes_hoy:
+        r = db.query(Respuesta).filter(Respuesta.solicitud_id == s.id).first()
+        solicitudes_data.append({
+            "id": s.id, "codigo": s.codigo, "tipo_documento": s.tipo_documento,
+            "identificador_documento": s.identificador_documento, "detalle": s.detalle,
+            "estado": s.estado, "creado_por": s.creado_por,
+            "fecha_creacion": s.fecha_creacion.isoformat() if s.fecha_creacion else None,
+            "respuesta": {
+                "id": r.id, "estado_documento": r.estado_documento,
+                "usuario_responde": r.usuario_responde,
+                "fecha_respuesta": r.fecha_respuesta.isoformat() if r.fecha_respuesta else None,
+            } if r else None,
+        })
+
+    respuestas_data = []
+    for r in respuestas_hoy:
+        s = db.query(Solicitud).filter(Solicitud.id == r.solicitud_id).first()
+        respuestas_data.append({
+            "id": r.id, "solicitud_id": r.solicitud_id,
+            "codigo": s.codigo if s else "—",
+            "estado_documento": r.estado_documento,
+            "observacion": r.observacion,
+            "usuario_responde": r.usuario_responde,
+            "fecha_respuesta": r.fecha_respuesta.isoformat() if r.fecha_respuesta else None,
+        })
+
+    return {
+        "resumen": {
+            "solicitudes_hoy": len(solicitudes_hoy),
+            "respuestas_hoy": len(respuestas_hoy),
+        },
+        "actividad": {
+            "solicitudes": solicitudes_data,
+            "respuestas": respuestas_data,
+        },
+    }
 
 
 def listar_pendientes(db: Session):

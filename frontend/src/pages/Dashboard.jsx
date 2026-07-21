@@ -48,7 +48,7 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={welcomeStyles.badge}>
-                        <span style={welcomeStyles.badgeText}>v1.0</span>
+                        <span style={welcomeStyles.badgeText}>v4.1.1</span>
                     </div>
                     <button onClick={handleLogout} style={logoutBtnStyles}>
                         Cerrar sesion
@@ -255,13 +255,13 @@ function KpiCard({ icon, iconBg, iconColor, label, value, sub }) {
 
 // ── Paleta de Colores Corporativa e Inmutable ──
 const PALETTE = {
-    bgPage: "#f8fafc",
-    bgCard: "#ffffff",
-    border: "#e2e8f0",
-    textMain: "#0f172a",
-    textMuted: "#64748b",
-    primary: "#0284c7",
-    success: "#16a34a",
+    bgPage: "#0f172a",
+    bgCard: "#042164",
+    border: "#1e3a8a",
+    textMain: "#f1f5f9",
+    textMuted: "#94a3b8",
+    primary: "#3b82f6",
+    success: "#22c55e",
     danger: "#dc2626",
     dangerHover: "#b91c1c",
     tableRowHover: "#f1f5f9"
@@ -270,7 +270,6 @@ const PALETTE = {
 // ── Definición Unificada de Estilos ──
 const dashboardStyles = {
     wrapper: {
-        backgroundColor: PALETTE.bgPage,
         minHeight: "100vh",
         padding: "32px",
         fontFamily: "Inter, system-ui, sans-serif",

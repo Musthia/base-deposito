@@ -16,7 +16,7 @@ export default function MainLayout() {
                 minWidth: 0,
                 padding: "20px",
                 minHeight: "100vh",
-                background: "#f4f4f4",
+                background: "#0f172a",
                 overflow: "auto",
             }}>
                 <NotificationProvider>

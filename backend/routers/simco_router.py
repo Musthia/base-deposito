@@ -9,12 +9,21 @@ from backend.services.simco_service import (
     crear_solicitud,
     listar_pendientes,
     responder_solicitud,
+    dashboard_hoy,
 )
 
 router = APIRouter(
     prefix="/api/simco",
     tags=["Simco"],
 )
+
+
+@router.get("/dashboard")
+def api_dashboard(
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    return dashboard_hoy(db)
 
 
 @router.get("/solicitudes")

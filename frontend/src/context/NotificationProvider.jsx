@@ -67,7 +67,7 @@ export default function NotificationProvider({ children }) {
                             borderRadius: 2,
                             borderLeft: "4px solid",
                             borderColor: n.tipo === "nueva_solicitud" ? "#f59e0b" : "#16a34a",
-                            bgcolor: "#fff",
+                            bgcolor: "#042164",
                             display: "flex",
                             alignItems: "flex-start",
                             gap: 1.5,
@@ -77,16 +77,16 @@ export default function NotificationProvider({ children }) {
                     >
                         <NotificationsIcon sx={{ color: n.tipo === "nueva_solicitud" ? "#f59e0b" : "#16a34a", mt: 0.3 }} />
                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 13, color: "#0f172a" }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 13, color: "#f1f5f9" }}>
                                 {n.tipo === "nueva_solicitud" ? "Nueva Solicitud" : "Solicitud Respondida"}
                             </Typography>
-                            <Typography variant="body2" sx={{ fontSize: 12, color: "#64748b", wordBreak: "break-word" }}>
+                            <Typography variant="body2" sx={{ fontSize: 12, color: "#94a3b8", wordBreak: "break-word" }}>
                                 {n.mensaje}
                             </Typography>
                             <Button
                                 size="small"
                                 variant="outlined"
-                                sx={{ mt: 1, fontSize: 11, textTransform: "none", borderColor: "#cbd5e1", color: "#0f172a" }}
+                                sx={{ mt: 1, fontSize: 11, textTransform: "none", borderColor: "#3b82f6", color: "#3b82f6" }}
                                 onClick={(e) => { e.stopPropagation(); handleClick(n); }}
                             >
                                 Ver solicitud

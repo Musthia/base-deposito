@@ -1,8 +1,9 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
     Box, Typography, Paper, Tabs, Tab, Snackbar, Alert,
 } from "@mui/material";
 import { useAuthStore } from "../../auth/authStore";
+import { useLocation } from "react-router-dom";
 import SolicitudesTab from "./SolicitudesTab";
 import RespuestasTab from "./RespuestasTab";
 import useSimcoWS from "../../hooks/useSimcoWS";
@@ -45,14 +46,26 @@ export default function SimcoPage() {
         });
     }, [nivel, esAdmin]);
 
+    const location = useLocation();
     const [tab, setTab] = useState(0);
+    const [highlightId, setHighlightId] = useState(null);
+
+    useEffect(() => {
+        const state = location.state;
+        if (state?.highlightTab && state?.highlightId) {
+            const idx = tabsVisibles.findIndex((t) => t.key === state.highlightTab);
+            if (idx >= 0) setTab(idx);
+            setHighlightId(state.highlightId);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state, tabsVisibles]);
 
     const tabActual = tabsVisibles[tab];
     const contenido = () => {
         if (!tabActual) return null;
         switch (tabActual.key) {
-            case "solicitudes": return <SolicitudesTab />;
-            case "respuestas": return <RespuestasTab />;
+            case "solicitudes": return <SolicitudesTab highlightId={highlightId} />;
+            case "respuestas": return <RespuestasTab highlightId={highlightId} />;
             default: return (
                 <Typography sx={{ color: PALETTE.textMuted, textAlign: "center", py: 6 }}>
                     Dashboard en construcción

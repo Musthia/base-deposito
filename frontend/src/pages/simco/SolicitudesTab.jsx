@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Fragment } from "react";
+import { useState, useEffect, useCallback, Fragment, useRef } from "react";
 import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, MenuItem, IconButton, Chip, Paper,
@@ -44,17 +44,26 @@ const chipEstado = (estado) => {
     );
 };
 
-export default function SolicitudesTab() {
+export default function SolicitudesTab({ highlightId: propHighlightId }) {
     const perms = usePermissions();
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [openCreate, setOpenCreate] = useState(false);
     const [expandedId, setExpandedId] = useState(null);
+    const [highlightId, setHighlightId] = useState(null);
     const [form, setForm] = useState({
         tipo_documento: "",
         identificador_documento: "",
         detalle: "",
     });
+
+    useEffect(() => {
+        if (propHighlightId) {
+            setHighlightId(propHighlightId);
+            const timer = setTimeout(() => setHighlightId(null), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [propHighlightId]);
 
     const cargar = useCallback(async () => {
         try {
@@ -74,11 +83,12 @@ export default function SolicitudesTab() {
     const handleCreate = async () => {
         try {
             await crearSolicitud(form);
-            setOpenCreate(false);
-            setForm({ tipo_documento: "", identificador_documento: "", detalle: "" });
             cargar();
         } catch (err) {
             console.error("Error al crear solicitud:", err);
+        } finally {
+            setOpenCreate(false);
+            setForm({ tipo_documento: "", identificador_documento: "", detalle: "" });
         }
     };
 
@@ -129,7 +139,12 @@ export default function SolicitudesTab() {
                                     <Fragment key={sol.id}>
                                         <TableRow
                                             hover
-                                            sx={{ cursor: "pointer", "&:hover": { backgroundColor: "#f8fafc" } }}
+                                            sx={{
+                                                cursor: "pointer",
+                                                backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
+                                                transition: "background-color 0.3s",
+                                                "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#f8fafc" },
+                                            }}
                                             onClick={() => setExpandedId(expanded ? null : sol.id)}
                                         >
                                             <TableCell>

@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { TabProvider } from "../context/TabContext";
 import { useIdleTimeout } from "../hooks/useIdleTimeout";
+import NotificationProvider from "../context/NotificationProvider";
 
 export default function MainLayout() {
     useIdleTimeout();
@@ -18,9 +19,11 @@ export default function MainLayout() {
                 background: "#f4f4f4",
                 overflow: "auto",
             }}>
-                <TabProvider>
-                    <Outlet />
-                </TabProvider>
+                <NotificationProvider>
+                    <TabProvider>
+                        <Outlet />
+                    </TabProvider>
+                </NotificationProvider>
             </main>
         </div>
     );

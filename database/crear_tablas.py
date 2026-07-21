@@ -7,6 +7,7 @@ from database.modelos import Base
 # -----------------------------------
 
 import database.modelos_simco  # noqa
+import database.modelos_notificaciones  # noqa
 
 # -----------------------------------
 # CREAR SCHEMAS

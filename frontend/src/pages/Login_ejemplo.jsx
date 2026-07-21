@@ -70,14 +70,14 @@ export default function Login() {
                             <div className="metric-item">
                                 <div className="metric-icon">&#128100;</div>
                                 <div className="metric-text">
-                                    <span className="metric-value">4 </span>
+                                    <span className="metric-value">2 </span>
                                     <span className="metric-label">Atencion especializada en el manejo de datos</span>
                                 </div>
                             </div>
                             <div className="metric-item">
                                 <div className="metric-icon">&#128274;</div>
                                 <div className="metric-text">
-                                    <span className="metric-value">3 </span>
+                                    <span className="metric-value">4  </span>
                                     <span className="metric-label">Somos un sistema confiable y seguro para la gestión de documentos.</span>
                                 </div>
                             </div>

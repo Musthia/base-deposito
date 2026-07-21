@@ -1,10 +1,26 @@
 import asyncio
+import logging
 from sqlalchemy.orm import Session
 from datetime import datetime
 
 from database.modelos_simco import Solicitud, Respuesta
 from backend.schemas.simco_schema import SolicitudCreate, RespuestaCreate
 from backend.ws.simco_manager import manager
+from backend.services.notificaciones_service import (
+    crear_notificaciones_nueva_solicitud,
+    crear_notificaciones_respuesta,
+)
+
+logger = logging.getLogger("datcorr")
+
+
+def _safe_create_task(coro):
+    """Crea una tarea asyncio si hay un event loop corriendo, o la ignora."""
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(coro)
+    except RuntimeError:
+        logger.warning("No hay event loop, omitiendo notificación WebSocket")
 
 
 def generar_codigo(db: Session) -> str:
@@ -59,7 +75,8 @@ def crear_solicitud(db: Session, data: SolicitudCreate, usuario):
     db.add(sol)
     db.commit()
     db.refresh(sol)
-    asyncio.create_task(manager.notify_nueva_solicitud(sol.codigo, sol.creado_por or "—"))
+    crear_notificaciones_nueva_solicitud(db, sol, usuario.id)
+    _safe_create_task(manager.notify_nueva_solicitud(sol.codigo, sol.creado_por or "—"))
     return sol
 
 
@@ -87,5 +104,6 @@ def responder_solicitud(db: Session, data: RespuestaCreate, usuario):
     db.add(resp)
     db.commit()
     db.refresh(resp)
-    asyncio.create_task(manager.notify_solicitud_respondida(sol.codigo))
+    crear_notificaciones_respuesta(db, sol)
+    _safe_create_task(manager.notify_solicitud_respondida(sol.codigo))
     return resp

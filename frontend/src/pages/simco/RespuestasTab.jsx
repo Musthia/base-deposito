@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Fragment } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, MenuItem, Chip, Paper,
@@ -27,9 +27,10 @@ const ESTADOS_DOCUMENTO = [
     { value: "no_localizado", label: "No localizado" },
 ];
 
-export default function RespuestasTab() {
+export default function RespuestasTab({ highlightId: propHighlightId }) {
     const perms = usePermissions();
     const [pendientes, setPendientes] = useState([]);
+    const [highlightId, setHighlightId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [openResponder, setOpenResponder] = useState(false);
     const [selected, setSelected] = useState(null);
@@ -43,7 +44,9 @@ export default function RespuestasTab() {
         try {
             setLoading(true);
             const data = await listarPendientes();
-            setPendientes(data.solicitudes || data);
+            const lista = data.solicitudes || data;
+            lista.sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion));
+            setPendientes(lista);
         } catch {
             setPendientes([]);
         } finally {
@@ -52,6 +55,14 @@ export default function RespuestasTab() {
     }, []);
 
     useEffect(() => { cargar(); }, [cargar]);
+
+    useEffect(() => {
+        if (propHighlightId) {
+            setHighlightId(propHighlightId);
+            const timer = setTimeout(() => setHighlightId(null), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [propHighlightId]);
 
     const abrirResponder = (sol) => {
         setSelected(sol);
@@ -69,11 +80,11 @@ export default function RespuestasTab() {
                 observacion: form.observacion,
             });
             setSnack({ open: true, msg: "Respuesta registrada correctamente", severity: "success" });
-            setOpenResponder(false);
             cargar();
         } catch {
             setSnack({ open: true, msg: "Error al registrar respuesta", severity: "error" });
         } finally {
+            setOpenResponder(false);
             setSending(false);
         }
     };
@@ -108,7 +119,11 @@ export default function RespuestasTab() {
                         </TableHead>
                         <TableBody>
                             {pendientes.map((sol) => (
-                                <TableRow key={sol.id} hover>
+                                <TableRow key={sol.id} hover sx={{
+                                    backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
+                                    transition: "background-color 0.3s",
+                                    "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : undefined },
+                                }}>
                                     <TableCell sx={{ fontWeight: 600, fontSize: 13 }}>{sol.codigo}</TableCell>
                                     <TableCell sx={{ fontSize: 13 }}>{sol.tipo_documento}</TableCell>
                                     <TableCell sx={{ fontSize: 13 }}>{sol.identificador_documento}</TableCell>

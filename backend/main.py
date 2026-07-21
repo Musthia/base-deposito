@@ -13,6 +13,7 @@ from backend.routers.roles_router import router as roles_router
 from backend.routers.permisos_router import router as permisos_router
 from backend.routers.simco_router import router as simco_router
 from backend.routers.simco_ws import router as simco_ws_router
+from backend.routers.notificaciones_router import router as notificaciones_router
 
 from backend.core.exceptions import DatcorrException
 from backend.core.handlers import (
@@ -39,16 +40,13 @@ app = FastAPI(
 # CORS
 # -----------------------------------
 
-origins = [
-    "http://localhost:5173",
-]
-
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
+        "http://localhost:4173",
+        "http://localhost:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -90,6 +88,7 @@ app.include_router(roles_router)
 app.include_router(permisos_router)
 app.include_router(simco_router)
 app.include_router(simco_ws_router)
+app.include_router(notificaciones_router)
 
 # -----------------------------------
 # ROOT

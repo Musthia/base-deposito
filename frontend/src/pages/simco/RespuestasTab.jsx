@@ -8,17 +8,7 @@ import {
 import ReplyIcon from "@mui/icons-material/Reply";
 import { usePermissions } from "../../auth/usePermissions";
 import { listarPendientes, responderSolicitud } from "../../services/simco/respuestasService";
-
-const PALETTE = {
-    bgPage: "#0f172a",
-    border: "#1e3a8a",
-    textMain: "#f1f5f9",
-    textMuted: "#94a3b8",
-    primary: "#2d4a6f",
-    success: "#22c55e",
-    warning: "#eab308",
-    danger: "#ef4444",
-};
+import { useThemeMode } from "../../context/ThemeModeContext";
 
 const ESTADOS_DOCUMENTO = [
     { value: "existe", label: "Existe" },
@@ -28,6 +18,7 @@ const ESTADOS_DOCUMENTO = [
 ];
 
 export default function RespuestasTab({ highlightId: propHighlightId }) {
+    const { colors } = useThemeMode();
     const perms = usePermissions();
     const [pendientes, setPendientes] = useState([]);
     const [highlightId, setHighlightId] = useState(null);
@@ -110,7 +101,7 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
 
     return (
         <Box>
-            <Typography variant="h6" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: colors.textMain, mb: 2 }}>
                 Solicitudes Pendientes
             </Typography>
 
@@ -119,36 +110,36 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
                     <CircularProgress />
                 </Box>
             ) : pendientes.length === 0 ? (
-                <Paper sx={{ p: 4, textAlign: "center", borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
-                    <Typography sx={{ color: PALETTE.textMuted }}>No hay solicitudes pendientes</Typography>
+                <Paper sx={{ p: 4, textAlign: "center", borderRadius: 2, border: `1px solid ${colors.border}` }}>
+                    <Typography sx={{ color: colors.textMuted }}>No hay solicitudes pendientes</Typography>
                 </Paper>
             ) : (
-                <TableContainer component={Paper} sx={{ borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
+                <TableContainer component={Paper} sx={{ borderRadius: 2, border: `1px solid ${colors.border}` }}>
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>CÓDIGO</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>TIPO DOC.</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>IDENTIFICADOR</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>DETALLE</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>SOLICITÓ</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>FECHA</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>CÓDIGO</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>TIPO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>IDENTIFICADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>DETALLE</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>SOLICITÓ</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>FECHA</TableCell>
                                 {puedeResponder && <TableCell sx={{ width: 100 }} />}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {pendientes.map((sol) => (
-                                <TableRow key={sol.id} hover sx={{
-                                    backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
-                                    transition: "background-color 0.3s",
-                                    "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : undefined },
-                                }}>
+                                    <TableRow key={sol.id} hover sx={{
+                                        backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
+                                        transition: "background-color 0.3s",
+                                        "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#f3f4f6" },
+                                    }}>
                                     <TableCell sx={{ fontWeight: 600, fontSize: 13 }}>{sol.codigo}</TableCell>
                                     <TableCell sx={{ fontSize: 13 }}>{sol.tipo_documento}</TableCell>
                                     <TableCell sx={{ fontSize: 13 }}>{sol.identificador_documento}</TableCell>
                                     <TableCell sx={{ fontSize: 13, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sol.detalle}</TableCell>
                                     <TableCell sx={{ fontSize: 13 }}>{sol.creado_por || "-"}</TableCell>
-                                    <TableCell sx={{ fontSize: 13, color: PALETTE.textMuted }}>
+                                    <TableCell sx={{ fontSize: 13, color: colors.textMuted }}>
                                         {sol.fecha_creacion ? new Date(sol.fecha_creacion).toLocaleDateString("es-AR") : "-"}
                                     </TableCell>
                                     {puedeResponder && (
@@ -175,7 +166,7 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
                 <DialogTitle sx={{ fontWeight: 600 }}>
                     Responder Solicitud
                     {selected && (
-                        <Typography variant="body2" sx={{ color: PALETTE.textMuted, mt: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: colors.textMuted, mt: 0.5 }}>
                             {selected.codigo} — {selected.detalle}
                         </Typography>
                     )}

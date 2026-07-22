@@ -197,6 +197,8 @@ export default function Login() {
 
                     <div className="form-links">
                         <Link to="/forgot-password" className="form-link">¿Olvidó su contraseña?</Link>
+                        <span className="form-link-sep">|</span>
+                        <Link to="/registro" className="form-link">Registrarse</Link>
                     </div>
 
                     <footer className="trust-footer">

@@ -34,6 +34,7 @@ from backend.schemas.auth_schema import (
     ForgotPasswordRequest,
     ResetPasswordRequest,
     ChangePasswordRequest,
+    VincularGoogleRequest,
 )
 
 from database.modelos import (
@@ -362,7 +363,9 @@ def get_current_user(
         rol=usuario_actual.rol,
         nivel_seguridad=usuario_actual.nivel_seguridad,
         es_superusuario=usuario_actual.es_superusuario,
-        permisos=permisos
+        permisos=permisos,
+        google_id=usuario_actual.google_id,
+        google_email=usuario_actual.google_email,
     )
 
 
@@ -420,3 +423,46 @@ def change_password(
     usuario_actual.ultimo_cambio_password = datetime.now(timezone.utc)
     db.commit()
     return {"success": True, "mensaje": "Contraseña cambiada correctamente."}
+
+
+# -----------------------------------
+# POST /auth/vincular-google
+# -----------------------------------
+
+@router.post("/vincular-google")
+def vincular_google(
+    body: VincularGoogleRequest,
+    usuario_actual=Depends(obtener_usuario_actual),
+    db: Session = Depends(get_db),
+):
+    if not body.google_id or not body.google_email:
+        raise HTTPException(400, "google_id y google_email son requeridos.")
+
+    existente = db.query(Usuario).filter(Usuario.google_id == body.google_id).first()
+    if existente and existente.id != usuario_actual.id:
+        raise HTTPException(400, "Esta cuenta de Google ya esta vinculada a otro usuario.")
+
+    usuario_actual.google_id = body.google_id
+    usuario_actual.google_email = body.google_email
+    db.commit()
+
+    return {"success": True, "mensaje": "Cuenta de Google vinculada correctamente."}
+
+
+# -----------------------------------
+# POST /auth/desvincular-google
+# -----------------------------------
+
+@router.post("/desvincular-google")
+def desvincular_google(
+    usuario_actual=Depends(obtener_usuario_actual),
+    db: Session = Depends(get_db),
+):
+    if not usuario_actual.google_id:
+        raise HTTPException(400, "No tiene una cuenta de Google vinculada.")
+
+    usuario_actual.google_id = None
+    usuario_actual.google_email = None
+    db.commit()
+
+    return {"success": True, "mensaje": "Cuenta de Google desvinculada correctamente."}

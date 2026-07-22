@@ -5,12 +5,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import api from "../api/axiosClient";
 import { useAuthStore } from "../auth/authStore";
+import { useThemeMode } from "./ThemeModeContext";
 
 const POLL_INTERVAL = 15000;
 
 export default function NotificationProvider({ children }) {
     const navigate = useNavigate();
     const user = useAuthStore((s) => s.user);
+    const { colors } = useThemeMode();
     const [notificaciones, setNotificaciones] = useState([]);
     const seenIds = useRef(new Set());
 
@@ -67,7 +69,7 @@ export default function NotificationProvider({ children }) {
                             borderRadius: 2,
                             borderLeft: "4px solid",
                             borderColor: n.tipo === "nueva_solicitud" ? "#f59e0b" : "#16a34a",
-                            bgcolor: "#042164",
+                            bgcolor: colors.bgCard,
                             display: "flex",
                             alignItems: "flex-start",
                             gap: 1.5,
@@ -75,18 +77,18 @@ export default function NotificationProvider({ children }) {
                             "&:hover": { transform: "translateX(-4px)" },
                         }}
                     >
-                        <NotificationsIcon sx={{ color: n.tipo === "nueva_solicitud" ? "#f59e0b" : "#16a34a", mt: 0.3 }} />
+                        <NotificationsIcon sx={{ color: n.tipo === "nueva_solicitud" ? colors.warning : colors.success, mt: 0.3 }} />
                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 13, color: "#f1f5f9" }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 13, color: colors.textMain }}>
                                 {n.tipo === "nueva_solicitud" ? "Nueva Solicitud" : "Solicitud Respondida"}
                             </Typography>
-                            <Typography variant="body2" sx={{ fontSize: 12, color: "#94a3b8", wordBreak: "break-word" }}>
+                            <Typography variant="body2" sx={{ fontSize: 12, color: colors.textMuted, wordBreak: "break-word" }}>
                                 {n.mensaje}
                             </Typography>
                             <Button
                                 size="small"
                                 variant="outlined"
-                                sx={{ mt: 1, fontSize: 11, textTransform: "none", borderColor: "#2d4a6f", color: "#2d4a6f" }}
+                                sx={{ mt: 1, fontSize: 11, textTransform: "none", borderColor: colors.primary, color: colors.primary }}
                                 onClick={(e) => { e.stopPropagation(); handleClick(n); }}
                             >
                                 Ver solicitud

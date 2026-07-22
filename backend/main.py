@@ -14,6 +14,7 @@ from backend.routers.permisos_router import router as permisos_router
 from backend.routers.simco_router import router as simco_router
 from backend.routers.simco_ws import router as simco_ws_router
 from backend.routers.notificaciones_router import router as notificaciones_router
+from backend.routers.registro_router import router as registro_router
 
 from backend.core.exceptions import DatcorrException
 from backend.core.handlers import (
@@ -89,6 +90,7 @@ app.include_router(permisos_router)
 app.include_router(simco_router)
 app.include_router(simco_ws_router)
 app.include_router(notificaciones_router)
+app.include_router(registro_router)
 
 # -----------------------------------
 # ROOT

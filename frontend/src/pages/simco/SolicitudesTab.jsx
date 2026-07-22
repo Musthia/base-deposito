@@ -10,17 +10,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { usePermissions } from "../../auth/usePermissions";
 import { listarSolicitudes, crearSolicitud } from "../../services/simco/solicitudesService";
-
-const PALETTE = {
-    bgPage: "#0f172a",
-    bgCard: "#042164",
-    border: "#1e3a8a",
-    textMain: "#f1f5f9",
-    textMuted: "#94a3b8",
-    primary: "#2d4a6f",
-    success: "#22c55e",
-    warning: "#eab308",
-};
+import { useThemeMode } from "../../context/ThemeModeContext";
 
 const TIPOS_DOCUMENTO = [
     { value: "expediente", label: "Expediente" },
@@ -29,12 +19,12 @@ const TIPOS_DOCUMENTO = [
     { value: "paquete", label: "Paquete" },
 ];
 
-const chipEstado = (estado) => {
+const chipEstado = (estado, colors) => {
     const map = {
-        pendiente: { label: "Pendiente", color: PALETTE.warning },
-        respondida: { label: "Respondido", color: PALETTE.success },
+        pendiente: { label: "Pendiente", color: colors.warning },
+        respondida: { label: "Respondido", color: colors.success },
     };
-    const cfg = map[estado] || { label: estado, color: PALETTE.textMuted };
+    const cfg = map[estado] || { label: estado, color: colors.textMuted };
     return (
         <Chip
             label={cfg.label}
@@ -45,6 +35,7 @@ const chipEstado = (estado) => {
 };
 
 export default function SolicitudesTab({ highlightId: propHighlightId }) {
+    const { colors } = useThemeMode();
     const perms = usePermissions();
     const [solicitudes, setSolicitudes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -120,7 +111,7 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
     return (
         <Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: 600, color: PALETTE.textMain }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, color: colors.textMain }}>
                     Solicitudes
                 </Typography>
                 {puedeCrear && (
@@ -135,21 +126,21 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
                     <CircularProgress />
                 </Box>
             ) : solicitudes.length === 0 ? (
-                <Paper sx={{ p: 4, textAlign: "center", borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
-                    <Typography sx={{ color: PALETTE.textMuted }}>No hay solicitudes registradas</Typography>
+                <Paper sx={{ p: 4, textAlign: "center", borderRadius: 2, border: `1px solid ${colors.border}` }}>
+                    <Typography sx={{ color: colors.textMuted }}>No hay solicitudes registradas</Typography>
                 </Paper>
             ) : (
-                <TableContainer component={Paper} sx={{ borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
+                <TableContainer component={Paper} sx={{ borderRadius: 2, border: `1px solid ${colors.border}` }}>
                     <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell sx={{ width: 40 }} />
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>CÓDIGO</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>TIPO DOC.</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>IDENTIFICADOR</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>DETALLE</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>ESTADO</TableCell>
-                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: PALETTE.textMain, letterSpacing: 0.5 }}>FECHA</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>CÓDIGO</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>TIPO DOC.</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>IDENTIFICADOR</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>DETALLE</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>ESTADO</TableCell>
+                                <TableCell sx={{ fontWeight: 700, fontSize: 12, color: colors.textMain, letterSpacing: 0.5 }}>FECHA</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -164,7 +155,7 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
                                                 cursor: "pointer",
                                                 backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
                                                 transition: "background-color 0.3s",
-                                                "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#1e3a8a" },
+                                                "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#f3f4f6" },
                                             }}
                                             onClick={() => setExpandedId(expanded ? null : sol.id)}
                                         >
@@ -177,8 +168,8 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
                                             <TableCell sx={{ fontSize: 13 }}>{sol.tipo_documento}</TableCell>
                                             <TableCell sx={{ fontSize: 13 }}>{sol.identificador_documento}</TableCell>
                                             <TableCell sx={{ fontSize: 13, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sol.detalle}</TableCell>
-                                            <TableCell>{chipEstado(sol.estado)}</TableCell>
-                                            <TableCell sx={{ fontSize: 13, color: PALETTE.textMuted }}>
+                                            <TableCell>{chipEstado(sol.estado, colors)}</TableCell>
+                                            <TableCell sx={{ fontSize: 13, color: colors.textMuted }}>
                                                 {sol.fecha_creacion ? new Date(sol.fecha_creacion).toLocaleDateString("es-AR") : "-"}
                                             </TableCell>
                                         </TableRow>
@@ -188,22 +179,22 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
                                                     <Box sx={{ py: 2, px: 4 }}>
                                                         {resp ? (
                                                             <Box>
-                                                                <Typography variant="subtitle2" sx={{ color: PALETTE.success, mb: 1, fontWeight: 600 }}>
+                                                                <Typography variant="subtitle2" sx={{ color: colors.success, mb: 1, fontWeight: 600 }}>
                                                                     Respuesta
                                                                 </Typography>
-                                                                <Typography variant="body2" sx={{ color: PALETTE.textMuted, mb: 0.5 }}>
+                                                                <Typography variant="body2" sx={{ color: colors.textMuted, mb: 0.5 }}>
                                                                     <strong>Estado documento:</strong> {resp.estado_documento}
                                                                 </Typography>
-                                                                <Typography variant="body2" sx={{ color: PALETTE.textMuted, mb: 0.5 }}>
+                                                                <Typography variant="body2" sx={{ color: colors.textMuted, mb: 0.5 }}>
                                                                     <strong>Observación:</strong> {resp.observacion || "Sin observaciones"}
                                                                 </Typography>
-                                                                <Typography variant="body2" sx={{ color: PALETTE.textMuted }}>
+                                                                <Typography variant="body2" sx={{ color: colors.textMuted }}>
                                                                     <strong>Respondido por:</strong> {resp.usuario_responde || "—"} &middot;{" "}
                                                                     {resp.fecha_respuesta ? new Date(resp.fecha_respuesta).toLocaleDateString("es-AR") : "—"}
                                                                 </Typography>
                                                             </Box>
                                                         ) : (
-                                                            <Typography variant="body2" sx={{ color: PALETTE.textMuted, fontStyle: "italic" }}>
+                                                            <Typography variant="body2" sx={{ color: colors.textMuted, fontStyle: "italic" }}>
                                                                 Sin responder
                                                             </Typography>
                                                         )}

@@ -96,6 +96,8 @@ class MeResponse(BaseModel):
     nivel_seguridad: int
     es_superusuario: bool
     permisos: List[str]
+    google_id: Optional[str] = None
+    google_email: Optional[str] = None
 
 
 class ForgotPasswordRequest(BaseModel):
@@ -110,3 +112,7 @@ class ResetPasswordRequest(BaseModel):
 class ChangePasswordRequest(BaseModel):
     actual: str
     nueva: str
+
+class VincularGoogleRequest(BaseModel):
+    google_id: str
+    google_email: str

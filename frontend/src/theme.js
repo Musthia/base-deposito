@@ -1,225 +1,246 @@
 import { createTheme } from "@mui/material/styles";
 
-export const COLORS = {
-    bgPage: "#1a3f22",
-    bgCard: "#58595aff",
-    border: "#515255",
-    textMain: "#a0e0fa",
-    textMainsort: "#000000",
-    textMuted: "#94a3b8",
-    primary: "#2d4a6f",
-    success: "#22c55e",
-    warning: "#eab308",
-    danger: "#ef4444",
+export const LIGHT = {
+    bgPage: "#f3f4f6",
+    bgCard: "#ffffff",
+    border: "#d1d5db",
+    textMain: "#111827",
+    textMuted: "#6b7280",
+    primary: "#2563eb",
+    success: "#16a34a",
+    warning: "#d97706",
+    danger: "#dc2626",
 };
 
-export const theme = createTheme({
-    components: {
-        MuiPaper: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: COLORS.bgCard,
-                    color: COLORS.textMain,
-                },
-            },
-        },
-        MuiIconButton: {
-            styleOverrides: {
-                root: {
-                    color: COLORS.textMain,
-                },
-            },
-        },
-        MuiTableCell: {
-            styleOverrides: {
-                root: {
-                    color: COLORS.textMain,
-                    borderBottomColor: COLORS.border,
-                },
-                head: {
-                    color: COLORS.textMain,
-                    fontWeight: 700,
-                    fontSize: 13,
-                },
-            },
-        },
-        MuiChip: {
-            styleOverrides: {
-                root: {
-                    color: "#fff",
-                },
-            },
-        },
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    textTransform: "none",
-                },
-            },
-        },
-        MuiTab: {
-            styleOverrides: {
-                root: {
-                    color: COLORS.textMuted,
-                    "&.Mui-selected": {
-                        color: COLORS.primary,
+export const DARK = {
+    bgPage: "#1e1e2e",
+    bgCard: "#2a2a3e",
+    border: "#3d3d5c",
+    textMain: "#e4e4ec",
+    textMuted: "#9ca3af",
+    primary: "#60a5fa",
+    success: "#34d399",
+    warning: "#fbbf24",
+    danger: "#f87171",
+};
+
+function buildTheme(colors) {
+    const isDark = colors.bgPage === "#1e1e2e";
+    return createTheme({
+        components: {
+            MuiPaper: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: colors.bgCard,
+                        color: colors.textMain,
                     },
                 },
             },
-        },
-        MuiTypography: {
-            styleOverrides: {
-                root: {
-                    color: COLORS.textMain,
-                },
-            },
-        },
-        MuiInputLabel: {
-            styleOverrides: {
-                root: {
-                    color: COLORS.textMuted,
-                    "&.Mui-focused": {
-                        color: COLORS.primary,
+            MuiIconButton: {
+                styleOverrides: {
+                    root: {
+                        color: colors.textMain,
                     },
                 },
             },
-        },
-        MuiOutlinedInput: {
-            styleOverrides: {
-                root: {
-                    color: COLORS.textMain,
-                    "& .MuiOutlinedInput-notchedOutline": {
-                        borderColor: COLORS.border,
+            MuiTableCell: {
+                styleOverrides: {
+                    root: {
+                        color: colors.textMain,
+                        borderBottomColor: colors.border,
                     },
-                    "&:hover .MuiOutlinedInput-notchedOutline": {
-                        borderColor: COLORS.primary,
+                    head: {
+                        color: colors.textMain,
+                        fontWeight: 700,
+                        fontSize: 13,
                     },
-                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                        borderColor: COLORS.primary,
+                },
+            },
+            MuiChip: {
+                styleOverrides: {
+                    root: {
+                        color: "#fff",
+                    },
+                },
+            },
+            MuiButton: {
+                styleOverrides: {
+                    root: {
+                        textTransform: "none",
+                    },
+                },
+            },
+            MuiTab: {
+                styleOverrides: {
+                    root: {
+                        color: colors.textMuted,
+                        "&.Mui-selected": {
+                            color: colors.primary,
+                        },
+                    },
+                },
+            },
+            MuiTypography: {
+                styleOverrides: {
+                    root: {
+                        color: colors.textMain,
+                    },
+                },
+            },
+            MuiInputLabel: {
+                styleOverrides: {
+                    root: {
+                        color: colors.textMuted,
+                        "&.Mui-focused": {
+                            color: colors.primary,
+                        },
+                    },
+                },
+            },
+            MuiOutlinedInput: {
+                styleOverrides: {
+                    root: {
+                        color: colors.textMain,
+                        "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: colors.border,
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: colors.primary,
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: colors.primary,
+                        },
+                    },
+                },
+            },
+            MuiSelect: {
+                styleOverrides: {
+                    select: {
+                        color: colors.textMain,
+                    },
+                    icon: {
+                        color: colors.textMuted,
+                    },
+                },
+            },
+            MuiDialog: {
+                styleOverrides: {
+                    paper: {
+                        backgroundColor: colors.bgCard,
+                    },
+                },
+            },
+            MuiTextField: {
+                styleOverrides: {
+                    root: {
+                        "& .MuiInputLabel-root": { color: colors.textMuted },
+                        "& .MuiInputBase-root": { color: colors.textMain },
+                        "& .MuiOutlinedInput-notchedOutline": { borderColor: colors.border },
+                    },
+                },
+            },
+            MuiMenu: {
+                styleOverrides: {
+                    paper: {
+                        backgroundColor: colors.bgCard,
+                        border: `1px solid ${colors.border}`,
+                    },
+                    list: {
+                        backgroundColor: colors.bgCard,
+                    },
+                },
+            },
+            MuiMenuItem: {
+                styleOverrides: {
+                    root: {
+                        color: colors.textMain,
+                        "&:hover": {
+                            backgroundColor: isDark ? "rgba(96, 165, 250, 0.12)" : "rgba(37, 99, 235, 0.08)",
+                        },
+                        "&.Mui-selected": {
+                            backgroundColor: isDark ? "rgba(96, 165, 250, 0.22)" : "rgba(37, 99, 235, 0.15)",
+                        },
+                    },
+                },
+            },
+            MuiSnackbar: {
+                styleOverrides: {
+                    root: {
+                        "& .MuiAlert-root": {
+                            backgroundColor: colors.bgCard,
+                            color: colors.textMain,
+                        },
+                    },
+                },
+            },
+            MuiDataGrid: {
+                styleOverrides: {
+                    root: {
+                        backgroundColor: colors.bgCard,
+                        color: colors.textMain,
+                        borderColor: colors.border,
+                        "& .MuiDataGrid-cell": {
+                            color: colors.textMain,
+                            borderBottom: `1px solid ${colors.border}`,
+                            backgroundColor: colors.bgCard,
+                        },
+                        "& .MuiTablePagination-root": {
+                            color: colors.textMain,
+                        },
+                        "& .MuiTablePagination-selectIcon": {
+                            color: colors.textMain,
+                        },
+                        "& .MuiDataGrid-row:hover": {
+                            backgroundColor: isDark ? "rgba(96, 165, 250, 0.06)" : "rgba(37, 99, 235, 0.04)",
+                        },
+                        "& .MuiDataGrid-row.Mui-selected": {
+                            backgroundColor: isDark ? "rgba(96, 165, 250, 0.14)" : "rgba(37, 99, 235, 0.10)",
+                        },
+                        "& .MuiDataGrid-sortIcon": {
+                            color: colors.textMain,
+                            opacity: 1,
+                            fontSize: 18,
+                        },
+                        "& .MuiDataGrid-iconButtonContainer": {
+                            color: colors.textMain,
+                            opacity: 1,
+                        },
+                        "& .MuiDataGrid-columnHeaderTitleContainer": {
+                            color: colors.textMain,
+                        },
+                    },
+                    columnHeaders: {
+                        backgroundColor: isDark ? "#363652" : "#f9fafb",
+                        color: colors.textMain,
+                        fontWeight: 700,
+                        fontSize: 13,
+                        borderBottom: `2px solid ${colors.border}`,
+                    },
+                    columnHeader: {
+                        backgroundColor: isDark ? "#363652" : "#f9fafb",
+                        color: colors.textMain,
+                        "&:hover": {
+                            backgroundColor: isDark ? "#404060" : "#e5e7eb",
+                        },
+                        "&.MuiDataGrid-columnHeader--sorted": {
+                            backgroundColor: isDark ? "#404060" : "#e5e7eb",
+                        },
+                    },
+                    columnHeaderTitle: {
+                        color: colors.textMain,
+                        fontWeight: 700,
+                    },
+                    footerContainer: {
+                        backgroundColor: isDark ? "#363652" : "#f9fafb",
+                        borderTop: `2px solid ${colors.border}`,
+                        color: colors.textMain,
                     },
                 },
             },
         },
-        MuiSelect: {
-            styleOverrides: {
-                icon: {
-                    color: COLORS.textMuted,
-                },
-            },
-        },
-        MuiDialog: {
-            styleOverrides: {
-                paper: {
-                    backgroundColor: COLORS.bgCard,
-                },
-            },
-        },
-        MuiTextField: {
-            styleOverrides: {
-                root: {
-                    "& .MuiInputLabel-root": { color: COLORS.textMuted },
-                    "& .MuiInputBase-root": { color: COLORS.textMain },
-                    "& .MuiOutlinedInput-notchedOutline": { borderColor: COLORS.border },
-                },
-            },
-        },
-        MuiMenu: {
-            styleOverrides: {
-                paper: {
-                    backgroundColor: "#0a1a4a",
-                    border: `1px solid ${COLORS.border}`,
-                },
-                list: {
-                    backgroundColor: "#0a1a4a",
-                },
-            },
-        },
-        MuiMenuItem: {
-            styleOverrides: {
-                root: {
-                    color: COLORS.textMain,
-                    "&:hover": {
-                        backgroundColor: "rgba(59, 130, 246, 0.15)",
-                    },
-                    "&.Mui-selected": {
-                        backgroundColor: "rgba(59, 130, 246, 0.25)",
-                    },
-                },
-            },
-        },
-        MuiSnackbar: {
-            styleOverrides: {
-                root: {
-                    "& .MuiAlert-root": {
-                        backgroundColor: COLORS.bgCard,
-                        color: COLORS.textMain,
-                    },
-                },
-            },
-        },
-        MuiDataGrid: {
-            styleOverrides: {
-                root: {
-                    backgroundColor: COLORS.bgCard,
-                    color: COLORS.textMain,
-                    borderColor: COLORS.border,
-                    "& .MuiDataGrid-cell": {
-                        color: COLORS.textMain,
-                        borderBottom: `1px solid ${COLORS.border}`,
-                        backgroundColor: COLORS.bgCard,
-                    },
-                    "& .MuiTablePagination-root": {
-                        color: COLORS.textMain,
-                    },
-                    "& .MuiTablePagination-selectIcon": {
-                        color: COLORS.textMain,
-                    },
-                    "& .MuiDataGrid-row:hover": {
-                        backgroundColor: "rgba(95, 96, 97, 0.08)",
-                    },
-                    "& .MuiDataGrid-row.Mui-selected": {
-                        backgroundColor: "rgba(93, 93, 94, 0.15)",
-                    },
-                    "& .MuiDataGrid-sortIcon": {
-                        color: COLORS.textMainsort,
-                        opacity: 1,
-                        fontSize: 18,
-                    },
-                    "& .MuiDataGrid-iconButtonContainer": {
-                        color: COLORS.textMain,
-                        opacity: 1,
-                    },
-                    "& .MuiDataGrid-columnHeaderTitleContainer": {
-                        color: COLORS.textMain,
-                    },
-                },
-                columnHeaders: {
-                    backgroundColor: "#505052",
-                    color: COLORS.textMain,
-                    fontWeight: 700,
-                    fontSize: 13,
-                    borderBottom: `2px solid ${COLORS.primary}`,
-                },
-                columnHeader: {
-                    backgroundColor: "#4f4f52",
-                    color: COLORS.textMain,
-                    "&:hover": {
-                        backgroundColor: "#646566",
-                    },
-                    "&.MuiDataGrid-columnHeader--sorted": {
-                        backgroundColor: "#626263",
-                    },
-                },
-                columnHeaderTitle: {
-                    color: COLORS.textMain,
-                    fontWeight: 700,
-                },
-                footerContainer: {
-                    backgroundColor: "#2f3030",
-                    borderTop: `2px solid ${COLORS.border}`,
-                    color: COLORS.textMain,
-                },
-            },
-        },
-    },
-});
+    });
+}
+
+export function getTheme(mode) {
+    return buildTheme(mode === "dark" ? DARK : LIGHT);
+}

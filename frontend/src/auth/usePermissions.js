@@ -14,6 +14,7 @@ export const usePermissions = () => {
             canViewCargaDatos: false,
             canViewSimco: false,
             canViewMensajes: false,
+            canViewAltasPendientes: false,
             isConsulta: false,
             canCreateUser: false,
             canEditUser: false,
@@ -37,6 +38,7 @@ export const usePermissions = () => {
         canViewCargaDatos: nivel >= 5,
         canViewSimco: true,
         canViewMensajes: nivel >= 3,
+        canViewAltasPendientes: isAdmin,
         isConsulta: nivel === 1,
 
         canCreateUser: isAdmin,

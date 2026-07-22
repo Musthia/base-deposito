@@ -8,9 +8,10 @@ from database.modelos import Base
 
 import database.modelos_simco  # noqa
 import database.modelos_notificaciones  # noqa
+import database.modelos_registro  # noqa
 
 # -----------------------------------
-# CREAR SCHEMAS
+# SCHEMA & TABLAS
 # -----------------------------------
 
 print("\nCreando schemas...")
@@ -21,12 +22,42 @@ with engine.connect() as conn:
 
 print("Schemas creados.")
 
-# -----------------------------------
-# CREAR TODAS LAS TABLAS
-# -----------------------------------
-
 print("Creando tablas PostgreSQL...\n")
 
 Base.metadata.create_all(bind=engine)
 
 print("Tablas creadas correctamente.")
+
+# -----------------------------------
+# MIGRACIONES
+# -----------------------------------
+
+print("Ejecutando migraciones...")
+
+with engine.connect() as conn:
+    conn.execute(text("""
+        DO $$
+        BEGIN
+            IF EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name='registros_pendientes'
+                AND column_name='updated_at'
+                AND is_nullable='YES'
+                AND column_default IS NULL
+            ) THEN
+                ALTER TABLE registros_pendientes
+                ALTER COLUMN updated_at SET DEFAULT NOW();
+            END IF;
+
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name='usuarios' AND column_name='google_id'
+            ) THEN
+                ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(255) UNIQUE;
+                ALTER TABLE usuarios ADD COLUMN google_email VARCHAR(255);
+            END IF;
+        END $$;
+    """))
+    conn.commit()
+
+print("Migraciones ejecutadas.")

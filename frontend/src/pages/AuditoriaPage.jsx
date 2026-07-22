@@ -16,6 +16,9 @@ const actionColor = (accion) => {
         DELETE_LOGICO_ERROR: "#dc2626",
         CONSULTA: "#8b5cf6",
         BUSQUEDA: "#f59e0b",
+        SOLICITUD_REGISTRO: "#3b82f6",
+        ALTA_USUARIO: "#16a34a",
+        RECHAZO_USUARIO: "#ef4444",
     };
     return map[accion] || "#64748b";
 };
@@ -32,6 +35,9 @@ const actionLabel = (accion, tabla) => {
         LOGOUT_SUCCESS: "Cierre de sesion",
         CONSULTA: "Consulta de datos",
         BUSQUEDA: "Busqueda de datos",
+        SOLICITUD_REGISTRO: "Solicitud de registro",
+        ALTA_USUARIO: "Alta de usuario aprobada",
+        RECHAZO_USUARIO: "Rechazo de registro",
     };
     return map[accion] || accion;
 };

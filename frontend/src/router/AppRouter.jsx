@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
+import RegistroPage from "../pages/RegistroPage";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
 import Dashboard from "../pages/Dashboard";
@@ -13,6 +14,8 @@ import SimcoPage from "../pages/simco/SimcoPage";
 import MensajesPage from "../pages/MensajesPage";
 import AcercaDatcorrPage from "../pages/AcercaDatcorrPage";
 import AcercaSimcoPage from "../pages/AcercaSimcoPage";
+import AltasPendientesPage from "../pages/AltasPendientesPage";
+import MiCuentaPage from "../pages/MiCuentaPage";
 
 import PrivateRoute from "../auth/PrivateRoute";
 import MainLayout from "../layouts/MainLayout";
@@ -24,6 +27,7 @@ export default function AppRouter() {
 
                 {/* PUBLICO */}
                 <Route path="/" element={<Login />} />
+                <Route path="/registro" element={<RegistroPage />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
 
@@ -45,6 +49,8 @@ export default function AppRouter() {
                     <Route path="/mensajes" element={<MensajesPage />} />
                     <Route path="/acerca-datcorr" element={<AcercaDatcorrPage />} />
                     <Route path="/acerca-simco" element={<AcercaSimcoPage />} />
+                    <Route path="/altas-pendientes" element={<AltasPendientesPage />} />
+                    <Route path="/mi-cuenta" element={<MiCuentaPage />} />
 
                 {/* fallback */}
                 <Route path="*" element={<Login />} />

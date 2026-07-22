@@ -13,26 +13,7 @@ import RespuestasTab from "./RespuestasTab";
 import useSimcoWS from "../../hooks/useSimcoWS";
 import api from "../../api/axiosClient";
 import { buscarSimco } from "../../services/simco/buscarService";
-
-const PALETTE = {
-    bgPage: "#0f172a",
-    bgCard: "#042164",
-    border: "#1e3a8a",
-    textMain: "#f1f5f9",
-    textMuted: "#94a3b8",
-    primary: "#2d4a6f",
-    success: "#22c55e",
-    warning: "#eab308",
-};
-
-const chipEstado = (estado) => {
-    const map = {
-        pendiente: { label: "Pendiente", color: PALETTE.warning },
-        respondida: { label: "Respondido", color: PALETTE.success },
-    };
-    const cfg = map[estado] || { label: estado, color: PALETTE.textMuted };
-    return <Chip label={cfg.label} size="small" sx={{ fontWeight: 600, fontSize: 11, backgroundColor: cfg.color, color: "#fff" }} />;
-};
+import { useThemeMode } from "../../context/ThemeModeContext";
 
 const TABS = [
     { label: "Dashboard", key: "dashboard" },
@@ -43,11 +24,11 @@ const TABS = [
 const ResultTables = ({ results }) => (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
         <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: colors.textMain, mb: 2 }}>
                 Solicitudes ({results.solicitudes.length})
             </Typography>
             {results.solicitudes.length > 0 ? (
-                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${PALETTE.border}` }}>
+                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${colors.border}` }}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -69,7 +50,7 @@ const ResultTables = ({ results }) => (
                                     <TableCell sx={{ fontSize: 12, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.detalle}</TableCell>
                                     <TableCell>{chipEstado(s.estado)}</TableCell>
                                     <TableCell sx={{ fontSize: 12 }}>{s.creado_por || "—"}</TableCell>
-                                    <TableCell sx={{ fontSize: 12, color: PALETTE.textMuted }}>
+                                    <TableCell sx={{ fontSize: 12, color: colors.textMuted }}>
                                         {s.fecha_creacion ? new Date(s.fecha_creacion).toLocaleDateString("es-AR") : "—"}
                                     </TableCell>
                                 </TableRow>
@@ -78,15 +59,15 @@ const ResultTables = ({ results }) => (
                     </Table>
                 </TableContainer>
             ) : (
-                <Typography variant="body2" sx={{ color: PALETTE.textMuted, fontStyle: "italic" }}>Sin resultados en solicitudes</Typography>
+                <Typography variant="body2" sx={{ color: colors.textMuted, fontStyle: "italic" }}>Sin resultados en solicitudes</Typography>
             )}
         </Box>
         <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: colors.textMain, mb: 2 }}>
                 Respuestas ({results.respuestas.length})
             </Typography>
             {results.respuestas.length > 0 ? (
-                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${PALETTE.border}` }}>
+                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${colors.border}` }}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -108,7 +89,7 @@ const ResultTables = ({ results }) => (
                                     <TableCell sx={{ fontSize: 12 }}>{r.estado_documento}</TableCell>
                                     <TableCell sx={{ fontSize: 12, maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.observacion || "—"}</TableCell>
                                     <TableCell sx={{ fontSize: 12 }}>{r.usuario_responde || "—"}</TableCell>
-                                    <TableCell sx={{ fontSize: 12, color: PALETTE.textMuted }}>
+                                    <TableCell sx={{ fontSize: 12, color: colors.textMuted }}>
                                         {r.fecha_respuesta ? new Date(r.fecha_respuesta).toLocaleDateString("es-AR") : "—"}
                                     </TableCell>
                                 </TableRow>
@@ -117,14 +98,25 @@ const ResultTables = ({ results }) => (
                     </Table>
                 </TableContainer>
             ) : (
-                <Typography variant="body2" sx={{ color: PALETTE.textMuted, fontStyle: "italic" }}>Sin resultados en respuestas</Typography>
+                <Typography variant="body2" sx={{ color: colors.textMuted, fontStyle: "italic" }}>Sin resultados en respuestas</Typography>
             )}
         </Box>
     </Box>
 );
 
 export default function SimcoPage() {
+    const { colors } = useThemeMode();
     const user = useAuthStore((s) => s.user);
+
+    const chipEstado = (estado) => {
+        const map = {
+            pendiente: { label: "Pendiente", color: colors.warning },
+            respondida: { label: "Respondido", color: colors.success },
+        };
+        const cfg = map[estado] || { label: estado, color: colors.textMuted };
+        return <Chip label={cfg.label} size="small" sx={{ fontWeight: 600, fontSize: 11, backgroundColor: cfg.color, color: "#fff" }} />;
+    };
+
     const [dashboardData, setDashboardData] = useState(null);
     const nivel = user?.nivel ?? 0;
     const esSuper = user?.superusuario ?? false;
@@ -265,11 +257,11 @@ export default function SimcoPage() {
                 return (
                     <Box sx={{ display: "flex", gap: 3 }}>
                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: colors.textMain, mb: 2 }}>
                                 Solicitudes de Hoy ({act?.solicitudes?.length || 0})
                             </Typography>
                             {act?.solicitudes?.length ? (
-                                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${PALETTE.border}` }}>
+                                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${colors.border}` }}>
                                     <Table size="small">
                                         <TableHead>
                                             <TableRow>
@@ -292,15 +284,15 @@ export default function SimcoPage() {
                                     </Table>
                                 </TableContainer>
                             ) : (
-                                <Typography variant="body2" sx={{ color: PALETTE.textMuted, fontStyle: "italic" }}>Sin solicitudes hoy</Typography>
+                                <Typography variant="body2" sx={{ color: colors.textMuted, fontStyle: "italic" }}>Sin solicitudes hoy</Typography>
                             )}
                         </Box>
                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: PALETTE.textMain, mb: 2 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: colors.textMain, mb: 2 }}>
                                 Respuestas de Hoy ({act?.respuestas?.length || 0})
                             </Typography>
                             {act?.respuestas?.length ? (
-                                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${PALETTE.border}` }}>
+                                <TableContainer component={Paper} sx={{ borderRadius: 1, border: `1px solid ${colors.border}` }}>
                                     <Table size="small">
                                         <TableHead>
                                             <TableRow>
@@ -321,7 +313,7 @@ export default function SimcoPage() {
                                     </Table>
                                 </TableContainer>
                             ) : (
-                                <Typography variant="body2" sx={{ color: PALETTE.textMuted, fontStyle: "italic" }}>Sin respuestas hoy</Typography>
+                                <Typography variant="body2" sx={{ color: colors.textMuted, fontStyle: "italic" }}>Sin respuestas hoy</Typography>
                             )}
                         </Box>
                     </Box>
@@ -335,24 +327,24 @@ export default function SimcoPage() {
 
     return (
         <Box sx={{ minHeight: "100vh", p: 3 }}>
-            <Paper sx={{ p: 3, mb: 3, borderRadius: 2, border: `1px solid ${PALETTE.border}` }}>
+            <Paper sx={{ p: 3, mb: 3, borderRadius: 2, border: `1px solid ${colors.border}` }}>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2 }}>
                     <Box>
-                        <Typography variant="h5" sx={{ fontWeight: 700, color: PALETTE.textMain, mb: 0.5 }}>
+                        <Typography variant="h5" sx={{ fontWeight: 700, color: colors.textMain, mb: 0.5 }}>
                             SiMCo
                         </Typography>
-                        <Typography variant="body2" sx={{ color: PALETTE.textMuted }}>
+                        <Typography variant="body2" sx={{ color: colors.textMuted }}>
                             {hoy}
                         </Typography>
                     </Box>
                     <Box sx={{ display: "flex", gap: 3 }}>
                         <Box sx={{ textAlign: "center" }}>
-                            <Typography variant="h4" sx={{ fontWeight: 700, color: PALETTE.primary }}>{resumen?.solicitudes_hoy ?? "—"}</Typography>
-                            <Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Solicitudes hoy</Typography>
+                            <Typography variant="h4" sx={{ fontWeight: 700, color: colors.primary }}>{resumen?.solicitudes_hoy ?? "—"}</Typography>
+                            <Typography variant="caption" sx={{ color: colors.textMuted }}>Solicitudes hoy</Typography>
                         </Box>
                         <Box sx={{ textAlign: "center" }}>
-                            <Typography variant="h4" sx={{ fontWeight: 700, color: PALETTE.success }}>{resumen?.respuestas_hoy ?? "—"}</Typography>
-                            <Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Respuestas hoy</Typography>
+                            <Typography variant="h4" sx={{ fontWeight: 700, color: colors.success }}>{resumen?.respuestas_hoy ?? "—"}</Typography>
+                            <Typography variant="caption" sx={{ color: colors.textMuted }}>Respuestas hoy</Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -365,35 +357,35 @@ export default function SimcoPage() {
                         onChange={(e) => setSearchInput(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") commitSearch(); }}
                         sx={{
-                            "& .MuiInputBase-root": { backgroundColor: "#0f172a", borderRadius: 1 },
+                            "& .MuiInputBase-root": { backgroundColor: "#ffffff", borderRadius: 1 },
                         }}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    {searching ? <CircularProgress size={18} /> : <SearchIcon sx={{ color: PALETTE.textMuted }} />}
+                                    {searching ? <CircularProgress size={18} /> : <SearchIcon sx={{ color: colors.textMuted }} />}
                                 </InputAdornment>
                             ),
                             endAdornment: searchInput ? (
                                 <InputAdornment position="end">
                                     <IconButton size="small" onClick={() => { setSearchInput(""); setSearchResults(null); }}>
-                                        <ClearIcon sx={{ color: PALETTE.textMuted, fontSize: 18 }} />
+                                        <ClearIcon sx={{ color: colors.textMuted, fontSize: 18 }} />
                                     </IconButton>
                                 </InputAdornment>
                             ) : null,
                         }}
                     />
-                    <IconButton onClick={commitSearch} disabled={!searchInput.trim() || !searchResults} sx={{ color: PALETTE.primary }}>
+                    <IconButton onClick={commitSearch} disabled={!searchInput.trim() || !searchResults} sx={{ color: colors.primary }}>
                         <SearchIcon />
                     </IconButton>
                 </Box>
                 <FormControlLabel
-                    control={<Checkbox size="small" checked={keepNewTab} onChange={(e) => setKeepNewTab(e.target.checked)} sx={{ color: PALETTE.textMuted, "&.Mui-checked": { color: PALETTE.primary } }} />}
-                    label={<Typography variant="caption" sx={{ color: PALETTE.textMuted }}>Nueva pestaña por búsqueda</Typography>}
+                    control={<Checkbox size="small" checked={keepNewTab} onChange={(e) => setKeepNewTab(e.target.checked)} sx={{ color: colors.textMuted, "&.Mui-checked": { color: colors.primary } }} />}
+                    label={<Typography variant="caption" sx={{ color: colors.textMuted }}>Nueva pestaña por búsqueda</Typography>}
                     sx={{ mt: 1 }}
                 />
             </Paper>
 
-            <Paper sx={{ borderRadius: 2, border: `1px solid ${PALETTE.border}`, overflow: "hidden" }}>
+            <Paper sx={{ borderRadius: 2, border: `1px solid ${colors.border}`, overflow: "hidden" }}>
                 <Tabs value={Math.min(tab, tabsVisibles.length - 1)} onChange={handleTabChange} sx={{ borderBottom: 1, borderColor: "divider", px: 2 }}>
                     {tabsVisibles.map((t) => (
                         <Tab
@@ -407,7 +399,7 @@ export default function SimcoPage() {
                                             onClick={(e) => { e.stopPropagation(); e.preventDefault(); removeSearchTab(t.searchId); }}
                                             sx={{
                                                 ml: 0.5,
-                                                color: PALETTE.textMuted,
+                                                color: colors.textMuted,
                                                 cursor: "pointer",
                                                 fontSize: 16,
                                                 lineHeight: 1,

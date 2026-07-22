@@ -65,6 +65,10 @@ export default function Dashboard() {
                     label="Bases activas"
                     value={stats.total_bases}
                     sub="Total de Organismos"
+                    details={stats.bases?.slice(0, 3).map((b) => ({
+                        label: b.nombre.replace(/_/g, " "),
+                        value: b.registros.toLocaleString(),
+                    }))}
                 />
                 <KpiCard
                     icon="R"
@@ -73,6 +77,11 @@ export default function Dashboard() {
                     label="Registros totales"
                     value={stats.total_registros.toLocaleString()}
                     sub="Suma de todas las bases"
+                    details={[
+                        { label: "DATCORR", value: (stats.total_datcorr || 0).toLocaleString() },
+                        { label: "VERIFICADO", value: (stats.total_verificado || 0).toLocaleString() },
+                        { label: "Bases activas", value: stats.total_bases },
+                    ]}
                 />
                 <KpiCard
                     icon="U"
@@ -81,6 +90,11 @@ export default function Dashboard() {
                     label="Usuarios activos"
                     value={stats.usuarios_activos}
                     sub={`De ${stats.total_usuarios} registrados`}
+                    details={[
+                        { label: "Registrados", value: stats.total_usuarios },
+                        { label: "Activos", value: stats.usuarios_activos },
+                        { label: "Inactivos", value: (stats.total_usuarios - stats.usuarios_activos) },
+                    ]}
                 />
                 <KpiCard
                     icon="A"
@@ -89,6 +103,10 @@ export default function Dashboard() {
                     label="Actividad reciente"
                     value={stats.actividad.length}
                     sub="Últimas acciones"
+                    details={stats.actividad.slice(0, 3).map((a) => ({
+                        label: formatAction(a),
+                        value: formatDate(a.fecha),
+                    }))}
                 />
             </div>
 
@@ -238,9 +256,14 @@ function formatDate(iso) {
 
 /* ── KPI Card ── */
 
-function KpiCard({ icon, iconBg, iconColor, label, value, sub }) {
+function KpiCard({ icon, iconBg, iconColor, label, value, sub, details }) {
+    const [over, setOver] = useState(false);
     return (
-        <div style={kpiStyles.card}>
+        <div
+            style={kpiStyles.card}
+            onMouseEnter={() => setOver(true)}
+            onMouseLeave={() => setOver(false)}
+        >
             <div style={{ ...kpiStyles.iconWrap, background: iconBg }}>
                 <span style={{ fontSize: 16, fontWeight: 700, color: iconColor }}>{icon}</span>
             </div>
@@ -249,23 +272,39 @@ function KpiCard({ icon, iconBg, iconColor, label, value, sub }) {
                 <div style={kpiStyles.value}>{value}</div>
                 <div style={kpiStyles.sub}>{sub}</div>
             </div>
+            <div style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(180deg, rgba(37,99,235,0.92) 0%, rgba(37,99,235,0.97) 100%)",
+                color: "#000000",
+                padding: "16px 20px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "6px",
+                transform: over ? "translateY(0)" : "translateY(101%)",
+                opacity: over ? 1 : 0,
+                transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease",
+                pointerEvents: over ? "auto" : "none",
+            }}>
+                {details?.map((d, i) => (
+                    <div key={i} style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: 13,
+                        lineHeight: 1.4,
+                        borderBottom: i < details.length - 1 ? "1px solid rgba(255,255,255,0.15)" : "none",
+                        paddingBottom: i < details.length - 1 ? "6px" : 0,
+                    }}>
+                        <span style={{ opacity: 0.9 }}>{d.label}</span>
+                        <span style={{ fontWeight: 700, fontSize: 14 }}>{d.value}</span>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
-
-// ── Paleta de Colores Corporativa e Inmutable ──
-const PALETTE = {
-    bgPage: "#0f172a",
-    bgCard: "#042164",
-    border: "#1e3a8a",
-    textMain: "#f1f5f9",
-    textMuted: "#94a3b8",
-    primary: "#2d4a6f",
-    success: "#22c55e",
-    danger: "#dc2626",
-    dangerHover: "#b91c1c",
-    tableRowHover: "#f1f5f9"
-};
 
 // ── Definición Unificada de Estilos ──
 const dashboardStyles = {
@@ -282,10 +321,10 @@ const welcomeStyles = {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: PALETTE.bgCard,
+        backgroundColor: "var(--bg-card)",
         padding: "24px 32px",
         borderRadius: "12px",
-        border: `1px solid ${PALETTE.border}`,
+        border: `1px solid ${"var(--border)"}`,
         marginBottom: "24px",
         boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)"
     },
@@ -297,13 +336,13 @@ const welcomeStyles = {
     title: {
         fontSize: "26px",
         fontWeight: "700",
-        color: PALETTE.textMain,
+        color: "var(--text-main)",
         margin: 0,
         letterSpacing: "-0.02em"
     },
     desc: {
         fontSize: "14px",
-        color: PALETTE.textMuted,
+        color: "var(--text-muted)",
         margin: 0
     },
     actions: {
@@ -315,18 +354,18 @@ const welcomeStyles = {
         backgroundColor: "#f1f5f9",
         padding: "6px 12px",
         borderRadius: "6px",
-        border: `1px solid ${PALETTE.border}`
+        border: `1px solid ${"var(--border)"}`
     },
     badgeText: {
         fontSize: "12px",
         fontWeight: "600",
-        color: PALETTE.textMuted,
+        color: "var(--text-muted)",
         fontFamily: "monospace"
     }
 };
 
 const logoutBtnStyles = {
-    backgroundColor: PALETTE.danger,
+    backgroundColor: "var(--danger)",
     color: "#ffffff",
     border: "none",
     padding: "8px 16px",
@@ -345,14 +384,16 @@ const kpiStyles = {
         marginBottom: "24px"
     },
     card: {
-        backgroundColor: PALETTE.bgCard,
+        backgroundColor: "var(--bg-card)",
         borderRadius: "12px",
         padding: "18px 20px",
         display: "flex",
         alignItems: "center",
         gap: "16px",
         boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
-        border: `1px solid ${PALETTE.border}`
+        border: `1px solid ${"var(--border)"}`,
+        position: "relative",
+        overflow: "hidden",
     },
     iconWrap: {
         width: "48px",
@@ -363,9 +404,9 @@ const kpiStyles = {
         justifyContent: "center",
         flexShrink: 0
     },
-    label: { fontSize: "13px", color: PALETTE.textMuted, fontWeight: "500" },
-    value: { fontSize: "26px", fontWeight: "700", color: PALETTE.textMain, lineHeight: 1.2 },
-    sub: { fontSize: "12px", color: PALETTE.textMuted, marginTop: "2px" }
+    label: { fontSize: "13px", color: "var(--text-muted)", fontWeight: "500" },
+    value: { fontSize: "26px", fontWeight: "700", color: "var(--text-main)", lineHeight: 1.2 },
+    sub: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }
 };
 
 const bottomStyles = {
@@ -381,10 +422,10 @@ const bottomStyles = {
 
 const cardStyles = {
     card: {
-        backgroundColor: PALETTE.bgCard,
+        backgroundColor: "var(--bg-card)",
         padding: "28px",
         borderRadius: "12px",
-        border: `1px solid ${PALETTE.border}`,
+        border: `1px solid ${"var(--border)"}`,
         boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)"
     }
 };
@@ -392,7 +433,7 @@ const cardStyles = {
 const sectionTitle = {
     fontSize: "18px",
     fontWeight: "600",
-    color: PALETTE.textMain,
+    color: "var(--text-main)",
     margin: "0 0 20px 0",
     letterSpacing: "-0.01em"
 };
@@ -401,17 +442,17 @@ const thStyles = {
     padding: "12px 16px",
     fontSize: "12px",
     fontWeight: "600",
-    color: PALETTE.textMuted,
+    color: "var(--text-muted)",
     textTransform: "uppercase",
     letterSpacing: "0.05em",
-    borderBottom: `1px solid ${PALETTE.border}`,
+    borderBottom: `1px solid ${"var(--border)"}`,
     textAlign: "left"
 };
 const tdStyles = {
     padding: "14px 16px",
     fontSize: "14px",
-    color: PALETTE.textMain,
-    borderBottom: `1px solid ${PALETTE.border}`
+    color: "var(--text-main)",
+    borderBottom: `1px solid ${"var(--border)"}`
 };
 const tableStyles = {
     container: { overflowX: "auto" },
@@ -419,27 +460,27 @@ const tableStyles = {
     tr: { transition: "background-color 0.15s ease" },
     thRight: { ...thStyles, textAlign: "right" },
     tdValue: { ...tdStyles, textAlign: "right", fontWeight: "600" },
-    tdDatcorr: { ...tdStyles, textAlign: "right", color: PALETTE.primary, fontWeight: "500" },
-    tdVerificado: { ...tdStyles, textAlign: "right", color: PALETTE.success, fontWeight: "500" },
+    tdDatcorr: { ...tdStyles, textAlign: "right", color: "var(--primary)", fontWeight: "500" },
+    tdVerificado: { ...tdStyles, textAlign: "right", color: "var(--success)", fontWeight: "500" },
     tfootTr: { backgroundColor: "#fafafa" },
-    tfootTdLabel: { ...tdStyles, fontWeight: "700", borderTop: `2px solid ${PALETTE.border}`, borderBottom: "none" },
-    tfootTdValue: { ...tdStyles, fontWeight: "700", textAlign: "right", borderTop: `2px solid ${PALETTE.border}`, borderBottom: "none" },
-    tfootTdDatcorr: { ...tdStyles, fontWeight: "700", textAlign: "right", color: PALETTE.primary, borderTop: `2px solid ${PALETTE.border}`, borderBottom: "none" },
-    tfootTdVerificado: { ...tdStyles, fontWeight: "700", textAlign: "right", color: PALETTE.success, borderTop: `2px solid ${PALETTE.border}`, borderBottom: "none" }
+    tfootTdLabel: { ...tdStyles, fontWeight: "700", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" },
+    tfootTdValue: { ...tdStyles, fontWeight: "700", textAlign: "right", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" },
+    tfootTdDatcorr: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "var(--primary)", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" },
+    tfootTdVerificado: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "var(--success)", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" }
 };
 const tlStyles = {
     container: { marginTop: "12px", display: "flex", flexDirection: "column" },
-    emptyText: { fontSize: "13px", color: PALETTE.textMuted, margin: 0 },
+    emptyText: { fontSize: "13px", color: "var(--text-muted)", margin: 0 },
     row: { display: "flex", gap: "16px" },
     iconCol: { display: "flex", flexDirection: "column", alignItems: "center" },
     icon: { width: "28px", height: "28px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#ffffff", fontWeight: "bold", zIndex: 2 },
-    line: { width: "2px", backgroundColor: PALETTE.border, flexGrow: 1, marginTop: "4px", marginBottom: "4px" },
+    line: { width: "2px", backgroundColor: "var(--border)", flexGrow: 1, marginTop: "4px", marginBottom: "4px" },
     textCol: { paddingBottom: "20px", display: "flex", flexDirection: "column", gap: "4px" },
-    label: { fontSize: "14px", fontWeight: "500", color: PALETTE.textMain },
-    time: { fontSize: "12px", color: PALETTE.textMuted }
+    label: { fontSize: "14px", fontWeight: "500", color: "var(--text-main)" },
+    time: { fontSize: "12px", color: "var(--text-muted)" }
 };
 const loadingStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: PALETTE.bgPage },
-    spinner: { width: "32px", height: "32px", border: `3px solid ${PALETTE.border}`, borderTop: `3px solid ${PALETTE.primary}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
-    text: { marginTop: "12px", color: PALETTE.textMuted, fontSize: "14px" }
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: "var(--bg-page)" },
+    spinner: { width: "32px", height: "32px", border: `3px solid ${"var(--border)"}`, borderTop: `3px solid ${"var(--primary)"}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
+    text: { marginTop: "12px", color: "var(--text-muted)", fontSize: "14px" }
 };

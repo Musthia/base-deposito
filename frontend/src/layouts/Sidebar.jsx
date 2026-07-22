@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../auth/authStore";
 import { usePermissions } from "../auth/usePermissions";
 import api from "../api/axiosClient";
+import { useThemeMode } from "../context/ThemeModeContext";
 
 export default function Sidebar() {
 
@@ -11,6 +12,7 @@ export default function Sidebar() {
     const user = useAuthStore((s) => s.user);
     const logout = useAuthStore((s) => s.logout);
     const perms = usePermissions();
+    const { mode, toggleMode } = useThemeMode();
 
     const datcorrMenu = [
         { label: "Panel de Control", path: "/dashboard" },
@@ -19,6 +21,7 @@ export default function Sidebar() {
         ...(perms.canViewCargaDatos ? [{ label: "Carga de Datos", path: "/carga-datos" }] : []),
         ...(perms.canViewAuditoria ? [{ label: "Auditoria", path: "/auditoria" }] : []),
         ...(perms.canViewReportes ? [{ label: "Reportes", path: "/reportes" }] : []),
+        ...(perms.canViewAltasPendientes ? [{ label: "Altas Pendientes", path: "/altas-pendientes" }] : []),
     ];
 
     const simcoMenu = [
@@ -46,7 +49,7 @@ export default function Sidebar() {
         borderRadius: "6px",
         marginBottom: "2px",
         fontSize: 14,
-        background: location.pathname === path ? "#3f51b53b" : "transparent",
+        background: location.pathname === path ? "#4db53f3b" : "transparent",
         transition: "background 0.15s",
     });
 
@@ -58,7 +61,7 @@ export default function Sidebar() {
             justifyContent: "center",
             lineHeight: 1,
             // Opcional: puedes forzar el color aquí si no quieres que herede el del padre
-            // color: "#94a3b8", 
+            color: "#94a3b8", 
         }
     };
 
@@ -66,7 +69,7 @@ export default function Sidebar() {
         <aside style={{
             width: "220px",
             height: "100vh",
-            background: "#4e4e4e",
+            background: "#222433",
             color: "white",
             display: "flex",
             flexDirection: "column",
@@ -172,7 +175,8 @@ export default function Sidebar() {
                     borderRadius: 8,
                     marginTop: 4,
                     marginBottom: 8,
-                }}>
+                    cursor: "pointer",
+                }} onClick={() => navigate("/mi-cuenta")}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <div style={{
                             width: 36,
@@ -209,6 +213,27 @@ export default function Sidebar() {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div
+                    onClick={toggleMode}
+                    style={{
+                        padding: "10px 12px",
+                        cursor: "pointer",
+                        borderRadius: "6px",
+                        color: "#94a3b8",
+                        fontSize: 13,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        transition: "background 0.15s",
+                        userSelect: "none",
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "#2a2a3d"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                >
+                    <span style={{ fontSize: 16, lineHeight: 1 }}>{mode === "dark" ? "\u2600" : "\u263E"}</span>
+                    <span>{mode === "dark" ? "Modo claro" : "Modo oscuro"}</span>
                 </div>
 
                 <div

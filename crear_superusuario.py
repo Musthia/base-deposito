@@ -46,7 +46,7 @@ try:
 
             rol="SUPERADMIN",
 
-            nivel_seguridad=999,
+            nivel_seguridad=10,
 
             activo=True,
 

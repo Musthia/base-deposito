@@ -119,6 +119,17 @@ class Usuario(Base):
         nullable=True
     )
 
+    google_id = Column(
+        String(255),
+        unique=True,
+        nullable=True
+    )
+
+    google_email = Column(
+        String(255),
+        nullable=True
+    )
+
     fecha_creacion = Column(
         TIMESTAMP,
         server_default=text("CURRENT_TIMESTAMP")

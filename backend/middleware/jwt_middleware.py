@@ -36,6 +36,9 @@ class JWTMiddleware(BaseHTTPMiddleware):
             "/openapi.json",
             "/auth/login",
             "/auth/refresh",
+            "/auth/forgot-password",
+            "/auth/reset-password",
+            "/registro/solicitar",
             "/api/simco/ws",
         }
 

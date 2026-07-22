@@ -98,6 +98,7 @@ class MeResponse(BaseModel):
     permisos: List[str]
     google_id: Optional[str] = None
     google_email: Optional[str] = None
+    auth_provider: Optional[str] = None
 
 
 class ForgotPasswordRequest(BaseModel):
@@ -116,3 +117,6 @@ class ChangePasswordRequest(BaseModel):
 class VincularGoogleRequest(BaseModel):
     google_id: str
     google_email: str
+
+class GoogleLoginRequest(BaseModel):
+    id_token: str

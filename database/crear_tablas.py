@@ -10,54 +10,67 @@ import database.modelos_simco  # noqa
 import database.modelos_notificaciones  # noqa
 import database.modelos_registro  # noqa
 
-# -----------------------------------
-# SCHEMA & TABLAS
-# -----------------------------------
 
-print("\nCreando schemas...")
+def crear_tablas():
+    # -----------------------------------
+    # SCHEMA & TABLAS
+    # -----------------------------------
 
-with engine.connect() as conn:
-    conn.execute(text("CREATE SCHEMA IF NOT EXISTS simco"))
-    conn.commit()
+    print("\nCreando schemas...")
 
-print("Schemas creados.")
+    with engine.connect() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS simco"))
+        conn.commit()
 
-print("Creando tablas PostgreSQL...\n")
+    print("Schemas creados.")
 
-Base.metadata.create_all(bind=engine)
+    print("Creando tablas PostgreSQL...\n")
 
-print("Tablas creadas correctamente.")
+    Base.metadata.create_all(bind=engine)
 
-# -----------------------------------
-# MIGRACIONES
-# -----------------------------------
+    print("Tablas creadas correctamente.")
 
-print("Ejecutando migraciones...")
+    # -----------------------------------
+    # MIGRACIONES
+    # -----------------------------------
 
-with engine.connect() as conn:
-    conn.execute(text("""
-        DO $$
-        BEGIN
-            IF EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_name='registros_pendientes'
-                AND column_name='updated_at'
-                AND is_nullable='YES'
-                AND column_default IS NULL
-            ) THEN
-                ALTER TABLE registros_pendientes
-                ALTER COLUMN updated_at SET DEFAULT NOW();
-            END IF;
+    print("Ejecutando migraciones...")
 
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_name='usuarios' AND column_name='google_id'
-            ) THEN
-                ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(255) UNIQUE;
-                ALTER TABLE usuarios ADD COLUMN google_email VARCHAR(255);
-            END IF;
-        END $$;
-    """))
-    conn.commit()
+    with engine.connect() as conn:
+        conn.execute(text("""
+            DO $$
+            BEGIN
+                IF EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='registros_pendientes'
+                    AND column_name='updated_at'
+                    AND is_nullable='YES'
+                    AND column_default IS NULL
+                ) THEN
+                    ALTER TABLE registros_pendientes
+                    ALTER COLUMN updated_at SET DEFAULT NOW();
+                END IF;
 
-print("Migraciones ejecutadas.")
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='usuarios' AND column_name='google_id'
+                ) THEN
+                    ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(255) UNIQUE;
+                    ALTER TABLE usuarios ADD COLUMN google_email VARCHAR(255);
+                END IF;
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_name='usuarios' AND column_name='auth_provider'
+                ) THEN
+                    ALTER TABLE usuarios ADD COLUMN auth_provider VARCHAR(20) DEFAULT 'local';
+                END IF;
+            END $$;
+        """))
+        conn.commit()
+
+    print("Migraciones ejecutadas.")
+
+
+if __name__ == "__main__":
+    crear_tablas()

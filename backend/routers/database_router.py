@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from typing import Optional
 from sqlalchemy import text
 
+from backend.core.permisos import verificar_permiso
 from backend.security.jwt_bearer import obtener_usuario_actual
 
 from database.conexion import engine as postgres_engine
@@ -208,8 +209,7 @@ def crear_registro(
     table: str = Query("Datcorr_database"),
     usuario_actual=Depends(obtener_usuario_actual),
 ):
-    if not _es_admin_escritura(usuario_actual):
-        raise HTTPException(status_code=403, detail="Nivel insuficiente para crear registros")
+    verificar_permiso(usuario_actual, nivel_minimo=5, accion="CREAR_REGISTRO")
     try:
         registro_id = insertar_registro(base, body.data, table)
         usuario = _nombre_usuario(request)
@@ -236,8 +236,7 @@ def actualizar(
     table: str = Query("Datcorr_database"),
     usuario_actual=Depends(obtener_usuario_actual),
 ):
-    if not _es_admin_escritura(usuario_actual):
-        raise HTTPException(status_code=403, detail="Nivel insuficiente para actualizar registros")
+    verificar_permiso(usuario_actual, nivel_minimo=5, accion="ACTUALIZAR_REGISTRO")
     try:
         actualizar_registro(base, record_id, body.data, table)
         campos = ", ".join(f"{k}={v}" for k, v in body.data.items())
@@ -260,8 +259,7 @@ def eliminar(
     table: str = Query("Datcorr_database"),
     usuario_actual=Depends(obtener_usuario_actual),
 ):
-    if not _es_admin_escritura(usuario_actual):
-        raise HTTPException(status_code=403, detail="Nivel insuficiente para eliminar registros")
+    verificar_permiso(usuario_actual, nivel_minimo=5, accion="ELIMINAR_REGISTRO")
     try:
         eliminar_registro(base, record_id, table)
         usuario = _nombre_usuario(request)

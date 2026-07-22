@@ -16,6 +16,8 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import SearchIcon from "@mui/icons-material/Search";
@@ -43,6 +45,7 @@ export default function DatabasePage() {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState({ open: false, base: "", idRegistro: null, claveTab: "", row: null });
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
     const { tabs, tabIndex, setTabIndex, agregarTab, cerrarTab, setTabs, actualizarFila } = useTabs();
     const tabsRef = useRef(tabs);
     useEffect(() => { tabsRef.current = tabs; }, [tabs]);
@@ -176,6 +179,7 @@ export default function DatabasePage() {
         try {
             await eliminarRegistro(base, idRegistro);
             setDeleteDialog({ open: false, base: "", idRegistro: null, claveTab: "", row: null });
+            setSnackbar({ open: true, message: "Registro eliminado correctamente", severity: "success" });
             const tab = tabs.find((t) => t.clave === claveTab);
             if (tab) {
                 const updated = await fetchPage(tab, tab.page, tab.pageSize);
@@ -184,7 +188,10 @@ export default function DatabasePage() {
                 );
             }
         } catch (err) {
-            console.error("Error eliminando registro:", err);
+            const msg = err.response?.status === 403
+                ? "No tiene permisos para eliminar registros"
+                : "Error al eliminar registro";
+            setSnackbar({ open: true, message: msg, severity: "error" });
         }
     };
 
@@ -192,9 +199,14 @@ export default function DatabasePage() {
         handleEditClick(params.row);
     };
 
-    const handleEditSaved = (datos) => {
+    const handleEditSaved = (datos, error) => {
+        if (error) {
+            setSnackbar({ open: true, message: error, severity: "error" });
+            return;
+        }
         if (editData && datos) {
             actualizarFila(editData.claveTab, editData.idRegistro, datos);
+            setSnackbar({ open: true, message: "Registro actualizado correctamente", severity: "success" });
         }
         setEditModalOpen(false);
         setEditData(null);
@@ -414,6 +426,16 @@ export default function DatabasePage() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={4000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+            >
+                <Alert severity={snackbar.severity} variant="filled">
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

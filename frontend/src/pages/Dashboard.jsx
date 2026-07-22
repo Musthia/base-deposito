@@ -96,6 +96,18 @@ export default function Dashboard() {
                         { label: "Inactivos", value: (stats.total_usuarios - stats.usuarios_activos) },
                     ]}
                 />
+                {!perms.isConsulta && <KpiCard
+                    icon="+"
+                    iconBg="#fef2f2"
+                    iconColor="#dc2626"
+                    label="Altas pendientes"
+                    value={stats.altas_pendientes}
+                    sub="Solicitudes de registro"
+                    details={[
+                        { label: "Pendientes", value: stats.altas_pendientes },
+                    ]}
+                    onClick={() => navigate("/altas-pendientes")}
+                />}
                 <KpiCard
                     icon="A"
                     iconBg="#fff7ed"
@@ -256,13 +268,14 @@ function formatDate(iso) {
 
 /* ── KPI Card ── */
 
-function KpiCard({ icon, iconBg, iconColor, label, value, sub, details }) {
+function KpiCard({ icon, iconBg, iconColor, label, value, sub, details, onClick }) {
     const [over, setOver] = useState(false);
     return (
         <div
-            style={kpiStyles.card}
+            style={{ ...kpiStyles.card, cursor: onClick ? "pointer" : "default" }}
             onMouseEnter={() => setOver(true)}
             onMouseLeave={() => setOver(false)}
+            onClick={onClick}
         >
             <div style={{ ...kpiStyles.iconWrap, background: iconBg }}>
                 <span style={{ fontSize: 16, fontWeight: 700, color: iconColor }}>{icon}</span>

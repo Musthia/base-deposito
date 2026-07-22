@@ -314,6 +314,28 @@
   to { transform: rotate(360deg); }
 }
 
+/* Google Sign-In */
+.google-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+.google-divider::before,
+.google-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
 /* Enlaces inferiores */
 .form-links {
   margin-top: 16px;

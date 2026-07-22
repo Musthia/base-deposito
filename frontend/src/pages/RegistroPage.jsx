@@ -12,6 +12,8 @@ export default function RegistroPage() {
         telefono: "",
         organizacion: "",
         username: "",
+        password: "",
+        confirmPassword: "",
         motivo: "",
     });
     const [loading, setLoading] = useState(false);
@@ -23,9 +25,18 @@ export default function RegistroPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        if (form.password !== form.confirmPassword) {
+            setError("Las contraseñas no coinciden");
+            return;
+        }
+        if (form.password.length < 6) {
+            setError("La contraseña debe tener al menos 6 caracteres");
+            return;
+        }
         setLoading(true);
         try {
-            await api.post("/registro/solicitar", form);
+            const { confirmPassword, ...payload } = form;
+            await api.post("/registro/solicitar", payload);
             setSuccess(true);
         } catch (err) {
             setError(err.response?.data?.detail || "Error al enviar solicitud");
@@ -65,11 +76,13 @@ export default function RegistroPage() {
                     </Box>
                     <TextField label="Email *" type="email" fullWidth required value={form.email} onChange={handleChange("email")} disabled={loading} />
                     <TextField label="Nombre de usuario *" fullWidth required value={form.username} onChange={handleChange("username")} disabled={loading} />
+                    <TextField label="Contraseña *" type="password" fullWidth required value={form.password} onChange={handleChange("password")} disabled={loading} />
+                    <TextField label="Repetir contraseña *" type="password" fullWidth required value={form.confirmPassword} onChange={handleChange("confirmPassword")} disabled={loading} />
                     <TextField label="Teléfono" fullWidth value={form.telefono} onChange={handleChange("telefono")} disabled={loading} />
                     <TextField label="Organización" fullWidth value={form.organizacion} onChange={handleChange("organizacion")} disabled={loading} />
                     <TextField label="Motivo de la solicitud" multiline rows={3} fullWidth value={form.motivo} onChange={handleChange("motivo")} disabled={loading} />
 
-                    <Button type="submit" variant="contained" size="large" disabled={loading || !form.nombre || !form.apellido || !form.email || !form.username}>
+                    <Button type="submit" variant="contained" size="large" disabled={loading || !form.nombre || !form.apellido || !form.email || !form.username || !form.password || !form.confirmPassword}>
                         {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
                         {loading ? "Enviando..." : "Enviar solicitud"}
                     </Button>

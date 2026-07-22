@@ -1,7 +1,11 @@
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from backend.routers.auth_router import router as auth_router
 from backend.routers.admin_router import router as admin_router
@@ -29,26 +33,49 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 # -----------------------------------
+# LIFESPAN: run table creation on startup
+# -----------------------------------
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        from database.crear_tablas import crear_tablas
+        crear_tablas()
+    except Exception as e:
+        print(f"Warning: table creation skipped ({e})")
+    yield
+
+
+# -----------------------------------
 # APP
 # -----------------------------------
 
 app = FastAPI(
     title="DatCorr API",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan,
 )
 
 # -----------------------------------
 # CORS
 # -----------------------------------
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "")
+
+if ENVIRONMENT == "production":
+    allowed_origins = [FRONTEND_URL] if FRONTEND_URL else ["*"]
+else:
+    allowed_origins = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:4173",
         "http://localhost:3000",
-    ],
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -91,17 +118,18 @@ app.include_router(simco_router)
 app.include_router(simco_ws_router)
 app.include_router(notificaciones_router)
 app.include_router(registro_router)
-
 # -----------------------------------
 # ROOT
 # -----------------------------------
 
+FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+
 @app.get("/")
 def root():
+    if os.path.isdir(FRONTEND_DIST):
+        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+    return {"mensaje": "DatCorr API funcionando"}
 
-    return {
-        "mensaje": "DatCorr API funcionando"
-    }
 
 # -----------------------------------
 # HEALTH
@@ -109,7 +137,20 @@ def root():
 
 @app.get("/health")
 def health():
+    return {"status": "ok"}
 
-    return {
-        "status": "ok"
-    }
+
+# -----------------------------------
+# STATIC FILES & SPA FALLBACK
+# -----------------------------------
+
+if os.path.isdir(FRONTEND_DIST):
+    app.mount(
+        "/assets",
+        StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")),
+        name="assets",
+    )
+
+    @app.api_route("/{full_path:path}", methods=["GET"])
+    async def spa_fallback(full_path: str):
+        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))

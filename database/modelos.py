@@ -130,6 +130,11 @@ class Usuario(Base):
         nullable=True
     )
 
+    auth_provider = Column(
+        String(20),
+        default="local"
+    )
+
     fecha_creacion = Column(
         TIMESTAMP,
         server_default=text("CURRENT_TIMESTAMP")

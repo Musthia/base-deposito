@@ -24,6 +24,7 @@ def solicitar_registro(db: Session, datos: dict) -> RegistroPendiente:
         organizacion=datos.get("organizacion"),
         motivo=datos.get("motivo"),
         username_sugerido=datos["username"],
+        password_hash=hash_password(datos["password"]),
     )
     db.add(registro)
     db.commit()
@@ -52,7 +53,7 @@ def listar_aprobados_rechazados(db: Session):
         RegistroPendiente.estado.in_(["aprobado", "rechazado"])
     ).order_by(RegistroPendiente.updated_at.desc()).all()
 
-def aprobar_registro(db: Session, registro_id: int, admin: Usuario, rol: str, nivel: int, password: str) -> bool:
+def aprobar_registro(db: Session, registro_id: int, admin: Usuario, rol: str, nivel: int) -> bool:
     registro = db.query(RegistroPendiente).filter(RegistroPendiente.id == registro_id).first()
     if not registro or registro.estado != "pendiente":
         return False
@@ -62,7 +63,7 @@ def aprobar_registro(db: Session, registro_id: int, admin: Usuario, rol: str, ni
         apellido=registro.apellido,
         usuario=registro.username_sugerido,
         email=registro.email,
-        password_hash=hash_password(password),
+        password_hash=registro.password_hash,
         rol=rol,
         nivel_seguridad=nivel,
         activo=True,
@@ -142,7 +143,7 @@ def _enviar_email_aprobado(destinatario: str, username: str):
     msg = MIMEText(
         f"Su solicitud de registro en DATCORR ha sido APROBADA.\n\n"
         f"Su usuario de acceso: {username}\n\n"
-        f"La contraseña fue establecida por el administrador.\n\n"
+        f"Puede iniciar sesion con la contraseña que eligió durante el registro.\n\n"
         f"Ingrese al sistema:\n{enlace}"
     )
     msg["Subject"] = "Registro aprobado - DATCORR"

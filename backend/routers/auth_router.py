@@ -10,6 +10,7 @@ from fastapi import (
 from sqlalchemy.orm import Session
 
 from datetime import datetime, timezone
+import os
 
 from backend.database.conexion import (
     get_db
@@ -35,12 +36,16 @@ from backend.schemas.auth_schema import (
     ResetPasswordRequest,
     ChangePasswordRequest,
     VincularGoogleRequest,
+    GoogleLoginRequest,
 )
 
 from database.modelos import (
     Permiso,
-    UsuarioPermiso
+    UsuarioPermiso,
+    Usuario,
 )
+
+from database.modelos_refresh import RefreshToken
 
 from backend.services.auth_service import (
     login_usuario,
@@ -50,6 +55,8 @@ from backend.services.auth_service import (
 from backend.services.auditoria_service import (
     registrar_auditoria
 )
+
+from backend.services.google_auth_service import verificar_token_google
 
 from backend.schemas.refresh_schema import (
 
@@ -72,6 +79,8 @@ from backend.services.blacklist_service import (
 from backend.security.jwt_manager import (
     SECRET_KEY,
     ALGORITHM,
+    crear_token,
+    crear_refresh_token,
 )
 
 from backend.security.jwt_bearer import (
@@ -366,6 +375,7 @@ def get_current_user(
         permisos=permisos,
         google_id=usuario_actual.google_id,
         google_email=usuario_actual.google_email,
+        auth_provider=usuario_actual.auth_provider,
     )
 
 
@@ -426,6 +436,141 @@ def change_password(
 
 
 # -----------------------------------
+# POST /auth/google-login
+# -----------------------------------
+
+@router.post("/google-login")
+def google_login(
+    body: GoogleLoginRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    ip_address = request.client.host if request.client else None
+    payload = verificar_token_google(body.id_token)
+
+    if not payload:
+        registrar_auditoria(
+            db=db,
+            usuario="desconocido",
+            accion="GOOGLE_LOGIN_FAILED",
+            tabla="auth",
+            registro_id=0,
+            detalle="Token Google invalido o email no verificado",
+            ip_address=ip_address,
+        )
+        raise HTTPException(401, "Token de Google invalido o email no verificado.")
+
+    email = payload["email"]
+    google_id = payload["google_id"]
+
+    usuario_db = db.query(Usuario).filter(
+        Usuario.email.ilike(email)
+    ).first()
+
+    if not usuario_db:
+        usuario_db = db.query(Usuario).filter(
+            Usuario.google_id == google_id
+        ).first()
+
+    if usuario_db:
+        if not usuario_db.activo:
+            raise HTTPException(403, "Usuario inactivo.")
+
+        usuario_db.ultimo_login = datetime.now(timezone.utc)
+        usuario_db.google_id = google_id
+        usuario_db.google_email = email
+        usuario_db.auth_provider = "google"
+        db.commit()
+
+        resultado_token = crear_token({
+            "sub": usuario_db.usuario,
+            "nombre": usuario_db.nombre or "",
+            "apellido": usuario_db.apellido or "",
+            "rol": usuario_db.rol or "",
+            "nivel": usuario_db.nivel_seguridad,
+            "superusuario": usuario_db.es_superusuario,
+        })
+
+        resultado_refresh = crear_refresh_token({"sub": usuario_db.usuario})
+
+        nuevo_refresh = RefreshToken(
+            usuario_id=usuario_db.id,
+            token_jti=resultado_refresh["jti"],
+            refresh_token=resultado_refresh["refresh_token"],
+            revoked=False,
+            ip_address=None,
+            user_agent=None,
+            expires_at=resultado_refresh["expires_at"],
+            access_jti=resultado_token["jti"],
+            last_activity=datetime.now(),
+        )
+        db.add(nuevo_refresh)
+        db.commit()
+
+        registrar_auditoria(
+            db=db,
+            usuario=usuario_db.usuario,
+            accion="GOOGLE_LOGIN_SUCCESS",
+            tabla="auth",
+            registro_id=usuario_db.id,
+            detalle=f"Login Google: {email}",
+            ip_address=ip_address,
+            token_jti=resultado_token["jti"],
+        )
+
+        return {
+            "success": True,
+            "mensaje": "Login correcto.",
+            "usuario": {
+                "id": usuario_db.id,
+                "usuario": usuario_db.usuario,
+                "nombre": usuario_db.nombre,
+                "apellido": usuario_db.apellido,
+                "rol": usuario_db.rol,
+                "nivel_seguridad": usuario_db.nivel_seguridad,
+                "es_superusuario": usuario_db.es_superusuario,
+            },
+            "token": resultado_token["access_token"],
+            "refresh_token": resultado_refresh["refresh_token"],
+        }
+
+    nuevo = Usuario(
+        nombre=payload.get("nombre", ""),
+        apellido=payload.get("apellido", ""),
+        usuario=email.split("@")[0],
+        email=email,
+        password_hash=hash_password(os.urandom(24).hex()),
+        rol="consulta",
+        nivel_seguridad=1,
+        activo=False,
+        google_id=google_id,
+        google_email=email,
+        auth_provider="google",
+    )
+    db.add(nuevo)
+    db.commit()
+
+    registrar_auditoria(
+        db=db,
+        usuario=nuevo.usuario,
+        accion="GOOGLE_LOGIN_SUCCESS",
+        tabla="auth",
+        registro_id=nuevo.id,
+        detalle=f"Primer login Google (pendiente aprobacion): {email}",
+        ip_address=ip_address,
+    )
+
+    return {
+        "success": True,
+        "mensaje": "Registro con Google exitoso. Un administrador debe aprobar su acceso.",
+        "usuario": None,
+        "token": None,
+        "refresh_token": None,
+        "pendiente_aprobacion": True,
+    }
+
+
+# -----------------------------------
 # POST /auth/vincular-google
 # -----------------------------------
 
@@ -444,7 +589,17 @@ def vincular_google(
 
     usuario_actual.google_id = body.google_id
     usuario_actual.google_email = body.google_email
+    usuario_actual.auth_provider = "google"
     db.commit()
+
+    registrar_auditoria(
+        db=db,
+        usuario=usuario_actual.usuario,
+        accion="GOOGLE_LINK",
+        tabla="usuarios",
+        registro_id=usuario_actual.id,
+        detalle=f"Cuenta Google vinculada: {body.google_email}",
+    )
 
     return {"success": True, "mensaje": "Cuenta de Google vinculada correctamente."}
 
@@ -463,6 +618,16 @@ def desvincular_google(
 
     usuario_actual.google_id = None
     usuario_actual.google_email = None
+    usuario_actual.auth_provider = "local"
     db.commit()
+
+    registrar_auditoria(
+        db=db,
+        usuario=usuario_actual.usuario,
+        accion="GOOGLE_UNLINK",
+        tabla="usuarios",
+        registro_id=usuario_actual.id,
+        detalle="Cuenta Google desvinculada",
+    )
 
     return {"success": True, "mensaje": "Cuenta de Google desvinculada correctamente."}

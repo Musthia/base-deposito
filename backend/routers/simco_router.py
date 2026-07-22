@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend.database.conexion import get_db
+from backend.core.permisos import verificar_nivel
 from backend.security.jwt_bearer import obtener_usuario_actual
 from backend.schemas.simco_schema import SolicitudCreate, RespuestaCreate
 from backend.services.simco_service import (
@@ -48,8 +49,7 @@ def api_crear_solicitud(
     db: Session = Depends(get_db),
     usuario=Depends(obtener_usuario_actual),
 ):
-    if usuario.nivel_seguridad < 3:
-        raise HTTPException(403, "No tienes permiso para crear solicitudes")
+    verificar_nivel(usuario, 3, accion="CREAR_SOLICITUD_SIMCO")
     sol = crear_solicitud(db, data, usuario)
     return {
         "mensaje": "Solicitud creada",
@@ -115,8 +115,7 @@ def api_responder_solicitud(
     db: Session = Depends(get_db),
     usuario=Depends(obtener_usuario_actual),
 ):
-    if usuario.nivel_seguridad < 5:
-        raise HTTPException(403, "No tienes permiso para responder solicitudes")
+    verificar_nivel(usuario, 5, accion="RESPONDER_SOLICITUD_SIMCO")
     try:
         resp = responder_solicitud(db, data, usuario)
         return {

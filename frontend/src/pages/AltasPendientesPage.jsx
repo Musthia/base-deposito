@@ -2,9 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
     Box, Typography, Paper, Tabs, Tab, Button, Chip, Dialog, DialogTitle,
     DialogContent, DialogActions, TextField, MenuItem, Snackbar, Alert,
-    InputAdornment, IconButton,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "../api/axiosClient";
 import { useThemeMode } from "../context/ThemeModeContext";
 
@@ -25,8 +23,7 @@ export default function AltasPendientesPage() {
     const [rechazando, setRechazando] = useState(null);
     const [rechazoMotivo, setRechazoMotivo] = useState("");
     const [snack, setSnack] = useState({ open: false, msg: "", severity: "success" });
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
+
 
     const fetchPendientes = useCallback(async () => {
         try {
@@ -47,19 +44,10 @@ export default function AltasPendientesPage() {
     }, [fetchPendientes, fetchHistorial]);
 
     const handleAprobar = async () => {
-        if (!aprobando.password || aprobando.password !== aprobando.confirmPassword) {
-            setSnack({ open: true, msg: "Las contraseñas no coinciden", severity: "error" });
-            return;
-        }
-        if (aprobando.password.length < 6) {
-            setSnack({ open: true, msg: "La contraseña debe tener al menos 6 caracteres", severity: "error" });
-            return;
-        }
         try {
             await api.post(`/registro/${aprobando.id}/aprobar`, {
                 rol: aprobando.rol,
                 nivel: aprobando.nivel,
-                password: aprobando.password,
             });
             setSnack({ open: true, msg: `Usuario ${aprobando.username_sugerido} creado correctamente`, severity: "success" });
             setAprobando(null);
@@ -103,7 +91,7 @@ export default function AltasPendientesPage() {
                 <Chip label="Pendiente" color="warning" size="small" />
             </Box>
             <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
-                <Button variant="contained" color="success" size="small" onClick={() => setAprobando({ ...r, rol: "consulta", nivel: 1, password: "", confirmPassword: "" })}>
+                <Button variant="contained" color="success" size="small" onClick={() => setAprobando({ ...r, rol: "consulta", nivel: 1 })}>
                     Aprobar
                 </Button>
                 <Button variant="outlined" color="error" size="small" onClick={() => { setRechazando(r); setRechazoMotivo(""); }}>
@@ -185,41 +173,13 @@ export default function AltasPendientesPage() {
                         onChange={(e) => setAprobando((prev) => prev ? { ...prev, nivel: parseInt(e.target.value) || 1 } : null)}
                         inputProps={{ min: 1, max: 10 }}
                     />
-                    <TextField
-                        label="Contraseña" fullWidth size="small" sx={{ mb: 2 }}
-                        type={showPassword ? "text" : "password"}
-                        value={aprobando?.password || ""}
-                        onChange={(e) => setAprobando((prev) => prev ? { ...prev, password: e.target.value } : null)}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton size="small" onClick={() => setShowPassword(!showPassword)} edge="end">
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <TextField
-                        label="Repetir contraseña" fullWidth size="small"
-                        type={showConfirm ? "text" : "password"}
-                        value={aprobando?.confirmPassword || ""}
-                        onChange={(e) => setAprobando((prev) => prev ? { ...prev, confirmPassword: e.target.value } : null)}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton size="small" onClick={() => setShowConfirm(!showConfirm)} edge="end">
-                                        {showConfirm ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
+                    <Typography variant="body2" sx={{ color: "var(--text-muted)", mt: 1 }}>
+                        La contraseña fue establecida por el solicitante durante el registro.
+                    </Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setAprobando(null)}>Cancelar</Button>
-                    <Button variant="contained" color="success" onClick={handleAprobar}
-                        disabled={!aprobando?.password || !aprobando?.confirmPassword}>
+                    <Button variant="contained" color="success" onClick={handleAprobar}>
                         Crear usuario
                     </Button>
                 </DialogActions>

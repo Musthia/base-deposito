@@ -7,6 +7,10 @@ from backend.security.jwt_bearer import (
     obtener_usuario_actual
 )
 
+from backend.core.permisos import (
+    _registrar_acceso_denegado
+)
+
 from services.usuarios_permisos_service import (
     usuario_tiene_permiso
 )
@@ -43,6 +47,11 @@ def requiere_permiso(
         )
 
         if not permitido:
+
+            _registrar_acceso_denegado(
+                usuario.usuario,
+                f"Permiso '{codigo_permiso}' denegado a usuario '{usuario.usuario}'"
+            )
 
             raise HTTPException(
                 status_code=403,
@@ -84,6 +93,11 @@ def requiere_nivel(
             <
             nivel_requerido
         ):
+
+            _registrar_acceso_denegado(
+                usuario.usuario,
+                f"Nivel insuficiente: {usuario.nivel_seguridad} < minimo {nivel_requerido} - usuario '{usuario.usuario}'"
+            )
 
             raise HTTPException(
                 status_code=403,

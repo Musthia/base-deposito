@@ -5,6 +5,8 @@ import {
     Typography,
     Button,
     TextField,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { actualizarRegistro } from "../../services/databaseService";
 
@@ -28,6 +30,7 @@ export default function EditRecordModal({
 }) {
     const [form, setForm] = useState(() => formFromProps(columnas, valores));
     const [saving, setSaving] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
     const [prevId, setPrevId] = useState(null);
 
     if (open && idRegistro !== prevId) {
@@ -49,9 +52,14 @@ export default function EditRecordModal({
                 }
             });
             await actualizarRegistro(base, idRegistro, data);
-            onSaved();
+            setSnackbar({ open: true, message: "Registro actualizado correctamente", severity: "success" });
+            setTimeout(() => onSaved({ ...form }), 500);
         } catch (err) {
-            console.error("Error actualizando registro:", err);
+            const msg = err.response?.status === 403
+                ? "No tiene permisos para editar registros"
+                : "Error al actualizar registro";
+            setSnackbar({ open: true, message: msg, severity: "error" });
+            onSaved(null, msg);
         } finally {
             setSaving(false);
         }
@@ -96,6 +104,16 @@ export default function EditRecordModal({
                     </Button>
                 </Box>
             </Box>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={4000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+            >
+                <Alert severity={snackbar.severity} variant="filled">
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Drawer>
     );
 }

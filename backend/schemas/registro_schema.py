@@ -10,6 +10,7 @@ class SolicitudRegistroRequest(BaseModel):
     organizacion: Optional[str] = None
     motivo: Optional[str] = None
     username: str
+    password: str
 
 class RegistroPendienteResponse(BaseModel):
     id: int
@@ -26,7 +27,6 @@ class RegistroPendienteResponse(BaseModel):
 class AprobarRequest(BaseModel):
     rol: str
     nivel: int
-    password: str
 
 class RechazarRequest(BaseModel):
     motivo: str

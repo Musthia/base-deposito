@@ -56,6 +56,13 @@ with engine.connect() as conn:
                 ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(255) UNIQUE;
                 ALTER TABLE usuarios ADD COLUMN google_email VARCHAR(255);
             END IF;
+
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name='usuarios' AND column_name='auth_provider'
+            ) THEN
+                ALTER TABLE usuarios ADD COLUMN auth_provider VARCHAR(20) DEFAULT 'local';
+            END IF;
         END $$;
     """))
     conn.commit()

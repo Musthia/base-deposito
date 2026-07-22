@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
 import api from "../api/axiosClient";
 import { useAuthStore } from "../auth/authStore";
 import "./Login.css";
@@ -13,6 +14,7 @@ export default function Login() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
 
     useEffect(() => {
         if (useAuthStore.getState().accessToken) {
@@ -36,6 +38,26 @@ export default function Login() {
             setError(mensaje);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        setGoogleLoading(true);
+        setError("");
+        try {
+            const res = await api.post("/auth/google-login", {
+                id_token: credentialResponse.credential,
+            });
+            if (res.data.token) {
+                setTokens(res.data.token);
+                navigate("/dashboard", { replace: true });
+            } else if (res.data.pendiente_aprobacion) {
+                setError("Registro con Google exitoso. Un administrador debe aprobar su acceso.");
+            }
+        } catch (err) {
+            setError(err.response?.data?.detail || "Error al iniciar sesión con Google");
+        } finally {
+            setGoogleLoading(false);
         }
     };
 
@@ -194,6 +216,22 @@ export default function Login() {
                             {loading ? "Ingresando…" : "Acceder al sistema"}
                         </button>
                     </form>
+
+                    <div className="google-divider">
+                        <span>o continúe con</span>
+                    </div>
+
+                    <div className="google-btn-wrapper">
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => setError("Error al autenticar con Google")}
+                            theme="outline"
+                            size="large"
+                            text="signin_with"
+                            shape="rectangular"
+                            disabled={googleLoading}
+                        />
+                    </div>
 
                     <div className="form-links">
                         <Link to="/forgot-password" className="form-link">¿Olvidó su contraseña?</Link>

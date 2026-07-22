@@ -19,6 +19,10 @@ const actionColor = (accion) => {
         SOLICITUD_REGISTRO: "#3b82f6",
         ALTA_USUARIO: "#16a34a",
         RECHAZO_USUARIO: "#ef4444",
+        GOOGLE_LOGIN_SUCCESS: "#4285F4",
+        GOOGLE_LOGIN_FAILED: "#ea4335",
+        GOOGLE_LINK: "#34a853",
+        GOOGLE_UNLINK: "#fbbc04",
     };
     return map[accion] || "#64748b";
 };
@@ -38,6 +42,10 @@ const actionLabel = (accion, tabla) => {
         SOLICITUD_REGISTRO: "Solicitud de registro",
         ALTA_USUARIO: "Alta de usuario aprobada",
         RECHAZO_USUARIO: "Rechazo de registro",
+        GOOGLE_LOGIN_SUCCESS: "Login con Google",
+        GOOGLE_LOGIN_FAILED: "Error login Google",
+        GOOGLE_LINK: "Vinculacion Google",
+        GOOGLE_UNLINK: "Desvinculacion Google",
     };
     return map[accion] || accion;
 };

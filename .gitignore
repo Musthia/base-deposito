@@ -96,3 +96,6 @@ Thumbs.db
 desktop.ini
 
 bases_g/
+
+client_secret*.json
+client_secret_*.json

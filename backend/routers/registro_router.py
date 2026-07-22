@@ -15,6 +15,7 @@ from backend.services.registro_service import (
     rechazar_registro,
 )
 from backend.core.exceptions import DatcorrException
+from backend.core.permisos import verificar_permiso
 from backend.security.jwt_bearer import obtener_usuario_actual
 from database.modelos import Usuario
 
@@ -33,8 +34,7 @@ def pendientes(
     db: Session = Depends(get_db),
     admin: Usuario = Depends(obtener_usuario_actual),
 ):
-    if not (admin.es_superusuario or admin.nivel_seguridad >= 10):
-        raise DatcorrException("No tiene permisos para ver solicitudes pendientes", 403)
+    verificar_permiso(admin, nivel_minimo=10, accion="VER_SOLICITUDES_PENDIENTES", db=db)
     return {"pendientes": listar_pendientes(db)}
 
 @router.get("/historial", summary="Listar solicitudes aprobadas/rechazadas (solo admin nivel 10)")
@@ -42,8 +42,7 @@ def historial(
     db: Session = Depends(get_db),
     admin: Usuario = Depends(obtener_usuario_actual),
 ):
-    if not (admin.es_superusuario or admin.nivel_seguridad >= 10):
-        raise DatcorrException("No tiene permisos para ver el historial", 403)
+    verificar_permiso(admin, nivel_minimo=10, accion="VER_HISTORIAL_REGISTROS", db=db)
     return {"historial": listar_aprobados_rechazados(db)}
 
 @router.post("/{id}/aprobar", summary="Aprobar solicitud y crear usuario")
@@ -53,9 +52,8 @@ def aprobar(
     db: Session = Depends(get_db),
     admin: Usuario = Depends(obtener_usuario_actual),
 ):
-    if not (admin.es_superusuario or admin.nivel_seguridad >= 10):
-        raise DatcorrException("No tiene permisos para aprobar solicitudes", 403)
-    if aprobar_registro(db, id, admin, body.rol, body.nivel, body.password):
+    verificar_permiso(admin, nivel_minimo=10, accion="APROBAR_SOLICITUD", db=db)
+    if aprobar_registro(db, id, admin, body.rol, body.nivel):
         return {"success": True, "mensaje": "Usuario creado correctamente. Se enviaron las credenciales por email."}
     raise DatcorrException("Solicitud no encontrada o ya procesada", 404)
 
@@ -66,8 +64,7 @@ def rechazar(
     db: Session = Depends(get_db),
     admin: Usuario = Depends(obtener_usuario_actual),
 ):
-    if not (admin.es_superusuario or admin.nivel_seguridad >= 10):
-        raise DatcorrException("No tiene permisos para rechazar solicitudes", 403)
+    verificar_permiso(admin, nivel_minimo=10, accion="RECHAZAR_SOLICITUD", db=db)
     if rechazar_registro(db, id, admin, body.motivo):
         return {"success": True, "mensaje": "Solicitud rechazada correctamente."}
     raise DatcorrException("Solicitud no encontrada o ya procesada", 404)

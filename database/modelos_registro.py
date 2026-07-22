@@ -13,6 +13,7 @@ class RegistroPendiente(Base):
     organizacion = Column(String(255), nullable=True)
     motivo = Column(Text, nullable=True)
     username_sugerido = Column(String(50), nullable=False)
+    password_hash = Column(String(255), nullable=True)
     estado = Column(String(20), nullable=False, default="pendiente")  # pendiente | aprobado | rechazado
     admin_id = Column(Integer, nullable=True)
     rol_asignado = Column(String(50), nullable=True)

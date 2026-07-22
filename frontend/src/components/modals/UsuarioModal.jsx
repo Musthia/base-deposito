@@ -166,6 +166,15 @@ export default function UsuarioModal({
 
                 <TextField
                     margin="dense"
+                    label="Apellido"
+                    name="apellido"
+                    fullWidth
+                    value={form.apellido}
+                    onChange={handleChange}
+                />
+
+                <TextField
+                    margin="dense"
                     label="Password"
                     name="password"
                     type="password"
@@ -174,14 +183,7 @@ export default function UsuarioModal({
                     onChange={handleChange}
                 />
 
-                <TextField
-                    margin="dense"
-                    label="Apellido"
-                    name="apellido"
-                    fullWidth
-                    value={form.apellido}
-                    onChange={handleChange}
-                />
+                
 
                 <TextField
                     margin="dense"
@@ -224,7 +226,7 @@ export default function UsuarioModal({
                         <MenuItem value={3}>3</MenuItem>
                         <MenuItem value={5}>5</MenuItem>
                         <MenuItem value={10}>10</MenuItem>
-                        <MenuItem value={9999}>9999</MenuItem>
+                        
                     </Select>
                 </FormControl>
 

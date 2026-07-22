@@ -1,7 +1,8 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "../auth/authStore";
 
-const WS_URL = "ws://127.0.0.1:8000/api/simco/ws";
+const API_URL = import.meta.env.VITE_API_URL || window.location.origin;
+const WS_URL = API_URL.replace(/^http/, "ws") + "/api/simco/ws";
 
 export default function useSimcoWS(onEvent) {
     const wsRef = useRef(null);

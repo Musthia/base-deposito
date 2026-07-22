@@ -10,29 +10,31 @@ import database.modelos_simco  # noqa
 import database.modelos_notificaciones  # noqa
 import database.modelos_registro  # noqa
 
-# -----------------------------------
-# SCHEMA & TABLAS
-# -----------------------------------
 
-print("\nCreando schemas...")
+def crear_tablas():
+    # -----------------------------------
+    # SCHEMA & TABLAS
+    # -----------------------------------
 
-with engine.connect() as conn:
-    conn.execute(text("CREATE SCHEMA IF NOT EXISTS simco"))
-    conn.commit()
+    print("\nCreando schemas...")
 
-print("Schemas creados.")
+    with engine.connect() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS simco"))
+        conn.commit()
 
-print("Creando tablas PostgreSQL...\n")
+    print("Schemas creados.")
 
-Base.metadata.create_all(bind=engine)
+    print("Creando tablas PostgreSQL...\n")
 
-print("Tablas creadas correctamente.")
+    Base.metadata.create_all(bind=engine)
 
-# -----------------------------------
-# MIGRACIONES
-# -----------------------------------
+    print("Tablas creadas correctamente.")
 
-print("Ejecutando migraciones...")
+    # -----------------------------------
+    # MIGRACIONES
+    # -----------------------------------
+
+    print("Ejecutando migraciones...")
 
 with engine.connect() as conn:
     conn.execute(text("""
@@ -51,7 +53,8 @@ with engine.connect() as conn:
 
             IF NOT EXISTS (
                 SELECT 1 FROM information_schema.columns
-                WHERE table_name='usuarios' AND column_name='google_id'
+                WHERE table_name='usuarios'
+                AND column_name='google_id'
             ) THEN
                 ALTER TABLE usuarios ADD COLUMN google_id VARCHAR(255) UNIQUE;
                 ALTER TABLE usuarios ADD COLUMN google_email VARCHAR(255);
@@ -59,7 +62,8 @@ with engine.connect() as conn:
 
             IF NOT EXISTS (
                 SELECT 1 FROM information_schema.columns
-                WHERE table_name='usuarios' AND column_name='auth_provider'
+                WHERE table_name='usuarios'
+                AND column_name='auth_provider'
             ) THEN
                 ALTER TABLE usuarios ADD COLUMN auth_provider VARCHAR(20) DEFAULT 'local';
             END IF;
@@ -68,3 +72,6 @@ with engine.connect() as conn:
     conn.commit()
 
 print("Migraciones ejecutadas.")
+
+if __name__ == "__main__":
+    crear_tablas()

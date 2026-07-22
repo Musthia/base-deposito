@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useAuthStore } from "../auth/authStore";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 const api = axios.create({
-    baseURL: "http://127.0.0.1:8000",
+    baseURL: API_URL,
     withCredentials: true,
 });
 
@@ -37,7 +39,7 @@ api.interceptors.response.use(
 
             try {
                 const response = await axios.post(
-                    "http://127.0.0.1:8000/usuarios/refresh",
+                    `${API_URL}/usuarios/refresh`,
                     {},
                     { withCredentials: true }
                 );

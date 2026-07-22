@@ -54,6 +54,10 @@ from backend.core.exceptions import (
     DatcorrException
 )
 
+from backend.core.permisos import (
+    verificar_permiso
+)
+
 from typing import Optional
 
 from backend.schemas.auth_schema import (
@@ -326,23 +330,7 @@ def crear_usuario(
         f"{usuario_actual.usuario}"
     )
 
-    # -----------------------------
-    # VALIDAR NIVEL
-    # -----------------------------
-
-    if (
-        not usuario_actual.es_superusuario
-        and
-        usuario_actual.nivel_seguridad < 10
-    ):
-
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                "Sin permisos "
-                "para crear usuarios."
-            )
-        )
+    verificar_permiso(usuario_actual, nivel_minimo=10, accion="CREAR_USUARIO", db=db)
 
     # -----------------------------
     # CREAR
@@ -407,25 +395,7 @@ def actualizar_usuario(
     )
 ):
 
-    # -----------------------------
-    # VALIDAR PERMISOS
-    # -----------------------------
-
-    if (
-        not usuario_actual.es_superusuario
-        and
-        usuario_actual.nivel_seguridad < 10
-    ):
-
-        raise HTTPException(
-
-            status_code=403,
-
-            detail=(
-                "Sin permisos "
-                "para actualizar usuarios."
-            )
-        )
+    verificar_permiso(usuario_actual, nivel_minimo=10, accion="ACTUALIZAR_USUARIO", db=db)
 
     # -----------------------------
     # ACTUALIZAR
@@ -495,28 +465,7 @@ def desactivar_usuario(
     )
 ):
 
-    # -----------------------------
-    # VALIDAR PERMISOS
-    # -----------------------------
-
-    if (
-
-        not usuario_actual.es_superusuario
-
-        and
-
-        usuario_actual.nivel_seguridad < 10
-    ):
-
-        raise HTTPException(
-
-            status_code=403,
-
-            detail=(
-                "Sin permisos "
-                "para desactivar usuarios."
-            )
-        )
+    verificar_permiso(usuario_actual, nivel_minimo=10, accion="DESACTIVAR_USUARIO", db=db)
 
     # -----------------------------
     # DESACTIVAR
@@ -573,19 +522,7 @@ def reactivar_usuario(
     )
 ):
 
-    if (
-        not usuario_actual.es_superusuario
-        and
-        usuario_actual.nivel_seguridad < 10
-    ):
-
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                "Sin permisos "
-                "para reactivar usuarios."
-            )
-        )
+    verificar_permiso(usuario_actual, nivel_minimo=10, accion="REACTIVAR_USUARIO", db=db)
 
     resultado = reactivar_usuario_web(
 

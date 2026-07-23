@@ -38,11 +38,23 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    try:
-        from database.crear_tablas import crear_tablas
-        crear_tablas()
-    except Exception as e:
-        print(f"Warning: table creation skipped ({e})")
+    import threading
+    def run_migrations():
+        import time
+        max_retries = 5
+        for attempt in range(1, max_retries + 1):
+            try:
+                from database.crear_tablas import crear_tablas
+                crear_tablas()
+                print("Database tables created successfully")
+                return
+            except Exception as e:
+                if attempt < max_retries:
+                    print(f"DB connection attempt {attempt}/{max_retries} failed, retrying in 5s... ({e})")
+                    time.sleep(5)
+                else:
+                    print(f"Warning: table creation skipped after {max_retries} attempts ({e})")
+    threading.Thread(target=run_migrations, daemon=True).start()
     yield
 
 
@@ -153,4 +165,11 @@ if os.path.isdir(FRONTEND_DIST):
 
     @app.api_route("/{full_path:path}", methods=["GET"])
     async def spa_fallback(full_path: str):
-        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+        if full_path and not full_path.startswith((
+            "auth", "admin", "usuarios", "databases",
+            "dashboard", "reportes", "roles", "permisos",
+            "api", "notificaciones", "registro",
+        )) and full_path not in ("health", "docs", "openapi.json", "redoc"):
+            return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404)

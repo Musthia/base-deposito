@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir -r requirements-api.txt
 # Copy backend code
 COPY backend/ ./backend/
 COPY database/ ./database/
+COPY services/ ./services/
 COPY utils/ ./utils/
 
 # Copy built frontend
@@ -30,5 +31,5 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 # Expose port
 EXPOSE 8000
 
-# Run table creation on startup, then start server
-CMD python -m database.crear_tablas && uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+# Start server (table creation runs in lifespan with retry)
+CMD uvicorn backend.main:app --host 0.0.0.0 --port $PORT

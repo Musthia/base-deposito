@@ -23,6 +23,7 @@ export const useAuthStore = create((set) => ({
     logout: () => {
 
         sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("datcorr_tabs");
 
         set({
             accessToken: null,

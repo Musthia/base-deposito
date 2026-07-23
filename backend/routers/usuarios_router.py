@@ -154,6 +154,8 @@ def listar_usuarios(
 
         activo=activo,
 
+        es_superusuario_request=usuario_actual.es_superusuario,
+
         sort_by=sort_by,
 
         order=order

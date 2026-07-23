@@ -40,6 +40,8 @@ def listar_usuarios_web(
 
     incluir_inactivos: bool = False,
 
+    es_superusuario_request: bool = False,
+
     sort_by: str = "id",
 
     order: str = "asc"
@@ -50,6 +52,16 @@ def listar_usuarios_web(
     )
 
     query = db.query(Usuario)
+
+    # -----------------------------
+    # FILTRAR SUPERUSUARIOS
+    # -----------------------------
+
+    if not es_superusuario_request:
+
+        query = query.filter(
+            Usuario.es_superusuario == False
+        )
 
     # -----------------------------
     # FILTRAR ACTIVOS

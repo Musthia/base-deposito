@@ -5,8 +5,6 @@ load_dotenv()
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
 from backend.routers.auth_router import router as auth_router
 from backend.routers.admin_router import router as admin_router
 from backend.routers.usuarios_router import router as usuarios_router
@@ -131,20 +129,7 @@ app.include_router(simco_ws_router)
 app.include_router(notificaciones_router)
 app.include_router(registro_router)
 # -----------------------------------
-# ROOT
-# -----------------------------------
-
-FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
-
-@app.get("/")
-def root():
-    if os.path.isdir(FRONTEND_DIST):
-        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
-    return {"mensaje": "DatCorr API funcionando"}
-
-
-# -----------------------------------
-# HEALTH
+# HEALTH (always available)
 # -----------------------------------
 
 @app.get("/health")
@@ -153,12 +138,16 @@ def health():
 
 
 # -----------------------------------
-# STATIC FILES & SPA FALLBACK
+# STATIC FILES & SPA (production) or API root (dev)
 # -----------------------------------
 
+FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+
 if os.path.isdir(FRONTEND_DIST):
-    app.mount(
-        "/",
-        StaticFiles(directory=FRONTEND_DIST, html=True),
-        name="frontend",
-    )
+    # Production: serve frontend for all non-API paths
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
+else:
+    # Development: API message at root
+    @app.get("/")
+    def root():
+        return {"mensaje": "DatCorr API funcionando"}

@@ -1,0 +1,29 @@
+# ============================================
+# DATCORR — VARIABLES DE ENTORNO PARA RAILWAY
+# Copiar todo y pegar en Railway Dashboard
+# ============================================
+
+# --- Base de datos (Railway provee DATABASE_URL automaticamente) ---
+# No hace falta configurar DB_HOST, DB_USER, etc. El codigo ya usa DATABASE_URL.
+
+# --- JWT ---
+JWT_SECRET_KEY=7adec191357743682a9eb9adfcac06a31ccc9e87c0df51fd93df03f9f8772c93
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=7
+COOKIE_SECURE=true
+INACTIVITY_MINUTES=30
+ALGORITHM=HS256
+
+# --- Entorno ---
+ENVIRONMENT=production
+FRONTEND_URL=https://[TU-SERVICIO].up.railway.app
+
+# --- SMTP (recuperacion de contrasena y notificaciones) ---
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=fabioeduardo305@gmail.com
+SMTP_PASS=esfj dkfd egnw lvqh
+
+# --- Google OAuth ---
+GOOGLE_CLIENT_ID=<GOOGLE_CLIENT_ID>
+GOOGLE_CLIENT_SECRET=<GOOGLE_CLIENT_SECRET>

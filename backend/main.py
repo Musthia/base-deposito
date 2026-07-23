@@ -143,11 +143,14 @@ def health():
 
 FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
 
+print(f"[STATIC] FRONTEND_DIST = {FRONTEND_DIST}")
+print(f"[STATIC] exists = {os.path.isdir(FRONTEND_DIST)}")
+
 if os.path.isdir(FRONTEND_DIST):
-    # Production: serve frontend for all non-API paths
+    print("[STATIC] Montando frontend en /")
     app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
 else:
-    # Development: API message at root
+    print("[STATIC] frontend/dist no encontrado — solo API")
     @app.get("/")
     def root():
         return {"mensaje": "DatCorr API funcionando"}

@@ -4,7 +4,7 @@ load_dotenv()
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from backend.routers.auth_router import router as auth_router
 from backend.routers.admin_router import router as admin_router
 from backend.routers.usuarios_router import router as usuarios_router
@@ -141,14 +141,22 @@ def health():
 # STATIC FILES & SPA (production) or API root (dev)
 # -----------------------------------
 
-FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+FRONTEND_DIST = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
 
 print(f"[STATIC] FRONTEND_DIST = {FRONTEND_DIST}")
 print(f"[STATIC] exists = {os.path.isdir(FRONTEND_DIST)}")
 
 if os.path.isdir(FRONTEND_DIST):
-    print("[STATIC] Montando frontend en /")
-    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
+    print("[STATIC] Sirviendo frontend SPA via catch-all")
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        if not full_path:
+            return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+        safe_path = os.path.realpath(os.path.join(FRONTEND_DIST, full_path))
+        if safe_path.startswith(FRONTEND_DIST) and os.path.isfile(safe_path):
+            return FileResponse(safe_path)
+        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
 else:
     print("[STATIC] frontend/dist no encontrado — solo API")
     @app.get("/")

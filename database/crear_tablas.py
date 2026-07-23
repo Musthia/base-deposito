@@ -67,6 +67,13 @@ with engine.connect() as conn:
             ) THEN
                 ALTER TABLE usuarios ADD COLUMN auth_provider VARCHAR(20) DEFAULT 'local';
             END IF;
+
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name='registros_pendientes' AND column_name='password_hash'
+            ) THEN
+                ALTER TABLE registros_pendientes ADD COLUMN password_hash VARCHAR(255);
+            END IF;
         END $$;
     """))
     conn.commit()

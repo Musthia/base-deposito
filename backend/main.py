@@ -158,18 +158,7 @@ def health():
 
 if os.path.isdir(FRONTEND_DIST):
     app.mount(
-        "/assets",
-        StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")),
-        name="assets",
+        "/",
+        StaticFiles(directory=FRONTEND_DIST, html=True),
+        name="frontend",
     )
-
-    @app.api_route("/{full_path:path}", methods=["GET"])
-    async def spa_fallback(full_path: str):
-        if full_path and not full_path.startswith((
-            "auth", "admin", "usuarios", "databases",
-            "dashboard", "reportes", "roles", "permisos",
-            "api", "notificaciones", "registro",
-        )) and full_path not in ("health", "docs", "openapi.json", "redoc"):
-            return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404)

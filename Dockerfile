@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir -r requirements-api.txt
 # Copy backend code
 COPY backend/ ./backend/
 COPY database/ ./database/
+COPY repositories/ ./repositories/
 COPY services/ ./services/
 COPY utils/ ./utils/
 

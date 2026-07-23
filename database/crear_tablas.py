@@ -9,6 +9,7 @@ from database.modelos import Base
 import database.modelos_simco  # noqa
 import database.modelos_notificaciones  # noqa
 import database.modelos_registro  # noqa
+import database.modelos_blacklist  # noqa
 
 
 def crear_tablas():

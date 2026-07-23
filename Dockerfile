@@ -19,7 +19,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements-api.txt .
 RUN pip install --no-cache-dir -r requirements-api.txt
 
-# Copy backend code
+# Copy entrypoint and backend code
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 COPY backend/ ./backend/
 COPY database/ ./database/
 COPY repositories/ ./repositories/
@@ -33,4 +35,4 @@ COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 EXPOSE 8000
 
 # Start server (table creation runs in lifespan with retry)
-CMD uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+CMD ["./entrypoint.sh"]

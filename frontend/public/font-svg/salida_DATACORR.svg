@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 240" width="1600.0" height="240.0">
+  <style>
+    .pista { fill: none; stroke: #111111; stroke-width: 6; stroke-linecap: square; stroke-linejoin: miter; }
+    .nodo { fill: #111111; }
+  </style>
+  <path class="pista" d="M 40.0,65 L 40.0,220 L 50.0,220" />
+  <path class="pista" d="M 50.0,65 L 130.0,65 L 165.0,100 L 170.0,140 L 165.0,180 L 130.0,220 L 55.0,220" />
+  <path class="pista" d="M 65.0,85 L 120.0,85 L 145.0,110 L 150.0,140 L 145.0,170 L 120.0,198 L 65.0,198" />
+  <path class="pista" d="M 65.0,100 L 65.0,190" />
+  <path class="pista" d="M 30.0,65 L 50.0,65" />
+  <circle class="nodo" cx="65" cy="100" r="6" />
+  <circle class="nodo" cx="65" cy="190" r="6" />
+  <circle class="nodo" cx="30" cy="65" r="6" />
+  <path class="pista" d="M 245.0,220 L 245.0,190 L 290.0,65 L 305.0,65" />
+  <path class="pista" d="M 315.0,75 L 355.0,190 L 355.0,220 L 340.0,220" />
+  <path class="pista" d="M 260.0,205 L 260.0,190 L 295.0,85" />
+  <path class="pista" d="M 310.0,95 L 340.0,195 L 320.0,195" />
+  <path class="pista" d="M 275.0,145 L 325.0,145" />
+  <path class="pista" d="M 230.0,220 L 270.0,220" />
+  <circle class="nodo" cx="305" cy="65" r="6" />
+  <circle class="nodo" cx="315" cy="75" r="6" />
+  <circle class="nodo" cx="295" cy="85" r="6" />
+  <circle class="nodo" cx="310" cy="95" r="6" />
+  <circle class="nodo" cx="320" cy="195" r="6" />
+  <circle class="nodo" cx="275" cy="145" r="6" />
+  <circle class="nodo" cx="325" cy="145" r="6" />
+  <circle class="nodo" cx="230" cy="220" r="6" />
+  <path class="pista" d="M 430.0,65 L 580.0,65" />
+  <path class="pista" d="M 505.0,65 L 505.0,220" />
+  <path class="pista" d="M 485.0,85 L 485.0,200" />
+  <path class="pista" d="M 525.0,85 L 525.0,200" />
+  <path class="pista" d="M 450.0,80 L 560.0,80" />
+  <circle class="nodo" cx="505" cy="220" r="6" />
+  <circle class="nodo" cx="485" cy="85" r="6" />
+  <circle class="nodo" cx="485" cy="200" r="6" />
+  <circle class="nodo" cx="525" cy="85" r="6" />
+  <circle class="nodo" cx="525" cy="200" r="6" />
+  <circle class="nodo" cx="450" cy="80" r="6" />
+  <circle class="nodo" cx="560" cy="80" r="6" />
+  <path class="pista" d="M 645.0,220 L 645.0,190 L 690.0,65 L 705.0,65" />
+  <path class="pista" d="M 715.0,75 L 755.0,190 L 755.0,220 L 740.0,220" />
+  <path class="pista" d="M 660.0,205 L 660.0,190 L 695.0,85" />
+  <path class="pista" d="M 710.0,95 L 740.0,195 L 720.0,195" />
+  <path class="pista" d="M 675.0,145 L 725.0,145" />
+  <path class="pista" d="M 630.0,220 L 670.0,220" />
+  <circle class="nodo" cx="705" cy="65" r="6" />
+  <circle class="nodo" cx="715" cy="75" r="6" />
+  <circle class="nodo" cx="695" cy="85" r="6" />
+  <circle class="nodo" cx="710" cy="95" r="6" />
+  <circle class="nodo" cx="720" cy="195" r="6" />
+  <circle class="nodo" cx="675" cy="145" r="6" />
+  <circle class="nodo" cx="725" cy="145" r="6" />
+  <circle class="nodo" cx="630" cy="220" r="6" />
+  <path class="pista" d="M 935.0,65 L 965.0,65 L 965.0,75" />
+  <path class="pista" d="M 845.0,90 L 845.0,165 L 850.0,195 L 870.0,215 L 905.0,220 L 935.0,215 L 955.0,195 L 965.0,175 L 965.0,165" />
+  <path class="pista" d="M 860.0,100 L 860.0,155 L 865.0,180 L 880.0,198 L 905.0,202 L 925.0,198 L 940.0,182 L 948.0,168" />
+  <path class="pista" d="M 850.0,75 L 925.0,75" />
+  <circle class="nodo" cx="935" cy="65" r="6" />
+  <circle class="nodo" cx="965" cy="75" r="6" />
+  <circle class="nodo" cx="965" cy="165" r="6" />
+  <circle class="nodo" cx="948" cy="168" r="6" />
+  <circle class="nodo" cx="850" cy="75" r="6" />
+  <circle class="nodo" cx="925" cy="75" r="6" />
+  <path class="pista" d="M 1095.0,65 L 1060.0,70 L 1040.0,100 L 1035.0,140 L 1040.0,180 L 1060.0,210 L 1095.0,220 L 1130.0,215 L 1155.0,190 L 1165.0,150 L 1160.0,110 L 1140.0,80 L 1110.0,68" />
+  <path class="pista" d="M 1055.0,95 L 1050.0,140 L 1055.0,180 L 1070.0,200 L 1095.0,208 L 1120.0,200 L 1138.0,180 L 1145.0,145 L 1140.0,110 L 1125.0,90 L 1100.0,82" />
+  <path class="pista" d="M 1070.0,75 L 1120.0,75" />
+  <circle class="nodo" cx="1095" cy="65" r="6" />
+  <circle class="nodo" cx="1110" cy="68" r="6" />
+  <circle class="nodo" cx="1055" cy="95" r="6" />
+  <circle class="nodo" cx="1100" cy="82" r="6" />
+  <circle class="nodo" cx="1070" cy="75" r="6" />
+  <circle class="nodo" cx="1120" cy="75" r="6" />
+  <path class="pista" d="M 1235.0,65 L 1235.0,220 L 1245.0,220" />
+  <path class="pista" d="M 1245.0,65 L 1330.0,65 L 1355.0,90 L 1355.0,120 L 1340.0,135 L 1245.0,135" />
+  <path class="pista" d="M 1265.0,85 L 1320.0,85 L 1335.0,100 L 1335.0,115 L 1325.0,120" />
+  <path class="pista" d="M 1255.0,145 L 1355.0,220" />
+  <path class="pista" d="M 1265.0,160 L 1325.0,195" />
+  <path class="pista" d="M 1230.0,65 L 1245.0,65" />
+  <circle class="nodo" cx="1325" cy="120" r="6" />
+  <circle class="nodo" cx="1355" cy="220" r="6" />
+  <circle class="nodo" cx="1265" cy="160" r="6" />
+  <circle class="nodo" cx="1325" cy="195" r="6" />
+  <circle class="nodo" cx="1230" cy="65" r="6" />
+  <path class="pista" d="M 1435.0,65 L 1435.0,220 L 1445.0,220" />
+  <path class="pista" d="M 1445.0,65 L 1530.0,65 L 1555.0,90 L 1555.0,120 L 1540.0,135 L 1445.0,135" />
+  <path class="pista" d="M 1465.0,85 L 1520.0,85 L 1535.0,100 L 1535.0,115 L 1525.0,120" />
+  <path class="pista" d="M 1455.0,145 L 1555.0,220" />
+  <path class="pista" d="M 1465.0,160 L 1525.0,195" />
+  <path class="pista" d="M 1430.0,65 L 1445.0,65" />
+  <circle class="nodo" cx="1525" cy="120" r="6" />
+  <circle class="nodo" cx="1555" cy="220" r="6" />
+  <circle class="nodo" cx="1465" cy="160" r="6" />
+  <circle class="nodo" cx="1525" cy="195" r="6" />
+  <circle class="nodo" cx="1430" cy="65" r="6" />
+</svg>

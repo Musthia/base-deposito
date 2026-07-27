@@ -10,7 +10,7 @@ const btnBase = {
     border: "none",
     padding: "10px 14px",
     cursor: "pointer",
-    fontSize: 14,
+    fontSize: 16,
     whiteSpace: "nowrap",
 };
 
@@ -58,7 +58,7 @@ function TopBar() {
     const nombre = user?.nombre || user?.usuario || "Usuario";
     const inicial = nombre.charAt(0).toUpperCase();
     const rol = user?.rol || "";
-    const nivelInfo = user?.nivel !== null && user?.nivel !== undefined ? `Nivel ${user.nivel}` : "";
+    //const nivelInfo = user?.nivel !== null && user?.nivel !== undefined ? `Nivel ${user.nivel}` : "";
 
     const btnActive = useCallback((path) => ({
         ...btnBase,
@@ -88,7 +88,7 @@ function TopBar() {
                 left: 0,
                 right: 0,
                 height: 56,
-                background: "#1e293b",
+                background: "#000205",
                 color: "#ffffff",
                 display: "flex",
                 alignItems: "center",
@@ -151,7 +151,7 @@ function TopBar() {
                         style={{
                             position: "fixed",
                             top: 56,
-                            left: "50%",
+                            left: "84%",
                             transform: "translateX(-50%)",
                             background: "#1e293b",
                             border: "1px solid #334155",
@@ -223,7 +223,9 @@ function TopBar() {
                         {nombre}
                         {rol && (
                             <span style={{ fontSize: 11, opacity: 0.7, marginLeft: 4 }}>
-                                ({[rol, nivelInfo].filter(Boolean).join(" · ")})
+                                ({[rol].filter(Boolean).join(" · ")})
+                                {/* ({[rol, nivelInfo].filter(Boolean).join(" · ")})*/}
+                                
                             </span>
                         )}
                     </span>

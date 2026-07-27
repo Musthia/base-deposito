@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="200" height="240">
+  <style>
+    .pista { fill: none; stroke: #111111; stroke-width: 6; stroke-linecap: square; stroke-linejoin: miter; }
+    .nodo { fill: #111111; }
+  </style>
+  <path class="pista" d="M 90,65 L 55,72 L 38,100 L 42,128 L 65,148 L 100,155 L 130,148 L 152,128 L 155,100 L 140,75 L 115,68" />
+  <path class="pista" d="M 55,170 L 48,195 L 58,215 L 85,222 L 115,215 L 142,198 L 150,172 L 138,155 L 100,148 L 62,155" />
+  <path class="pista" d="M 58,90 L 55,115 L 78,132 L 108,130 L 135,115 L 138,90 L 120,78" />
+  <path class="pista" d="M 62,190 L 72,208 L 100,212 L 128,202 L 138,185" />
+  <circle class="nodo" cx="90" cy="65" r="6" />
+  <circle class="nodo" cx="115" cy="68" r="6" />
+  <circle class="nodo" cx="55" cy="170" r="6" />
+  <circle class="nodo" cx="62" cy="155" r="6" />
+  <circle class="nodo" cx="58" cy="90" r="6" />
+  <circle class="nodo" cx="120" cy="78" r="6" />
+  <circle class="nodo" cx="62" cy="190" r="6" />
+  <circle class="nodo" cx="138" cy="185" r="6" />
+</svg>

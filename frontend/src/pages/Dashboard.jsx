@@ -4,6 +4,7 @@ import { useAuthStore } from "../auth/authStore";
 import { usePermissions } from "../auth/usePermissions";
 import api from "../api/axiosClient";
 import { getDashboardStats } from "../services/dashboardService";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Dashboard() {
     if (!stats) {
         return (
             <div style={loadingStyles.container}>
-                <div style={loadingStyles.spinner} />
+                <CircularProgress size={32} />
                 <p style={{ marginTop: 12, color: "#64748b", fontSize: 14 }}>Cargando panel...</p>
             </div>
         );
@@ -269,51 +270,37 @@ function formatDate(iso) {
 /* ── KPI Card ── */
 
 function KpiCard({ icon, iconBg, iconColor, label, value, sub, details, onClick }) {
-    const [over, setOver] = useState(false);
+    const [showDetails, setShowDetails] = useState(false);
     return (
         <div
             style={{ ...kpiStyles.card, cursor: onClick ? "pointer" : "default" }}
-            onMouseEnter={() => setOver(true)}
-            onMouseLeave={() => setOver(false)}
+            onMouseEnter={() => setShowDetails(true)}
+            onMouseLeave={() => setShowDetails(false)}
             onClick={onClick}
         >
             <div style={{ ...kpiStyles.iconWrap, background: iconBg }}>
                 <span style={{ fontSize: 16, fontWeight: 700, color: iconColor }}>{icon}</span>
             </div>
-            <div>
+            <div style={{ flex: 1 }}>
                 <div style={kpiStyles.label}>{label}</div>
                 <div style={kpiStyles.value}>{value}</div>
                 <div style={kpiStyles.sub}>{sub}</div>
-            </div>
-            <div style={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(180deg, rgba(37,99,235,0.92) 0%, rgba(37,99,235,0.97) 100%)",
-                color: "#000000",
-                padding: "16px 20px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                gap: "6px",
-                transform: over ? "translateY(0)" : "translateY(101%)",
-                opacity: over ? 1 : 0,
-                transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease",
-                pointerEvents: over ? "auto" : "none",
-            }}>
-                {details?.map((d, i) => (
-                    <div key={i} style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontSize: 13,
-                        lineHeight: 1.4,
-                        borderBottom: i < details.length - 1 ? "1px solid rgba(255,255,255,0.15)" : "none",
-                        paddingBottom: i < details.length - 1 ? "6px" : 0,
-                    }}>
-                        <span style={{ opacity: 0.9 }}>{d.label}</span>
-                        <span style={{ fontWeight: 700, fontSize: 14 }}>{d.value}</span>
+                {showDetails && details && (
+                    <div style={{ marginTop: 8, borderTop: "1px solid #e2e8f0", paddingTop: 6 }}>
+                        {details.map((d, i) => (
+                            <div key={i} style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                fontSize: 12,
+                                color: "#64748b",
+                                padding: "2px 0",
+                            }}>
+                                <span>{d.label}</span>
+                                <span style={{ fontWeight: 600 }}>{d.value}</span>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );
@@ -322,9 +309,7 @@ function KpiCard({ icon, iconBg, iconColor, label, value, sub, details, onClick 
 // ── Definición Unificada de Estilos ──
 const dashboardStyles = {
     wrapper: {
-        minHeight: "100vh",
-        padding: "32px",
-        fontFamily: "Inter, system-ui, sans-serif",
+        fontFamily: "'Open Sans', system-ui, sans-serif",
         boxSizing: "border-box"
     }
 };
@@ -334,46 +319,35 @@ const welcomeStyles = {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "var(--bg-card)",
-        padding: "24px 32px",
-        borderRadius: "12px",
-        border: `1px solid ${"var(--border)"}`,
+        background: "#f8fafc",
+        borderBottom: "2px solid #e2e8f0",
+        padding: "20px 24px",
         marginBottom: "24px",
-        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)"
     },
     content: {
         display: "flex",
         flexDirection: "column",
-        gap: "6px"
+        gap: "4px"
     },
     title: {
-        fontSize: "26px",
+        fontSize: "22px",
         fontWeight: "700",
-        color: "var(--text-main)",
+        color: "#1e293b",
         margin: 0,
-        letterSpacing: "-0.02em"
     },
     desc: {
         fontSize: "14px",
-        color: "var(--text-muted)",
-        margin: 0
-    },
-    actions: {
-        display: "flex",
-        alignItems: "center",
-        gap: "12px"
+        color: "#64748b",
+        margin: "4px 0 0 0",
     },
     badge: {
-        backgroundColor: "#f1f5f9",
-        padding: "6px 12px",
-        borderRadius: "6px",
-        border: `1px solid ${"var(--border)"}`
+        background: "#e2e8f0",
+        padding: "4px 10px",
     },
     badgeText: {
         fontSize: "12px",
         fontWeight: "600",
-        color: "var(--text-muted)",
-        fontFamily: "monospace"
+        color: "#64748b",
     }
 };
 
@@ -393,41 +367,37 @@ const kpiStyles = {
     row: {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-        gap: "20px",
+        gap: "16px",
         marginBottom: "24px"
     },
     card: {
-        backgroundColor: "var(--bg-card)",
-        borderRadius: "12px",
+        background: "#ffffff",
+        border: "1px solid #e2e8f0",
         padding: "18px 20px",
         display: "flex",
         alignItems: "center",
         gap: "16px",
-        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
-        border: `1px solid ${"var(--border)"}`,
         position: "relative",
-        overflow: "hidden",
     },
     iconWrap: {
-        width: "48px",
-        height: "48px",
-        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        flexShrink: 0
+        flexShrink: 0,
+        borderRadius: "4px",
     },
-    label: { fontSize: "13px", color: "var(--text-muted)", fontWeight: "500" },
-    value: { fontSize: "26px", fontWeight: "700", color: "var(--text-main)", lineHeight: 1.2 },
-    sub: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }
+    label: { fontSize: "13px", color: "#64748b", fontWeight: "500" },
+    value: { fontSize: "24px", fontWeight: "700", color: "#1e293b", lineHeight: 1.2 },
+    sub: { fontSize: "12px", color: "#64748b", marginTop: "2px" }
 };
 
 const bottomStyles = {
     row: {
-        display: "grid",
-        gridTemplateColumns: "1.6fr 1fr",
+        display: "flex",
+        flexDirection: "column",
         gap: "24px",
-        alignItems: "start"
     },
     left: { minWidth: 0 },
     right: { minWidth: 0 }
@@ -435,65 +405,57 @@ const bottomStyles = {
 
 const cardStyles = {
     card: {
-        backgroundColor: "var(--bg-card)",
-        padding: "28px",
-        borderRadius: "12px",
-        border: `1px solid ${"var(--border)"}`,
-        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)"
+        background: "#ffffff",
+        border: "1px solid #e2e8f0",
+        padding: "20px 24px",
     }
 };
 
 const sectionTitle = {
     fontSize: "18px",
     fontWeight: "600",
-    color: "var(--text-main)",
-    margin: "0 0 20px 0",
-    letterSpacing: "-0.01em"
+    color: "#1e293b",
+    margin: "0 0 16px 0",
 };
 
 const thStyles = {
-    padding: "12px 16px",
+    padding: "10px 14px",
     fontSize: "12px",
     fontWeight: "600",
-    color: "var(--text-muted)",
+    color: "#64748b",
     textTransform: "uppercase",
     letterSpacing: "0.05em",
-    borderBottom: `1px solid ${"var(--border)"}`,
+    borderBottom: "1px solid #e2e8f0",
     textAlign: "left"
 };
 const tdStyles = {
-    padding: "14px 16px",
+    padding: "12px 14px",
     fontSize: "14px",
-    color: "var(--text-main)",
-    borderBottom: `1px solid ${"var(--border)"}`
+    color: "#1e293b",
+    borderBottom: "1px solid #e2e8f0"
 };
 const tableStyles = {
     container: { overflowX: "auto" },
     table: { width: "100%", borderCollapse: "collapse", textAlign: "left" },
-    tr: { transition: "background-color 0.15s ease" },
     thRight: { ...thStyles, textAlign: "right" },
     tdValue: { ...tdStyles, textAlign: "right", fontWeight: "600" },
-    tdDatcorr: { ...tdStyles, textAlign: "right", color: "var(--primary)", fontWeight: "500" },
-    tdVerificado: { ...tdStyles, textAlign: "right", color: "var(--success)", fontWeight: "500" },
-    tfootTr: { backgroundColor: "#fafafa" },
-    tfootTdLabel: { ...tdStyles, fontWeight: "700", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" },
-    tfootTdValue: { ...tdStyles, fontWeight: "700", textAlign: "right", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" },
-    tfootTdDatcorr: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "var(--primary)", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" },
-    tfootTdVerificado: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "var(--success)", borderTop: `2px solid ${"var(--border)"}`, borderBottom: "none" }
+    tdDatcorr: { ...tdStyles, textAlign: "right", color: "#0284c7", fontWeight: "500" },
+    tdVerificado: { ...tdStyles, textAlign: "right", color: "#16a34a", fontWeight: "500" },
+    tfootTr: { background: "#f8fafc" },
+    tfootTdLabel: { ...tdStyles, fontWeight: "700", borderTop: "2px solid #e2e8f0", borderBottom: "none" },
+    tfootTdValue: { ...tdStyles, fontWeight: "700", textAlign: "right", borderTop: "2px solid #e2e8f0", borderBottom: "none" },
+    tfootTdDatcorr: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#0284c7", borderTop: "2px solid #e2e8f0", borderBottom: "none" },
+    tfootTdVerificado: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#16a34a", borderTop: "2px solid #e2e8f0", borderBottom: "none" }
 };
 const tlStyles = {
-    container: { marginTop: "12px", display: "flex", flexDirection: "column" },
-    emptyText: { fontSize: "13px", color: "var(--text-muted)", margin: 0 },
-    row: { display: "flex", gap: "16px" },
+    row: { display: "flex", gap: "12px" },
     iconCol: { display: "flex", flexDirection: "column", alignItems: "center" },
-    icon: { width: "28px", height: "28px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#ffffff", fontWeight: "bold", zIndex: 2 },
-    line: { width: "2px", backgroundColor: "var(--border)", flexGrow: 1, marginTop: "4px", marginBottom: "4px" },
-    textCol: { paddingBottom: "20px", display: "flex", flexDirection: "column", gap: "4px" },
-    label: { fontSize: "14px", fontWeight: "500", color: "var(--text-main)" },
-    time: { fontSize: "12px", color: "var(--text-muted)" }
+    icon: { width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", color: "#ffffff", fontWeight: "bold" },
+    line: { width: "1px", background: "#e2e8f0", flexGrow: 1, margin: "2px 0" },
+    textCol: { paddingBottom: "16px" },
+    label: { fontSize: "13px", fontWeight: "500", color: "#1e293b" },
+    time: { fontSize: "12px", color: "#64748b", marginTop: "2px" },
 };
 const loadingStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: "var(--bg-page)" },
-    spinner: { width: "32px", height: "32px", border: `3px solid ${"var(--border)"}`, borderTop: `3px solid ${"var(--primary)"}`, borderRadius: "50%", animation: "spin 1s linear infinite" },
-    text: { marginTop: "12px", color: "var(--text-muted)", fontSize: "14px" }
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f8fafc" },
 };

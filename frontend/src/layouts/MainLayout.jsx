@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import TopBar from "./TopBar";
 import { TabProvider } from "../context/TabContext";
 import { useIdleTimeout } from "../hooks/useIdleTimeout";
 import NotificationProvider from "../context/NotificationProvider";
@@ -8,14 +8,12 @@ export default function MainLayout() {
     useIdleTimeout();
 
     return (
-        <div style={{ display: "flex" }}>
-            <Sidebar />
-
+        <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+            <TopBar />
             <main style={{
                 flex: 1,
-                minWidth: 0,
-                padding: "20px",
-                minHeight: "100vh",
+                padding: "24px",
+                paddingTop: "80px",
                 background: "#ffffff",
                 overflow: "auto",
             }}>

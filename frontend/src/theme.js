@@ -1,5 +1,14 @@
 import { createTheme } from "@mui/material/styles";
 
+export const TOPBAR = {
+    bg: "#1e293b",
+    text: "#ffffff",
+    activeBg: "#334155",
+    height: "56px",
+};
+
+export const BORDER_SUBTLE = "#e2e8f0";
+
 export const LIGHT = {
     bgPage: "#f3f4f6",
     bgCard: "#ffffff",

@@ -8,9 +8,7 @@ __pycache__/
 .gitignore
 .env
 .env.local
-.env.production
 frontend/.env
-!frontend/.env.production
 node_modules/
 frontend/node_modules/
 simco/
@@ -31,3 +29,6 @@ desktop.ini
 .vscode/
 .idea/
 README.md
+*.md
+!ejecucion_rediseno_dashboard.md
+!guia_final_rediseno_dashboard.md

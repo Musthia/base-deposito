@@ -102,7 +102,7 @@ router = APIRouter(
 # -----------------------------------
 
 @router.get(
-    "",
+    "/",
     response_model=UsuariosListadoResponse
 )
 
@@ -312,7 +312,7 @@ def obtener_usuario_por_id(
 # -----------------------------------
 
 @router.post(
-    "",
+    "/",
     response_model=UsuarioCreateResponse
 )
 

@@ -103,13 +103,13 @@ export default function UsuariosPage() {
     };
 
     if (!permissions.canViewUsers) {
-        return <Box sx={{ p: 3 }}><Typography sx={{ color: "#6b7280", fontStyle: "italic" }}>Sin permisos para ver usuarios</Typography></Box>;
+        return <Box sx={{ p: 3 }}><Typography sx={{ color: "var(--text-muted)", fontStyle: "italic" }}>Sin permisos para ver usuarios</Typography></Box>;
     }
 
     return (
         <Box sx={{ p: 3 }}>
 
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>Usuarios</Typography>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "var(--text-main)" }}>Usuarios</Typography>
 
             {permissions.canCreateUser && (
                 <Button

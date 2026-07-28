@@ -132,7 +132,7 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
                                     <TableRow key={sol.id} hover sx={{
                                         backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
                                         transition: "background-color 0.3s",
-                                        "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#f3f4f6" },
+                                        "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "var(--bg-page)" },
                                     }}>
                                     <TableCell sx={{ fontWeight: 600, fontSize: 13 }}>{sol.codigo}</TableCell>
                                     <TableCell sx={{ fontSize: 13 }}>{sol.tipo_documento}</TableCell>

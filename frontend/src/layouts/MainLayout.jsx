@@ -17,7 +17,7 @@ export default function MainLayout() {
                     flex: 1,
                     p: "24px",
                     pt: "80px",
-                    backgroundColor: "#f3f4f6",
+                    backgroundColor: "var(--bg-page)",
                     overflow: "auto",
                 }}
             >

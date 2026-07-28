@@ -10,15 +10,16 @@ export const TOPBAR = {
 export const BORDER_SUBTLE = "#e2e8f0";
 
 export const LIGHT = {
-    bgPage: "#f3f4f6",
-    bgCard: "#ffffff",
-    border: "#d1d5db",
-    textMain: "#111827",
-    textMuted: "#6b7280",
-    primary: "#2563eb",
-    success: "#16a34a",
-    warning: "#d97706",
-    danger: "#dc2626",
+    bgPage: "#000000",
+    bgCard: "#111111",
+    border: "#333333",
+    textMain: "#e5e5e5",
+    textMain1: "#070707",
+    textMuted: "#9ca3af",
+    primary: "#60a5fa",
+    success: "#34d399",
+    warning: "#fbbf24",
+    danger: "#f87171",
 };
 
 export const DARK = {
@@ -34,7 +35,7 @@ export const DARK = {
 };
 
 function buildTheme(colors) {
-    const isDark = colors.bgPage === "#1e1e2e";
+    const isDark = colors.bgPage !== "#f3f4f6";
     return createTheme({
         components: {
             MuiPaper: {
@@ -206,7 +207,7 @@ function buildTheme(colors) {
                             backgroundColor: isDark ? "rgba(96, 165, 250, 0.14)" : "rgba(37, 99, 235, 0.10)",
                         },
                         "& .MuiDataGrid-sortIcon": {
-                            color: colors.textMain,
+                            color: colors.textMain1,
                             opacity: 1,
                             fontSize: 18,
                         },

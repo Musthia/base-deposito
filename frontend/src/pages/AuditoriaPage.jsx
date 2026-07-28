@@ -123,14 +123,14 @@ export default function AuditoriaPage() {
     if (error) {
         return (
             <Box sx={{ p: 3, display: "flex", justifyContent: "center" }}>
-                <Box sx={{ background: "#ffffff", borderRadius: "8px", padding: "32px", textAlign: "center", maxWidth: 400 }}>
+                <Box sx={{ background: "var(--bg-card)", borderRadius: "8px", padding: "32px", textAlign: "center", maxWidth: 400 }}>
                     <Typography variant="h6" sx={{ mb: 1 }}>Error al cargar auditoria</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>{error}</Typography>
                     <button
                         onClick={() => loadData(paginationModel.page, paginationModel.pageSize)}
                         style={{
                             background: "#0f172a",
-                            color: "#ffffff",
+                            color: "var(--bg-card)",
                             border: "none",
                             borderRadius: "8px",
                             padding: "12px 24px",
@@ -146,14 +146,14 @@ export default function AuditoriaPage() {
 
     return (
         <Box sx={{ p: 3, overflow: "hidden", maxWidth: "100%" }}>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "var(--text-main)" }}>
                 Auditoria
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 Registro de actividad del sistema ({total} eventos)
             </Typography>
 
-            <Box sx={{ background: "#ffffff", borderRadius: "8px", height: 600, width: "100%", overflow: "hidden", maxWidth: "100%" }}>
+            <Box sx={{ background: "var(--bg-card)", borderRadius: "8px", height: 600, width: "100%", overflow: "hidden", maxWidth: "100%" }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}

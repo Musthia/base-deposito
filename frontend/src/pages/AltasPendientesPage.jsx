@@ -134,7 +134,7 @@ export default function AltasPendientesPage() {
 
     return (
         <Box sx={{ p: 3 }}>
-            <Typography variant="h5" sx={{ fontWeight: 600, color: "#111827", mb: 3 }}>Altas de usuarios pendientes</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 600, color: "var(--text-main)", mb: 3 }}>Altas de usuarios pendientes</Typography>
 
             <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
                 <Tab label={`Pendientes (${pendientes.length})`} />

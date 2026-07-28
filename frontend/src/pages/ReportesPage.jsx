@@ -135,16 +135,16 @@ export default function ReportesPage() {
 
     return (
         <Box sx={{ p: 3, maxWidth: "100%" }}>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>Reportes</Typography>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "var(--text-main)" }}>Reportes</Typography>
 
             {/* KPIs */}
             {kpis && (
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     {[
-                        { label: "Total Registros", value: kpis.total_registros?.toLocaleString(), color: "#111827" },
-                        { label: "Usuarios Activos", value: kpis.usuarios_activos, color: "#111827" },
-                        { label: "Total Usuarios", value: kpis.total_usuarios, color: "#111827" },
-                        { label: "Alertas Pendientes", value: kpis.alertas_pendientes, color: kpis.alertas_pendientes > 0 ? "#dc2626" : "#111827" },
+                        { label: "Total Registros", value: kpis.total_registros?.toLocaleString(), color: "var(--text-main)" },
+                        { label: "Usuarios Activos", value: kpis.usuarios_activos, color: "var(--text-main)" },
+                        { label: "Total Usuarios", value: kpis.total_usuarios, color: "var(--text-main)" },
+                        { label: "Alertas Pendientes", value: kpis.alertas_pendientes, color: kpis.alertas_pendientes > 0 ? "#dc2626" : "var(--text-main)" },
                     ].map((kpi) => (
                         <Grid item xs={6} sm={3} key={kpi.label}>
                             <Card sx={{ borderRadius: "8px", boxShadow: "none", border: "none" }}>
@@ -196,21 +196,21 @@ export default function ReportesPage() {
                     disabled={!consultaId || loading}
                     sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" }, textTransform: "none" }}
                 >
-                    {loading ? <CircularProgress size={20} sx={{ mr: 1, color: "#fff" }} /> : null}
+                    {loading ? <CircularProgress size={20} sx={{ mr: 1, color: "var(--text-main)" }} /> : null}
                     Generar
                 </Button>
                 {generated && rows.length > 0 && (
                     <>
-                        <Button variant="outlined" onClick={() => handleExport("csv")} sx={{ borderColor: "#d1d5db", color: "#111827", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>CSV</Button>
-                        <Button variant="outlined" onClick={() => handleExport("xlsx")} sx={{ borderColor: "#d1d5db", color: "#111827", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>XLSX</Button>
-                        <Button variant="outlined" onClick={() => handleExport("pdf")} sx={{ borderColor: "#d1d5db", color: "#111827", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>PDF</Button>
+                        <Button variant="outlined" onClick={() => handleExport("csv")} sx={{ borderColor: "var(--border)", color: "var(--text-main)", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>CSV</Button>
+                        <Button variant="outlined" onClick={() => handleExport("xlsx")} sx={{ borderColor: "var(--border)", color: "var(--text-main)", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>XLSX</Button>
+                        <Button variant="outlined" onClick={() => handleExport("pdf")} sx={{ borderColor: "var(--border)", color: "var(--text-main)", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>PDF</Button>
                     </>
                 )}
             </Box>
 
             {/* Preview */}
             {generated && !reportError && (
-                <Box sx={{ background: "#ffffff", borderRadius: "8px", height: "calc(100vh - 350px)", width: "100%", minHeight: 400 }}>
+                <Box sx={{ background: "var(--bg-card)", borderRadius: "8px", height: "calc(100vh - 350px)", width: "100%", minHeight: 400 }}>
                     <Box sx={{ px: 2, pt: 2 }}>
                         <Typography variant="body2" color="text.secondary">
                             {consultaMeta?.nombre} — {rows.length} registros
@@ -242,7 +242,7 @@ export default function ReportesPage() {
             )}
 
             {reportError && (
-                <Box sx={{ background: "#ffffff", borderRadius: "8px", p: 4, textAlign: "center" }}>
+                <Box sx={{ background: "var(--bg-card)", borderRadius: "8px", p: 4, textAlign: "center" }}>
                     <Typography variant="body1" sx={{ mb: 1 }}>{reportError}</Typography>
                     <Button
                         variant="contained"

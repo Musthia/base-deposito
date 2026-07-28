@@ -47,10 +47,10 @@ export default function RegistroPage() {
 
     if (success) {
         return (
-            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "#f3f4f6" }}>
+            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "var(--bg-page)" }}>
                 <Paper elevation={0} sx={{ p: 6, maxWidth: 500, textAlign: "center", borderRadius: 3 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: "#111827" }}>Solicitud enviada</Typography>
-                    <Typography sx={{ mb: 3, color: "#6b7280" }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: "var(--text-main)" }}>Solicitud enviada</Typography>
+                    <Typography sx={{ mb: 3, color: "var(--text-muted)" }}>
                         Su solicitud de registro fue enviada correctamente. Recibirá un email cuando un administrador la apruebe.
                     </Typography>
                     <Button variant="contained" onClick={() => navigate("/")} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>Volver al inicio</Button>
@@ -60,10 +60,10 @@ export default function RegistroPage() {
     }
 
     return (
-        <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "#f3f4f6", p: 2 }}>
+        <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "var(--bg-page)", p: 2 }}>
             <Paper elevation={0} sx={{ p: 4, maxWidth: 520, width: "100%", borderRadius: 3 }}>
-                <Typography variant="h5" sx={{ fontWeight: 700, color: "#111827", mb: 1 }}>Solicitar registro</Typography>
-                <Typography variant="body2" sx={{ color: "#6b7280", mb: 3 }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, color: "var(--text-main)", mb: 1 }}>Solicitar registro</Typography>
+                <Typography variant="body2" sx={{ color: "var(--text-muted)", mb: 3 }}>
                     Complete todos los campos obligatorios. Un administrador revisará su solicitud.
                 </Typography>
 

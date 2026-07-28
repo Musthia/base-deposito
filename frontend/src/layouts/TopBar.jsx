@@ -266,7 +266,7 @@ function TopBar() {
                                 <div key={u} style={{
                                     padding: "6px 16px",
                                     fontSize: 13,
-                                    color: "#e2e8f0",
+                                    color: "var(--text-main)",
                                     display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
@@ -452,7 +452,7 @@ function TopBar() {
                         top: 56,
                         left: 0,
                         right: 0,
-                        background: "#1e293b",
+                        background: "#b6e4da",
                         borderTop: "1px solid #334155",
                         display: "flex",
                         flexDirection: "column",

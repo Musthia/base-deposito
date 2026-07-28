@@ -250,7 +250,7 @@ export default function CargaDatosPage() {
 
     return (
         <Box sx={{ p: 3, overflow: "hidden", maxWidth: "100%" }}>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "var(--text-main)" }}>
                 Carga de Datos
             </Typography>
 
@@ -363,11 +363,11 @@ export default function CargaDatosPage() {
                         <Table size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>#</TableCell>
-                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>Hora</TableCell>
-                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>Acciones</TableCell>
+                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "var(--bg-card)" }}>#</TableCell>
+                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "var(--bg-card)" }}>Hora</TableCell>
+                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "var(--bg-card)" }}>Acciones</TableCell>
                                     {tabActual.registrosCreados[0]?.todasLasCols?.map((col) => (
-                                        <TableCell key={col} sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>
+                                        <TableCell key={col} sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "var(--bg-card)" }}>
                                             {col}
                                         </TableCell>
                                     ))}
@@ -400,7 +400,7 @@ export default function CargaDatosPage() {
             )}
 
             {!loading && !tabActual && tabs.length === 0 && (
-                <Typography sx={{ color: "#6b7280", fontStyle: "italic" }}>
+                <Typography sx={{ color: "var(--text-muted)", fontStyle: "italic" }}>
                     Seleccione una base de datos del menú de arriba para comenzar
                 </Typography>
             )}

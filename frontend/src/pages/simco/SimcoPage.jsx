@@ -357,7 +357,7 @@ export default function SimcoPage() {
                         onChange={(e) => setSearchInput(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") commitSearch(); }}
                         sx={{
-                            "& .MuiInputBase-root": { backgroundColor: "#ffffff", borderRadius: 1 },
+                            "& .MuiInputBase-root": { backgroundColor: "var(--bg-card)", borderRadius: 1 },
                         }}
                         InputProps={{
                             startAdornment: (

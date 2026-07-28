@@ -3,14 +3,14 @@ import { Box, Typography, Divider } from "@mui/material";
 export default function AcercaSimcoPage() {
     return (
         <Box sx={{ p: 3, maxWidth: 720 }}>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "var(--text-main)" }}>
                 Acerca de
             </Typography>
-            <Box sx={{ background: "#ffffff", borderRadius: "8px", p: 3 }}>
-                <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, color: "#111827" }}>
+            <Box sx={{ background: "var(--bg-card)", borderRadius: "8px", p: 3 }}>
+                <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 1, color: "var(--text-main)" }}>
                     SiMCo
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 2, fontStyle: "italic", color: "#6b7280" }}>
+                <Typography variant="body2" sx={{ mb: 2, fontStyle: "italic", color: "var(--text-muted)" }}>
                     — SiMCo (Sistema de Manejo de Consultas) es un módulo de gestión de
                     solicitudes, trazabilidad, adjuntos, respuestas, notificaciones,
                     auditoría de actividades y un sistema de búsqueda avanzada. —
@@ -27,7 +27,7 @@ export default function AcercaSimcoPage() {
                         ["Notificaciones", "Permite enviar notificaciones a los usuarios sobre el estado de sus solicitudes y consultas"],
                         ["Auditoría", "Permite registrar y consultar actividades realizadas en el sistema"],
                     ].map(([label, value]) => (
-                        <Typography key={label} variant="body2" sx={{ color: "#111827" }}>
+                        <Typography key={label} variant="body2" sx={{ color: "var(--text-main)" }}>
                             <strong>{label}:</strong> {value}
                         </Typography>
                     ))}

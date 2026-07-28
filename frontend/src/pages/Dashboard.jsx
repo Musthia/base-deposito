@@ -181,7 +181,7 @@ export default function Dashboard() {
                         <h2 style={sectionTitle}>Actividad reciente</h2>
                         <div style={{ marginTop: 8 }}>
                             {stats.actividad.length === 0 && (
-                                <p style={{ fontSize: 13, color: "#6b7280" }}>Sin actividad registrada</p>
+                                <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Sin actividad registrada</p>
                             )}
                             {stats.actividad.map((item, i) => (
                                 <div key={i} style={tlStyles.row}>
@@ -294,13 +294,13 @@ function KpiCard({ icon, iconBg, iconColor, label, value, sub, details, onClick 
                 <div style={kpiStyles.value}>{value}</div>
                 <div style={kpiStyles.sub}>{sub}</div>
                 {showDetails && details && (
-                    <div style={{ marginTop: 8, borderTop: "1px solid #e2e8f0", paddingTop: 6 }}>
+                    <div style={{ marginTop: 8, borderTop: "1px solid var(--border)", paddingTop: 6 }}>
                         {details.map((d, i) => (
                             <div key={i} style={{
                                 display: "flex",
                                 justifyContent: "space-between",
                                 fontSize: 12,
-                                color: "#64748b",
+                                color: "var(--text-muted)",
                                 padding: "2px 0",
                             }}>
                                 <span>{d.label}</span>
@@ -327,7 +327,7 @@ const welcomeStyles = {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "#ffffff",
+        background: "var(--bg-card)",
         borderRadius: "8px",
         padding: "20px 24px",
         marginBottom: "24px",
@@ -340,23 +340,23 @@ const welcomeStyles = {
     title: {
         fontSize: "22px",
         fontWeight: "700",
-        color: "#111827",
+        color: "var(--text-main)",
         margin: 0,
     },
     desc: {
         fontSize: "14px",
-        color: "#6b7280",
+        color: "var(--text-muted)",
         margin: "4px 0 0 0",
     },
     badge: {
-        background: "#e2e8f0",
+        background: "var(--border)",
         padding: "4px 10px",
         borderRadius: "4px",
     },
     badgeText: {
         fontSize: "12px",
         fontWeight: "600",
-        color: "#64748b",
+        color: "var(--text-muted)",
     }
 };
 
@@ -368,7 +368,7 @@ const kpiStyles = {
         marginBottom: "24px"
     },
     card: {
-        background: "#ffffff",
+        background: "var(--bg-card)",
         borderRadius: "8px",
         padding: "18px 20px",
         display: "flex",
@@ -381,7 +381,7 @@ const kpiStyles = {
         cursor: "pointer",
     },
     cardHovered: {
-        boxShadow: "0 4px 12px rgba(15,23,42,0.1)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
         transform: "translateY(-1px)",
     },
     iconWrap: {
@@ -393,9 +393,9 @@ const kpiStyles = {
         flexShrink: 0,
         borderRadius: "8px",
     },
-    label: { fontSize: "13px", color: "#6b7280", fontWeight: "500" },
-    value: { fontSize: "24px", fontWeight: "700", color: "#111827", lineHeight: 1.2 },
-    sub: { fontSize: "12px", color: "#6b7280", marginTop: "2px" }
+    label: { fontSize: "13px", color: "var(--text-muted)", fontWeight: "500" },
+    value: { fontSize: "24px", fontWeight: "700", color: "var(--text-main)", lineHeight: 1.2 },
+    sub: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }
 };
 
 const bottomStyles = {
@@ -410,7 +410,7 @@ const bottomStyles = {
 
 const cardStyles = {
     card: {
-        background: "#ffffff",
+        background: "var(--bg-card)",
         borderRadius: "8px",
         padding: "20px 24px",
     }
@@ -419,7 +419,7 @@ const cardStyles = {
 const sectionTitle = {
     fontSize: "18px",
     fontWeight: "600",
-    color: "#111827",
+    color: "var(--text-main)",
     margin: "0 0 16px 0",
 };
 
@@ -427,15 +427,15 @@ const thStyles = {
     padding: "10px 14px",
     fontSize: "12px",
     fontWeight: "600",
-    color: "#6b7280",
-    borderBottom: "1px solid #e2e8f0",
+    color: "var(--text-muted)",
+    borderBottom: "1px solid var(--border)",
     textAlign: "left"
 };
 const tdStyles = {
     padding: "12px 14px",
     fontSize: "14px",
-    color: "#111827",
-    borderBottom: "1px solid #e2e8f0"
+    color: "var(--text-main)",
+    borderBottom: "1px solid var(--border)"
 };
 const tableStyles = {
     container: { overflowX: "auto" },
@@ -445,30 +445,30 @@ const tableStyles = {
     tdValue: { ...tdStyles, textAlign: "right", fontWeight: "600" },
     tdDatcorr: { ...tdStyles, textAlign: "right", color: "#0284c7", fontWeight: "500" },
     tdVerificado: { ...tdStyles, textAlign: "right", color: "#16a34a", fontWeight: "500" },
-    tfootTr: { background: "#f8fafc" },
-    tfootTdLabel: { ...tdStyles, fontWeight: "700", borderTop: "2px solid #e2e8f0", borderBottom: "none" },
-    tfootTdValue: { ...tdStyles, fontWeight: "700", textAlign: "right", borderTop: "2px solid #e2e8f0", borderBottom: "none" },
-    tfootTdDatcorr: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#0284c7", borderTop: "2px solid #e2e8f0", borderBottom: "none" },
-    tfootTdVerificado: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#16a34a", borderTop: "2px solid #e2e8f0", borderBottom: "none" }
+    tfootTr: { background: "var(--bg-card)" },
+    tfootTdLabel: { ...tdStyles, fontWeight: "700", borderTop: "2px solid var(--border)", borderBottom: "none" },
+    tfootTdValue: { ...tdStyles, fontWeight: "700", textAlign: "right", borderTop: "2px solid var(--border)", borderBottom: "none" },
+    tfootTdDatcorr: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#0284c7", borderTop: "2px solid var(--border)", borderBottom: "none" },
+    tfootTdVerificado: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#16a34a", borderTop: "2px solid var(--border)", borderBottom: "none" }
 };
 const tlStyles = {
     row: { display: "flex", gap: "12px" },
     iconCol: { display: "flex", flexDirection: "column", alignItems: "center" },
     icon: { width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", color: "#ffffff", fontWeight: "bold", borderRadius: "50%" },
-    line: { width: "1px", background: "#e2e8f0", flexGrow: 1, margin: "2px 0" },
+    line: { width: "1px", background: "var(--border)", flexGrow: 1, margin: "2px 0" },
     textCol: { paddingBottom: "16px" },
-    label: { fontSize: "13px", fontWeight: "500", color: "#111827" },
-    time: { fontSize: "12px", color: "#6b7280", marginTop: "2px" },
+    label: { fontSize: "13px", fontWeight: "500", color: "var(--text-main)" },
+    time: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" },
 };
 const loadingStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f3f4f6" },
-    text: { marginTop: 12, color: "#6b7280", fontSize: 14 },
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-page)" },
+    text: { marginTop: 12, color: "var(--text-muted)", fontSize: 14 },
 };
 
 const errorStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f3f4f6", padding: "24px" },
-    card: { background: "#ffffff", borderRadius: "16px", padding: "32px", textAlign: "center", maxWidth: "400px" },
-    title: { fontSize: "18px", fontWeight: "600", color: "#111827", margin: "16px 0 8px 0" },
-    desc: { fontSize: "14px", color: "#6b7280", margin: "0 0 24px 0" },
-    button: { background: "#0f172a", color: "#ffffff", border: "none", borderRadius: "8px", padding: "12px 24px", fontSize: "14px", fontWeight: 600, cursor: "pointer" },
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-page)", padding: "24px" },
+    card: { background: "var(--bg-card)", borderRadius: "16px", padding: "32px", textAlign: "center", maxWidth: "400px" },
+    title: { fontSize: "18px", fontWeight: "600", color: "var(--text-main)", margin: "16px 0 8px 0" },
+    desc: { fontSize: "14px", color: "var(--text-muted)", margin: "0 0 24px 0" },
+    button: { background: "var(--bg-card)", color: "var(--text-main)", border: "1px solid var(--border)", borderRadius: "8px", padding: "12px 24px", fontSize: "14px", fontWeight: 600, cursor: "pointer" },
 };

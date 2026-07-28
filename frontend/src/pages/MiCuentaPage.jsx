@@ -71,10 +71,10 @@ export default function MiCuentaPage() {
 
     return (
         <Box sx={{ p: 3, maxWidth: 600, mx: "auto" }}>
-            <Typography variant="h5" sx={{ fontWeight: 600, color: "#111827", mb: 3 }}>Mi cuenta</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 600, color: "var(--text-main)", mb: 3 }}>Mi cuenta</Typography>
 
             <Paper elevation={0} sx={{ p: 3, mb: 3, border: `1px solid ${colors.border}`, borderRadius: 2 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: "#111827" }}>Datos personales</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: "var(--text-main)" }}>Datos personales</Typography>
                 <Box sx={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: 1.5, fontSize: 14 }}>
                     <Typography sx={{ color: colors.textMuted }}>Usuario:</Typography>
                     <Typography>{user?.usuario}</Typography>
@@ -88,7 +88,7 @@ export default function MiCuentaPage() {
             </Paper>
 
             <Paper elevation={0} sx={{ p: 3, border: `1px solid ${colors.border}`, borderRadius: 2 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: "#111827" }}>Cuenta de Google</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: "var(--text-main)" }}>Cuenta de Google</Typography>
                 {tieneGoogle ? (
                     <Box>
                         <Typography variant="body2" sx={{ mb: 1, color: colors.textMuted }}>

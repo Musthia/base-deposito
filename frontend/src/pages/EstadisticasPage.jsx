@@ -149,7 +149,7 @@ export default function EstadisticasPage() {
     return (
         <Box sx={{ p: 3 }}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 2, flexWrap: "wrap", gap: 1 }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, color: "#111827" }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, color: "var(--text-main)" }}>
                     Estadísticas
                 </Typography>
 
@@ -200,7 +200,7 @@ export default function EstadisticasPage() {
             {!loading && !error && datcorr && simco && (
                 <Box ref={contentRef}>
                     {/* ─── DATCORR ─── */}
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: "#111827", mb: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: "var(--text-main)", mb: 2 }}>
                         DatCorr
                     </Typography>
 
@@ -219,7 +219,7 @@ export default function EstadisticasPage() {
                     </Box>
 
                     <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "#111827" }}>
+                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Composición por base de datos
                         </Typography>
                         <ResponsiveContainer width="100%" height={300}>
@@ -236,13 +236,13 @@ export default function EstadisticasPage() {
                                 <Legend />
                                 <Bar dataKey="DatCorr" stackId="a" fill="#0f172a" />
                                 <Bar dataKey="Verificado" stackId="a" fill="#16a34a" />
-                                <Bar dataKey="Otros" stackId="a" fill="#d1d5db" />
+                                <Bar dataKey="Otros" stackId="a" fill="var(--border)" />
                             </BarChart>
                         </ResponsiveContainer>
                     </Paper>
 
                     <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "#111827" }}>
+                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Movimientos por período
                         </Typography>
                         <ResponsiveContainer width="100%" height={300}>
@@ -261,7 +261,7 @@ export default function EstadisticasPage() {
                     </Paper>
 
                     <Paper elevation={0} sx={{ p: 2, mb: 4, border: "1px solid #d1d5db", borderRadius: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "#111827" }}>
+                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Accesos por período
                         </Typography>
                         <ResponsiveContainer width="100%" height={250}>
@@ -279,7 +279,7 @@ export default function EstadisticasPage() {
                     <Divider sx={{ my: 3 }} />
 
                     {/* ─── SIMCO ─── */}
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: "#111827", mb: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: "var(--text-main)", mb: 2 }}>
                         SiMCo
                     </Typography>
 
@@ -298,7 +298,7 @@ export default function EstadisticasPage() {
                     </Box>
 
                     <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "#111827" }}>
+                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Solicitudes por período
                         </Typography>
                         <ResponsiveContainer width="100%" height={300}>
@@ -315,7 +315,7 @@ export default function EstadisticasPage() {
                     </Paper>
 
                     <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "#111827" }}>
+                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Respuestas por período
                         </Typography>
                         <ResponsiveContainer width="100%" height={250}>
@@ -331,7 +331,7 @@ export default function EstadisticasPage() {
                     </Paper>
 
                     <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "#111827" }}>
+                        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Solicitudes por tipo de documento
                         </Typography>
                         <ResponsiveContainer width="100%" height={300}>

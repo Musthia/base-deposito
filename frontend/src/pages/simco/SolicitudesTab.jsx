@@ -155,7 +155,7 @@ export default function SolicitudesTab({ highlightId: propHighlightId }) {
                                                 cursor: "pointer",
                                                 backgroundColor: highlightId === sol.id ? "#fef3c7" : undefined,
                                                 transition: "background-color 0.3s",
-                                                "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "#f3f4f6" },
+                                                "&:hover": { backgroundColor: highlightId === sol.id ? "#fde68a" : "var(--bg-page)" },
                                             }}
                                             onClick={() => setExpandedId(expanded ? null : sol.id)}
                                         >

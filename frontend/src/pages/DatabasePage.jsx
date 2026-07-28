@@ -215,7 +215,7 @@ export default function DatabasePage() {
     if (!bases.length) {
         return (
             <Box sx={{ p: 3 }}>
-                <Typography variant="h5" sx={{ fontWeight: 600, color: "#111827" }}>Consultar Bases</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 600, color: "var(--text-main)" }}>Consultar Bases</Typography>
                 <Typography color="text.secondary">Cargando bases disponibles...</Typography>
             </Box>
         );
@@ -225,7 +225,7 @@ export default function DatabasePage() {
 
     return (
         <Box sx={{ p: 3, overflow: "hidden", maxWidth: "100%" }}>
-            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "var(--text-main)" }}>
                 Consultar Bases de Datos
             </Typography>
 
@@ -258,7 +258,7 @@ export default function DatabasePage() {
                     Buscar
                 </Button>
 
-                <Button variant="outlined" onClick={handleConsultar} sx={{ borderColor: "#d1d5db", color: "#111827", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>
+                <Button variant="outlined" onClick={handleConsultar} sx={{ borderColor: "var(--border)", color: "var(--text-main)", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>
                     Ver todo
                 </Button>
             </Box>
@@ -377,7 +377,7 @@ export default function DatabasePage() {
                         justifyContent: "center",
                         alignItems: "center",
                         height: 300,
-                        color: "#6b7280",
+                        color: "var(--text-muted)",
                         fontStyle: "italic",
                     }}
                 >

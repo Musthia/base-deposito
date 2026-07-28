@@ -73,7 +73,7 @@ export default function AltasPendientesPage() {
     };
 
     const renderPendiente = (r) => (
-        <Paper key={r.id} sx={{ p: 3, mb: 2, border: `1px solid ${colors.border}`, borderRadius: 2 }}>
+        <Paper key={r.id} elevation={0} sx={{ p: 3, mb: 2, border: `1px solid ${colors.border}`, borderRadius: 2 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <Box>
                     <Typography sx={{ fontWeight: 700 }}>{r.nombre} {r.apellido}</Typography>
@@ -104,7 +104,7 @@ export default function AltasPendientesPage() {
     const renderHistorialItem = (r) => {
         const esAprobado = r.estado === "aprobado";
         return (
-            <Paper key={r.id} sx={{ p: 2, mb: 1, border: `1px solid ${colors.border}`, borderRadius: 1, opacity: 0.8 }}>
+            <Paper key={r.id} elevation={0} sx={{ p: 2, mb: 1, border: `1px solid ${colors.border}`, borderRadius: 1, opacity: 0.8 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Box>
                         <Typography sx={{ fontWeight: 600, fontSize: 14 }}>{r.nombre} {r.apellido}</Typography>
@@ -129,12 +129,12 @@ export default function AltasPendientesPage() {
     };
 
     if (loading) {
-        return <Box sx={{ p: 3 }}><Typography>Cargando...</Typography></Box>;
+        return <Box sx={{ p: 3 }}><Typography sx={{ color: colors.textMuted }}>Cargando...</Typography></Box>;
     }
 
     return (
         <Box sx={{ p: 3 }}>
-            <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>Altas de usuarios pendientes</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 600, color: "#111827", mb: 3 }}>Altas de usuarios pendientes</Typography>
 
             <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
                 <Tab label={`Pendientes (${pendientes.length})`} />
@@ -173,7 +173,7 @@ export default function AltasPendientesPage() {
                         onChange={(e) => setAprobando((prev) => prev ? { ...prev, nivel: parseInt(e.target.value) || 1 } : null)}
                         inputProps={{ min: 1, max: 10 }}
                     />
-                    <Typography variant="body2" sx={{ color: "var(--text-muted)", mt: 1 }}>
+                    <Typography variant="body2" sx={{ color: colors.textMuted, mt: 1 }}>
                         La contraseña fue establecida por el solicitante durante el registro.
                     </Typography>
                 </DialogContent>

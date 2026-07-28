@@ -16,6 +16,7 @@ export default function ReportesPage() {
     const [columns, setColumns] = useState([]);
     const [loading, setLoading] = useState(false);
     const [generated, setGenerated] = useState(false);
+    const [reportError, setReportError] = useState(null);
     const [kpis, setKpis] = useState(null);
     const [snack, setSnack] = useState({ open: false, msg: "", severity: "info" });
 
@@ -25,7 +26,7 @@ export default function ReportesPage() {
             .catch(() => setSnack({ open: true, msg: "Error al cargar consultas", severity: "error" }));
         getKpis()
             .then(setKpis)
-            .catch(() => {});
+            .catch(() => setSnack({ open: true, msg: "Error al cargar indicadores", severity: "error" }));
     }, []);
 
     const moduloActual = consultas.find((c) => c.id === consultaId);
@@ -46,6 +47,7 @@ export default function ReportesPage() {
     const handleGenerate = useCallback(async () => {
         if (!consultaId) return;
         setLoading(true);
+        setReportError(null);
         try {
             const result = await ejecutarConsulta(consultaId, filtros);
             setConsultaMeta({ nombre: result.nombre, descripcion: result.descripcion });
@@ -60,6 +62,7 @@ export default function ReportesPage() {
             setRows(dataRows);
             setGenerated(true);
         } catch {
+            setReportError("Error al generar reporte");
             setSnack({ open: true, msg: "Error al generar reporte", severity: "error" });
         } finally {
             setLoading(false);
@@ -132,21 +135,21 @@ export default function ReportesPage() {
 
     return (
         <Box sx={{ p: 3, maxWidth: "100%" }}>
-            <Typography variant="h5" gutterBottom>Reportes</Typography>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>Reportes</Typography>
 
             {/* KPIs */}
             {kpis && (
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     {[
-                        { label: "Total Registros", value: kpis.total_registros?.toLocaleString() },
-                        { label: "Usuarios Activos", value: kpis.usuarios_activos },
-                        { label: "Total Usuarios", value: kpis.total_usuarios },
-                        { label: "Alertas Pendientes", value: kpis.alertas_pendientes, color: kpis.alertas_pendientes > 0 ? "error.main" : undefined },
+                        { label: "Total Registros", value: kpis.total_registros?.toLocaleString(), color: "#111827" },
+                        { label: "Usuarios Activos", value: kpis.usuarios_activos, color: "#111827" },
+                        { label: "Total Usuarios", value: kpis.total_usuarios, color: "#111827" },
+                        { label: "Alertas Pendientes", value: kpis.alertas_pendientes, color: kpis.alertas_pendientes > 0 ? "#dc2626" : "#111827" },
                     ].map((kpi) => (
                         <Grid item xs={6} sm={3} key={kpi.label}>
-                            <Card>
+                            <Card sx={{ borderRadius: "8px", boxShadow: "none", border: "none" }}>
                                 <CardContent sx={{ textAlign: "center", py: 2 }}>
-                                    <Typography variant="h4" sx={{ color: kpi.color || "primary.main", fontWeight: 700 }}>
+                                    <Typography variant="h4" sx={{ color: kpi.color, fontWeight: 700 }}>
                                         {kpi.value}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
@@ -173,6 +176,12 @@ export default function ReportesPage() {
                 </Select>
             </FormControl>
 
+            {!consultaId && (
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontStyle: "italic" }}>
+                    Seleccione un reporte para comenzar
+                </Typography>
+            )}
+
             {moduloActual && moduloActual.filtros && moduloActual.filtros.length > 0 && (
                 <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", alignItems: "center", mb: 2 }}>
                     {moduloActual.filtros.map(renderFiltro)}
@@ -181,25 +190,32 @@ export default function ReportesPage() {
 
             {/* Botones */}
             <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
-                <Button variant="contained" onClick={handleGenerate} disabled={!consultaId || loading}>
-                    {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
+                <Button
+                    variant="contained"
+                    onClick={handleGenerate}
+                    disabled={!consultaId || loading}
+                    sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" }, textTransform: "none" }}
+                >
+                    {loading ? <CircularProgress size={20} sx={{ mr: 1, color: "#fff" }} /> : null}
                     Generar
                 </Button>
                 {generated && rows.length > 0 && (
                     <>
-                        <Button variant="outlined" onClick={() => handleExport("csv")}>CSV</Button>
-                        <Button variant="outlined" onClick={() => handleExport("xlsx")}>XLSX</Button>
-                        <Button variant="outlined" onClick={() => handleExport("pdf")}>PDF</Button>
+                        <Button variant="outlined" onClick={() => handleExport("csv")} sx={{ borderColor: "#d1d5db", color: "#111827", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>CSV</Button>
+                        <Button variant="outlined" onClick={() => handleExport("xlsx")} sx={{ borderColor: "#d1d5db", color: "#111827", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>XLSX</Button>
+                        <Button variant="outlined" onClick={() => handleExport("pdf")} sx={{ borderColor: "#d1d5db", color: "#111827", textTransform: "none", "&:hover": { borderColor: "#0284c7", color: "#0284c7" } }}>PDF</Button>
                     </>
                 )}
             </Box>
 
             {/* Preview */}
-            {generated && (
-                <Box sx={{ height: "calc(100vh - 350px)", width: "100%", minHeight: 400 }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        {consultaMeta?.nombre} — {rows.length} registros
-                    </Typography>
+            {generated && !reportError && (
+                <Box sx={{ background: "#ffffff", borderRadius: "8px", height: "calc(100vh - 350px)", width: "100%", minHeight: 400 }}>
+                    <Box sx={{ px: 2, pt: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            {consultaMeta?.nombre} — {rows.length} registros
+                        </Typography>
+                    </Box>
                     <DataGrid
                         rows={rows}
                         columns={columns}
@@ -207,6 +223,13 @@ export default function ReportesPage() {
                         disableExtendRowFullWidth
                         pageSizeOptions={[25, 50, 100]}
                         initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}
+                        slots={{
+                            noRowsOverlay: () => (
+                                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+                                    <Typography variant="body2" color="text.secondary">Sin resultados</Typography>
+                                </Box>
+                            ),
+                        }}
                         slotProps={{
                             basePagination: { showFirstButton: true, showLastButton: true },
                         }}
@@ -215,6 +238,17 @@ export default function ReportesPage() {
                             "& .MuiDataGrid-cell:focus": { outline: "none" },
                         }}
                     />
+                </Box>
+            )}
+
+            {reportError && (
+                <Box sx={{ background: "#ffffff", borderRadius: "8px", p: 4, textAlign: "center" }}>
+                    <Typography variant="body1" sx={{ mb: 1 }}>{reportError}</Typography>
+                    <Button
+                        variant="contained"
+                        onClick={handleGenerate}
+                        sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" }, textTransform: "none" }}
+                    >Reintentar</Button>
                 </Box>
             )}
 

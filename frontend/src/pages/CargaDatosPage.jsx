@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     Box,
     Typography,
@@ -250,7 +250,7 @@ export default function CargaDatosPage() {
 
     return (
         <Box sx={{ p: 3, overflow: "hidden", maxWidth: "100%" }}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>
                 Carga de Datos
             </Typography>
 
@@ -315,7 +315,7 @@ export default function CargaDatosPage() {
             )}
 
             {!loading && tabActual && (
-                <Paper sx={{ p: 3 }}>
+                <Paper elevation={0} sx={{ p: 3 }}>
                     <Typography variant="subtitle1" gutterBottom>
                         Nuevo registro en: <strong>{tabActual.base}</strong>
                     </Typography>
@@ -344,6 +344,7 @@ export default function CargaDatosPage() {
                             variant="contained"
                             disabled={saving}
                             startIcon={saving ? <CircularProgress size={20} /> : null}
+                            sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}
                         >
                             {saving ? "Guardando..." : "Guardar registro"}
                         </Button>
@@ -352,21 +353,21 @@ export default function CargaDatosPage() {
             )}
 
             {tabActual && tabActual.registrosCreados?.length > 0 && (
-                <Paper sx={{ p: 2, mt: 2 }}>
+                <Paper elevation={0} sx={{ p: 2, mt: 2 }}>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
                         <Typography variant="subtitle2">
-                            Registros creados en esta sesion — {tabActual.base}
+                            Registros creados en esta sesión — {tabActual.base}
                         </Typography>
                     </Box>
                     <TableContainer sx={{ maxHeight: 400, overflow: "auto" }}>
                         <Table size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>#</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>Hora</TableCell>
-                                    <TableCell sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>Acciones</TableCell>
+                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>#</TableCell>
+                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>Hora</TableCell>
+                                    <TableCell sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>Acciones</TableCell>
                                     {tabActual.registrosCreados[0]?.todasLasCols?.map((col) => (
-                                        <TableCell key={col} sx={{ fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>
+                                        <TableCell key={col} sx={{ fontWeight: 700, fontSize: 12, whiteSpace: "nowrap", backgroundColor: "#f9fafb" }}>
                                             {col}
                                         </TableCell>
                                     ))}
@@ -399,8 +400,8 @@ export default function CargaDatosPage() {
             )}
 
             {!loading && !tabActual && tabs.length === 0 && (
-                <Typography color="text.secondary">
-                    Seleccione una base de datos del menu de arriba para comenzar
+                <Typography sx={{ color: "#6b7280", fontStyle: "italic" }}>
+                    Seleccione una base de datos del menú de arriba para comenzar
                 </Typography>
             )}
 
@@ -442,19 +443,19 @@ export default function CargaDatosPage() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={cerrarEditar}>Cancelar</Button>
-                    <Button variant="contained" onClick={guardarEdicion}>Guardar cambios</Button>
+                    <Button variant="contained" onClick={guardarEdicion} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>Guardar cambios</Button>
                 </DialogActions>
             </Dialog>
 
             {/* Delete Confirmation */}
             <Dialog open={deleteDialog.open} onClose={cerrarConfirmarEliminar} maxWidth="xs">
-                <DialogTitle>Confirmar eliminacion</DialogTitle>
+                <DialogTitle>Confirmar eliminación</DialogTitle>
                 <DialogContent>
                     <Typography>
                         ¿Eliminar el registro #{deleteDialog.registro?.id} de <strong>{tabActual?.base}</strong>?
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Esta accion no se puede deshacer. Se eliminara de la base de datos y de la lista.
+                        Esta acción no se puede deshacer. Se eliminará de la base de datos y de la lista.
                     </Typography>
                 </DialogContent>
                 <DialogActions>

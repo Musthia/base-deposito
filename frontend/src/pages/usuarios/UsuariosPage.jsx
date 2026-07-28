@@ -13,6 +13,8 @@ import {
     DialogActions,
     Typography,
     Box,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -29,6 +31,7 @@ export default function UsuariosPage() {
     const [openModal, setOpenModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [deleteDialog, setDeleteDialog] = useState({ open: false, user: null });
+    const [snack, setSnack] = useState({ open: false, msg: "", severity: "success" });
 
     const {
         rows,
@@ -92,20 +95,21 @@ export default function UsuariosPage() {
         try {
             await eliminarUsuario(deleteDialog.user.id);
             setDeleteDialog({ open: false, user: null });
+            setSnack({ open: true, msg: "Usuario eliminado correctamente", severity: "success" });
             await fetchData(pagination.page, pagination.pageSize);
         } catch (err) {
-            console.error("Error eliminando usuario:", err);
+            setSnack({ open: true, msg: "Error al eliminar usuario", severity: "error" });
         }
     };
 
     if (!permissions.canViewUsers) {
-        return <Box sx={{ p: 3 }}><Typography>Sin permisos</Typography></Box>;
+        return <Box sx={{ p: 3 }}><Typography sx={{ color: "#6b7280", fontStyle: "italic" }}>Sin permisos para ver usuarios</Typography></Box>;
     }
 
     return (
         <Box sx={{ p: 3 }}>
 
-            <Typography variant="h5" gutterBottom>Usuarios</Typography>
+            <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, color: "#111827" }}>Usuarios</Typography>
 
             {permissions.canCreateUser && (
                 <Button
@@ -114,6 +118,7 @@ export default function UsuariosPage() {
                         setSelectedUser(null);
                         setOpenModal(true);
                     }}
+                    sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}
                 >
                     Nuevo Usuario
                 </Button>
@@ -134,6 +139,13 @@ export default function UsuariosPage() {
                     fetchData(model.page, model.pageSize);
                 }}
                 disableRowSelectionOnClick
+                slots={{
+                    noRowsOverlay: () => (
+                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+                            <Typography variant="body2" color="text.secondary">Sin usuarios</Typography>
+                        </Box>
+                    ),
+                }}
                 slotProps={{
                     basePagination: {
                         showFirstButton: true,
@@ -161,13 +173,13 @@ export default function UsuariosPage() {
                 onClose={() => setDeleteDialog({ open: false, user: null })}
                 maxWidth="xs"
             >
-                <DialogTitle>Confirmar eliminacion</DialogTitle>
+                <DialogTitle>Confirmar eliminación</DialogTitle>
                 <DialogContent>
                     <Typography>
                         ¿Eliminar al usuario <strong>{deleteDialog.user?.usuario}</strong>?
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Esta accion no se puede deshacer.
+                        Esta acción no se puede deshacer.
                     </Typography>
                 </DialogContent>
                 <DialogActions>
@@ -180,6 +192,9 @@ export default function UsuariosPage() {
                 </DialogActions>
             </Dialog>
 
+            <Snackbar open={snack.open} autoHideDuration={4000} onClose={() => setSnack({ ...snack, open: false })} anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+                <Alert severity={snack.severity} variant="filled">{snack.msg}</Alert>
+            </Snackbar>
         </Box>
     );
 }

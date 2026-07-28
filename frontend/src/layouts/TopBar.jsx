@@ -12,15 +12,8 @@ const btnBase = {
     cursor: "pointer",
     fontSize: 16,
     whiteSpace: "nowrap",
-};
-const btnBase1 = {
-    background: "#0fc409",
-    color: "#ffffff",
-    border: "none",
-    padding: "10px 14px",
-    cursor: "pointer",
-    fontSize: 16,
-    whiteSpace: "nowrap",
+    borderRadius: "4px",
+    transition: "background 0.15s",
 };
 
 function TopBar() {
@@ -65,7 +58,6 @@ function TopBar() {
     const nombre = user?.nombre || user?.usuario || "Usuario";
     const inicial = nombre.charAt(0).toUpperCase();
     const rol = user?.rol || "";
-    //const nivelInfo = user?.nivel !== null && user?.nivel !== undefined ? `Nivel ${user.nivel}` : "";
 
     const btnActive = useCallback((path) => ({
         ...btnBase,
@@ -87,8 +79,8 @@ function TopBar() {
 
     return (
         <header
-            role="navigation"
-            aria-label="Navegacion principal"
+            role="banner"
+            aria-label="Barra de navegacion principal"
             style={{
                 position: "fixed",
                 top: 0,
@@ -96,7 +88,7 @@ function TopBar() {
                 right: 0,
                 height: 56,
                 background: "#646363",
-                color: "#000000",
+                color: "#ffffff",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -156,16 +148,15 @@ function TopBar() {
                 {acercaOpen && (
                     <div
                         style={{
-                            position: "fixed",
-                            top: 56,
-                            left: "84%",
-                            transform: "translateX(-50%)",
+                            position: "absolute",
+                            top: "100%",
+                            right: 0,
                             background: "#373838",
                             border: "1px solid #334155",
                             borderRadius: 4,
                             minWidth: 220,
                             zIndex: 1001,
-                            boxShadow: "0 4px 12px rgb(82, 33, 33)",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
                         }}
                     >
                         {acercaItems.map((item) => (
@@ -179,6 +170,8 @@ function TopBar() {
                                     padding: "12px 16px",
                                     background: location.pathname === item.path ? "#334155" : "transparent",
                                 }}
+                                onMouseEnter={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "#424147"; }}
+                                onMouseLeave={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "transparent"; }}
                             >
                                 {item.label}
                             </button>
@@ -200,15 +193,19 @@ function TopBar() {
                     style={{
                         background: "transparent",
                         border: "none",
-                        color: "#2e0505",
+                        color: "#ffffff",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         gap: 8,
                         padding: "6px 10px",
                         fontSize: 13,
+                        borderRadius: 4,
+                        transition: "background 0.15s",
                     }}
                     title="Mi cuenta"
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                 >
                     <span
                         style={{
@@ -231,8 +228,6 @@ function TopBar() {
                         {rol && (
                             <span style={{ fontSize: 11, opacity: 0.7, marginLeft: 4 }}>
                                 ({[rol].filter(Boolean).join(" · ")})
-                                {/* ({[rol, nivelInfo].filter(Boolean).join(" · ")})*/}
-                                
                             </span>
                         )}
                     </span>
@@ -241,14 +236,17 @@ function TopBar() {
                 <button
                     onClick={handleLogout}
                     style={{
-                        background: "#fafafa",
+                        background: "transparent",
                         border: "1px solid rgba(255,255,255,0.3)",
-                        color: "#f80404",
+                        color: "#dc2626",
                         cursor: "pointer",
                         padding: "6px 12px",
                         fontSize: 13,
                         borderRadius: 4,
+                        transition: "background 0.15s",
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "rgba(220,38,38,0.12)"}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     aria-label="Cerrar sesion"
                 >
                     Cerrar sesion
@@ -297,7 +295,7 @@ function TopBar() {
                                 padding: "12px 16px",
                                 fontSize: 13,
                                 opacity: 0.8,
-                                background: location.pathname === item.path ? "#f5f3f3" : "transparent",
+                                background: location.pathname === item.path ? "#334155" : "transparent",
                             }}
                         >
                             {item.label}
@@ -306,7 +304,7 @@ function TopBar() {
                     <hr style={{ border: "none", borderTop: "1px solid #334155", margin: "8px 0" }} />
                     <button
                         onClick={() => { navigate("/mi-cuenta"); setMenuOpen(false); }}
-                        style={{ ...btnBase1, textAlign: "left", width: "100%", padding: "12px 16px" }}
+                        style={{ ...btnBase, textAlign: "left", width: "100%", padding: "12px 16px" }}
                     >
                         Mi cuenta
                     </button>

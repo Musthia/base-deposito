@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { usePermissions } from "../auth/usePermissions";
-//import api from "../api/axiosClient";
 import { getDashboardStats } from "../services/dashboardService";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -11,18 +10,35 @@ export default function Dashboard() {
     
     const perms = usePermissions();
     const [stats, setStats] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         getDashboardStats()
             .then(setStats)
-            .catch(console.error);
+            .catch((err) => setError(err?.message || "Error al cargar el panel"));
     }, []);
+
+    if (error) {
+        return (
+            <div style={errorStyles.container}>
+                <div style={errorStyles.card}>
+                    <span style={{ fontSize: 32 }}>⚠</span>
+                    <h2 style={errorStyles.title}>Error al cargar el panel</h2>
+                    <p style={errorStyles.desc}>{error}</p>
+                    <button
+                        onClick={() => { setError(null); setStats(null); getDashboardStats().then(setStats).catch((err) => setError(err?.message || "Error")); }}
+                        style={errorStyles.button}
+                    >Reintentar</button>
+                </div>
+            </div>
+        );
+    }
 
     if (!stats) {
         return (
             <div style={loadingStyles.container}>
                 <CircularProgress size={32} />
-                <p style={{ marginTop: 12, color: "#64748b", fontSize: 14 }}>Cargando panel...</p>
+                <p style={loadingStyles.text}>Cargando panel...</p>
             </div>
         );
     }
@@ -165,7 +181,7 @@ export default function Dashboard() {
                         <h2 style={sectionTitle}>Actividad reciente</h2>
                         <div style={{ marginTop: 8 }}>
                             {stats.actividad.length === 0 && (
-                                <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Sin actividad registrada</p>
+                                <p style={{ fontSize: 13, color: "#6b7280" }}>Sin actividad registrada</p>
                             )}
                             {stats.actividad.map((item, i) => (
                                 <div key={i} style={tlStyles.row}>
@@ -258,11 +274,16 @@ function formatDate(iso) {
 
 function KpiCard({ icon, iconBg, iconColor, label, value, sub, details, onClick }) {
     const [showDetails, setShowDetails] = useState(false);
+    const [hovered, setHovered] = useState(false);
     return (
         <div
-            style={{ ...kpiStyles.card, cursor: onClick ? "pointer" : "default" }}
-            onMouseEnter={() => setShowDetails(true)}
-            onMouseLeave={() => setShowDetails(false)}
+            style={{
+                ...kpiStyles.card,
+                ...(onClick ? kpiStyles.cardClickable : {}),
+                ...(hovered && onClick ? kpiStyles.cardHovered : {}),
+            }}
+            onMouseEnter={() => { setShowDetails(true); setHovered(true); }}
+            onMouseLeave={() => { setShowDetails(false); setHovered(false); }}
             onClick={onClick}
         >
             <div style={{ ...kpiStyles.iconWrap, background: iconBg }}>
@@ -306,8 +327,8 @@ const welcomeStyles = {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "#f8fafc",
-        borderBottom: "2px solid #e2e8f0",
+        background: "#ffffff",
+        borderRadius: "8px",
         padding: "20px 24px",
         marginBottom: "24px",
     },
@@ -319,17 +340,18 @@ const welcomeStyles = {
     title: {
         fontSize: "22px",
         fontWeight: "700",
-        color: "#1e293b",
+        color: "#111827",
         margin: 0,
     },
     desc: {
         fontSize: "14px",
-        color: "#64748b",
+        color: "#6b7280",
         margin: "4px 0 0 0",
     },
     badge: {
         background: "#e2e8f0",
         padding: "4px 10px",
+        borderRadius: "4px",
     },
     badgeText: {
         fontSize: "12px",
@@ -347,12 +369,20 @@ const kpiStyles = {
     },
     card: {
         background: "#ffffff",
-        border: "1px solid #e2e8f0",
+        borderRadius: "8px",
         padding: "18px 20px",
         display: "flex",
         alignItems: "center",
         gap: "16px",
         position: "relative",
+        transition: "box-shadow 0.15s, transform 0.15s",
+    },
+    cardClickable: {
+        cursor: "pointer",
+    },
+    cardHovered: {
+        boxShadow: "0 4px 12px rgba(15,23,42,0.1)",
+        transform: "translateY(-1px)",
     },
     iconWrap: {
         width: "40px",
@@ -361,11 +391,11 @@ const kpiStyles = {
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
-        borderRadius: "4px",
+        borderRadius: "8px",
     },
-    label: { fontSize: "13px", color: "#64748b", fontWeight: "500" },
-    value: { fontSize: "24px", fontWeight: "700", color: "#1e293b", lineHeight: 1.2 },
-    sub: { fontSize: "12px", color: "#64748b", marginTop: "2px" }
+    label: { fontSize: "13px", color: "#6b7280", fontWeight: "500" },
+    value: { fontSize: "24px", fontWeight: "700", color: "#111827", lineHeight: 1.2 },
+    sub: { fontSize: "12px", color: "#6b7280", marginTop: "2px" }
 };
 
 const bottomStyles = {
@@ -381,7 +411,7 @@ const bottomStyles = {
 const cardStyles = {
     card: {
         background: "#ffffff",
-        border: "1px solid #e2e8f0",
+        borderRadius: "8px",
         padding: "20px 24px",
     }
 };
@@ -389,7 +419,7 @@ const cardStyles = {
 const sectionTitle = {
     fontSize: "18px",
     fontWeight: "600",
-    color: "#1e293b",
+    color: "#111827",
     margin: "0 0 16px 0",
 };
 
@@ -397,21 +427,20 @@ const thStyles = {
     padding: "10px 14px",
     fontSize: "12px",
     fontWeight: "600",
-    color: "#64748b",
-    textTransform: "uppercase",
-    letterSpacing: "0.05em",
+    color: "#6b7280",
     borderBottom: "1px solid #e2e8f0",
     textAlign: "left"
 };
 const tdStyles = {
     padding: "12px 14px",
     fontSize: "14px",
-    color: "#1e293b",
+    color: "#111827",
     borderBottom: "1px solid #e2e8f0"
 };
 const tableStyles = {
     container: { overflowX: "auto" },
     table: { width: "100%", borderCollapse: "collapse", textAlign: "left" },
+    tr: {},
     thRight: { ...thStyles, textAlign: "right" },
     tdValue: { ...tdStyles, textAlign: "right", fontWeight: "600" },
     tdDatcorr: { ...tdStyles, textAlign: "right", color: "#0284c7", fontWeight: "500" },
@@ -425,12 +454,21 @@ const tableStyles = {
 const tlStyles = {
     row: { display: "flex", gap: "12px" },
     iconCol: { display: "flex", flexDirection: "column", alignItems: "center" },
-    icon: { width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", color: "#ffffff", fontWeight: "bold" },
+    icon: { width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", color: "#ffffff", fontWeight: "bold", borderRadius: "50%" },
     line: { width: "1px", background: "#e2e8f0", flexGrow: 1, margin: "2px 0" },
     textCol: { paddingBottom: "16px" },
-    label: { fontSize: "13px", fontWeight: "500", color: "#1e293b" },
-    time: { fontSize: "12px", color: "#64748b", marginTop: "2px" },
+    label: { fontSize: "13px", fontWeight: "500", color: "#111827" },
+    time: { fontSize: "12px", color: "#6b7280", marginTop: "2px" },
 };
 const loadingStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f8fafc" },
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f3f4f6" },
+    text: { marginTop: 12, color: "#6b7280", fontSize: 14 },
+};
+
+const errorStyles = {
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f3f4f6", padding: "24px" },
+    card: { background: "#ffffff", borderRadius: "16px", padding: "32px", textAlign: "center", maxWidth: "400px" },
+    title: { fontSize: "18px", fontWeight: "600", color: "#111827", margin: "16px 0 8px 0" },
+    desc: { fontSize: "14px", color: "#6b7280", margin: "0 0 24px 0" },
+    button: { background: "#0f172a", color: "#ffffff", border: "none", borderRadius: "8px", padding: "12px 24px", fontSize: "14px", fontWeight: 600, cursor: "pointer" },
 };

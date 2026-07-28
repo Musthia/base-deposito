@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-28T00:00:00.000Z",
+  "title": "Design System: DatCorr",
+  "extensions": {
+    "colorMeta": {
+      "dark-slate": { "role": "primary", "displayName": "Dark Slate", "canonical": "#0f172a", "tonalRamp": ["#020617", "#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1"] },
+      "cerulean": { "role": "accent", "displayName": "Cerulean", "canonical": "#0284c7", "tonalRamp": ["#0c4a6e", "#075985", "#0369a1", "#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#bae6fd"] },
+      "page-bg": { "role": "neutral", "displayName": "Page BG", "canonical": "#f3f4f6", "tonalRamp": ["#030712", "#111827", "#1f2937", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db"] },
+      "card-bg": { "role": "neutral", "displayName": "Card BG", "canonical": "#ffffff", "tonalRamp": ["#f9fafb", "#f3f4f6", "#e5e7eb", "#d1d5db", "#9ca3af", "#6b7280", "#4b5563", "#374151"] },
+      "sidebar-bg": { "role": "neutral", "displayName": "Sidebar BG", "canonical": "#222433", "tonalRamp": ["#111117", "#1a1b2a", "#222433", "#2a2b3e", "#363652", "#404060", "#5a5a78", "#7a7a94"] },
+      "success-green": { "role": "semantic", "displayName": "Success Green", "canonical": "#16a34a", "tonalRamp": ["#052e16", "#166534", "#15803d", "#16a34a", "#22c55e", "#4ade80", "#86efac", "#bbf7d0"] },
+      "danger-red": { "role": "semantic", "displayName": "Danger Red", "canonical": "#dc2626", "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#ef4444", "#f87171", "#fca5a5"] },
+      "warning-amber": { "role": "semantic", "displayName": "Warning Amber", "canonical": "#d97706", "tonalRamp": ["#451a03", "#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fbbf24", "#fde68a"] }
+    },
+    "typographyMeta": {
+      "body": { "displayName": "Body", "purpose": "Primary reading text, table cell content, descriptions." },
+      "label": { "displayName": "Label", "purpose": "Form labels, sidebar section headers, table header text." },
+      "display": { "displayName": "Display", "purpose": "Login form titles, welcome headings. Rare." },
+      "title": { "displayName": "Title", "purpose": "Card titles, section headers within app interior." }
+    },
+    "shadows": [
+      { "name": "elegant", "value": "0 20px 40px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.1)", "purpose": "Login card — the vault entry threshold signal." },
+      { "name": "hover-lift", "value": "0 4px 12px rgba(15,23,42,0.15)", "purpose": "Button hover state lift." },
+      { "name": "dropdown", "value": "0 4px 12px rgba(0,0,0,0.2)", "purpose": "Dropdown menus and popovers." }
+    ],
+    "motion": [
+      { "name": "ease-smooth", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for state transitions (hover, focus)." },
+      { "name": "duration-fast", "value": "0.15s", "purpose": "Quick state changes (sidebar item hover)." },
+      { "name": "duration-standard", "value": "0.3s", "purpose": "Standard transitions (button hover, input focus)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (Login)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Full-width submit button for auth forms.",
+      "html": "<button class=\"ds-btn-primary\">Acceder al sistema</button>",
+      "css": ".ds-btn-primary { background: #0f172a; color: #fff; border: none; border-radius: 8px; padding: 14px 16px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 28px; } .ds-btn-primary:hover:not(:disabled) { background: #1e293b; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,23,42,0.15); } .ds-btn-primary:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; }"
+    },
+    {
+      "name": "Outlined Input",
+      "kind": "input",
+      "refersTo": "input-outlined",
+      "description": "Default text input for forms.",
+      "html": "<div class=\"ds-input-group\"><label class=\"ds-label\" for=\"demo-input\">Usuario</label><input id=\"demo-input\" class=\"ds-input\" type=\"text\" placeholder=\"Ingrese su usuario\"></div>",
+      "css": ".ds-input-group { margin-bottom: 20px; } .ds-label { display: block; font-size: 0.85rem; font-weight: 600; color: #0f172a; margin-bottom: 8px; font-family: 'Open Sans', system-ui, sans-serif; } .ds-input { width: 100%; padding: 12px 16px; font-size: 0.95rem; font-family: 'Open Sans', system-ui, sans-serif; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; color: #0f172a; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-sizing: border-box; } .ds-input:focus { outline: none; background: #ffffff; border-color: #0284c7; box-shadow: 0 0 0 4px #e0f2fe; }"
+    },
+    {
+      "name": "Sidebar Navigation Item",
+      "kind": "nav",
+      "refersTo": "nav-sidebar-item",
+      "description": "Navigation link inside the dark sidebar panel.",
+      "html": "<nav class=\"ds-sidebar\"><div class=\"ds-sidebar-header\">DATCORR</div><div class=\"ds-nav-item\">Panel de Control</div><div class=\"ds-nav-item ds-nav-item-active\">Consultar Bases</div><div class=\"ds-nav-item\">Usuarios</div></nav>",
+      "css": ".ds-sidebar { background: #222433; width: 220px; padding: 10px; font-family: 'Open Sans', system-ui, sans-serif; } .ds-sidebar-header { font-size: 16px; font-weight: 600; color: #fff; letter-spacing: 0.5px; margin: 0 0 16px 0; padding: 0 2px; } .ds-nav-item { padding: 10px 12px; cursor: pointer; border-radius: 6px; margin-bottom: 2px; font-size: 14px; color: #fff; transition: background 0.15s; } .ds-nav-item:hover { background: #2a2a3d; } .ds-nav-item-active { background: rgba(77, 181, 63, 0.23); }"
+    },
+    {
+      "name": "User Avatar",
+      "kind": "custom",
+      "refersTo": "avatar-circle",
+      "description": "Circular user initial avatar used in sidebar and top bar.",
+      "html": "<div class=\"ds-avatar\">J</div>",
+      "css": ".ds-avatar { width: 36px; height: 36px; border-radius: 50%; background: #3f51b5; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; font-family: 'Open Sans', system-ui, sans-serif; flex-shrink: 0; }"
+    },
+    {
+      "name": "DataGrid Table Header",
+      "kind": "custom",
+      "refersTo": "card-container",
+      "description": "MUI DataGrid table cell and header style.",
+      "html": "<div class=\"ds-datagrid\"><div class=\"ds-dg-header\"><div class=\"ds-dg-header-cell\">Nombre</div><div class=\"ds-dg-header-cell\">Registros</div></div><div class=\"ds-dg-row\"><div class=\"ds-dg-cell\">Base Central</div><div class=\"ds-dg-cell\">12,345</div></div><div class=\"ds-dg-row ds-dg-row-hover\"><div class=\"ds-dg-cell\">Archivo Histórico</div><div class=\"ds-dg-cell\">8,201</div></div></div>",
+      "css": ".ds-datagrid { background: #fff; border: 1px solid #d1d5db; border-radius: 8px; font-family: 'Open Sans', system-ui, sans-serif; font-size: 0.875rem; overflow: hidden; } .ds-dg-header { background: #f9fafb; border-bottom: 2px solid #d1d5db; display: flex; } .ds-dg-header-cell { padding: 12px 16px; font-weight: 700; font-size: 13px; color: #111827; flex: 1; } .ds-dg-row { display: flex; border-bottom: 1px solid #d1d5db; } .ds-dg-row:last-child { border-bottom: none; } .ds-dg-row-hover { background: rgba(37,99,235,0.04); } .ds-dg-cell { padding: 12px 16px; color: #111827; flex: 1; }"
+    },
+    {
+      "name": "KPI Card",
+      "kind": "card",
+      "refersTo": "card-container",
+      "description": "Metric display card used on the dashboard.",
+      "html": "<div class=\"ds-kpi\"><div class=\"ds-kpi-icon\" style=\"background:#eff6ff;color:#0284c7\">B</div><div class=\"ds-kpi-content\"><div class=\"ds-kpi-label\">Bases activas</div><div class=\"ds-kpi-value\">12</div><div class=\"ds-kpi-sub\">Total de Organismos</div></div></div>",
+      "css": ".ds-kpi { background: #fff; border-radius: 16px; padding: 24px; display: flex; align-items: center; gap: 16px; font-family: 'Open Sans', system-ui, sans-serif; box-shadow: none; } .ds-kpi-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; flex-shrink: 0; } .ds-kpi-content { min-width: 0; } .ds-kpi-label { font-size: 0.85rem; color: #6b7280; font-weight: 500; margin-bottom: 4px; } .ds-kpi-value { font-size: 1.75rem; font-weight: 700; color: #111827; line-height: 1.2; letter-spacing: -0.5px; } .ds-kpi-sub { font-size: 0.8rem; color: #9ca3af; margin-top: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Institutional Vault",
+    "overview": "DatCorr presents itself as a secure, authoritative, and calm records management environment. The design language communicates institutional trustworthiness — the digital equivalent of a government records facility where data is protected through professional restraint.\n\nThe system operates in light mode exclusively (dark mode is disabled in code — the government-design context requires consistent light presentation). It uses two visual registers: the auth surfaces (login, registration) employ a dramatic dark gradient with animated constellation data-flow visuals to signal security and technological sophistication, while the app interior (dashboard, database browsing, user management) uses a clean light layout with a persistent dark sidebar and neutral top bar. The contrast between these two registers reinforces the transition from \"outside\" to \"inside\" the vault.\n\nTypography is utilitarian and legible. Color is used sparingly — the Dark Slate / Cerulean palette provides authority with tech-forward accent moments. Layout favors dense, data-rich screens with clear hierarchy. Micro-elevation (subtle shadows) is used sparingly, mostly on interactive surfaces.",
+    "keyCharacteristics": [
+      "Light mode only, government-institutional context",
+      "Two visual registers: dark auth surfaces / light app interior",
+      "Persistent dark sidebar (#222433) anchors navigation",
+      "Cerulean accent for interactive, focused, and active states",
+      "Data-rich: DataGrid tables, KPI cards, structured forms",
+      "Motion is functional: hover transitions, loading spinners, data pulse animations on login",
+      "No glass, no gradient text, no decorative blur"
+    ],
+    "rules": [
+      { "name": "The Monochrome Interior Rule", "body": "Inside the app, color is reserved for interactive states (Cerulean), semantic signals (green/amber/red), and the active sidebar item (green-tinted). Backgrounds remain grayscale. The rarity of color is what gives it meaning.", "section": "colors" },
+      { "name": "The Vault-Entry Rule", "body": "Auth surfaces (login, registration, password reset) use the dark gradient + animated constellation treatment. This visual register is exclusive to unauthenticated entry points. Once inside, the light interior takes over.", "section": "colors" },
+      { "name": "The Data-Over-Design Rule", "body": "Body copy in data tables, KPI values, and record content is never styled for decorative effect. Font weight, size, and color carry semantic meaning only.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces inside the app are flat at rest. Shadows appear only as a response to state (hover, focus, active) or on the login card as a deliberate threshold signal.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Dark Slate (#0f172a) for all primary action buttons and authoritative text.",
+      "Do use Cerulean (#0284c7) exclusively for interactive/focused states and links.",
+      "Do keep card surfaces flat with tonal separation from #f3f4f6 page background.",
+      "Do use a 1px lift on button hover with a matching shadow for tactile feedback.",
+      "Do maintain the two-register system: dark gradient for auth, light interior for the app.",
+      "Do prefer MUI DataGrid for all tabular data with sort icons always visible."
+    ],
+    "donts": [
+      "Don't enable dark mode — the government context requires light-only presentation.",
+      "Don't use gradient text, glass effects, or blur as decoration.",
+      "Don't add colored left/right borders to cards or list items.",
+      "Don't use uppercase transforms on buttons (MUI override is intentional).",
+      "Don't introduce pill-shaped components — use 8px radius for inputs/buttons, 16px for cards.",
+      "Don't add motion for decoration — transitions serve state changes only.",
+      "Don't invent components the system doesn't have — document only what exists."
+    ]
+  }
+}

@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import { Box } from "@mui/material";
 import TopBar from "./TopBar";
 import { TabProvider } from "../context/TabContext";
 import { useIdleTimeout } from "../hooks/useIdleTimeout";
@@ -8,21 +9,24 @@ export default function MainLayout() {
     useIdleTimeout();
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
             <TopBar />
-            <main style={{
-                flex: 1,
-                padding: "24px",
-                paddingTop: "80px",
-                background: "#ffffff",
-                overflow: "auto",
-            }}>
+            <Box
+                component="main"
+                sx={{
+                    flex: 1,
+                    p: "24px",
+                    pt: "80px",
+                    backgroundColor: "#f3f4f6",
+                    overflow: "auto",
+                }}
+            >
                 <NotificationProvider>
                     <TabProvider>
                         <Outlet />
                     </TabProvider>
                 </NotificationProvider>
-            </main>
-        </div>
+            </Box>
+        </Box>
     );
 }

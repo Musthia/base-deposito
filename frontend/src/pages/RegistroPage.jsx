@@ -47,23 +47,23 @@ export default function RegistroPage() {
 
     if (success) {
         return (
-            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "var(--bg-page)" }}>
-                <Paper sx={{ p: 6, maxWidth: 500, textAlign: "center", borderRadius: 3 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>Solicitud enviada</Typography>
-                    <Typography sx={{ mb: 3, color: "var(--text-muted)" }}>
+            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "#f3f4f6" }}>
+                <Paper elevation={0} sx={{ p: 6, maxWidth: 500, textAlign: "center", borderRadius: 3 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: "#111827" }}>Solicitud enviada</Typography>
+                    <Typography sx={{ mb: 3, color: "#6b7280" }}>
                         Su solicitud de registro fue enviada correctamente. Recibirá un email cuando un administrador la apruebe.
                     </Typography>
-                    <Button variant="contained" onClick={() => navigate("/")}>Volver al inicio</Button>
+                    <Button variant="contained" onClick={() => navigate("/")} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>Volver al inicio</Button>
                 </Paper>
             </Box>
         );
     }
 
     return (
-        <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "var(--bg-page)", p: 2 }}>
-            <Paper sx={{ p: 4, maxWidth: 520, width: "100%", borderRadius: 3 }}>
-                <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>Solicitar registro</Typography>
-                <Typography variant="body2" sx={{ color: "var(--text-muted)", mb: 3 }}>
+        <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "#f3f4f6", p: 2 }}>
+            <Paper elevation={0} sx={{ p: 4, maxWidth: 520, width: "100%", borderRadius: 3 }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, color: "#111827", mb: 1 }}>Solicitar registro</Typography>
+                <Typography variant="body2" sx={{ color: "#6b7280", mb: 3 }}>
                     Complete todos los campos obligatorios. Un administrador revisará su solicitud.
                 </Typography>
 
@@ -82,14 +82,14 @@ export default function RegistroPage() {
                     <TextField label="Organización" fullWidth value={form.organizacion} onChange={handleChange("organizacion")} disabled={loading} />
                     <TextField label="Motivo de la solicitud" multiline rows={3} fullWidth value={form.motivo} onChange={handleChange("motivo")} disabled={loading} />
 
-                    <Button type="submit" variant="contained" size="large" disabled={loading || !form.nombre || !form.apellido || !form.email || !form.username || !form.password || !form.confirmPassword}>
+                    <Button type="submit" variant="contained" size="large" disabled={loading || !form.nombre || !form.apellido || !form.email || !form.username || !form.password || !form.confirmPassword} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>
                         {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
                         {loading ? "Enviando..." : "Enviar solicitud"}
                     </Button>
                 </Box>
 
                 <Box sx={{ mt: 2, textAlign: "center" }}>
-                    <Link to="/" style={{ color: "var(--primary)", fontSize: 14 }}>Volver al inicio de sesión</Link>
+                    <Link to="/" style={{ color: "#0284c7", fontSize: 14 }}>Volver al inicio de sesión</Link>
                 </Box>
             </Paper>
         </Box>

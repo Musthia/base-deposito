@@ -55,7 +55,7 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={welcomeStyles.badge}>
-                        <span style={welcomeStyles.badgeText}>v7.0</span>
+                        <span style={welcomeStyles.badgeText}>v7.1</span>
                     </div>
                 </div>
             </div>

@@ -16,6 +16,7 @@ import AcercaDatcorrPage from "../pages/AcercaDatcorrPage";
 import AcercaSimcoPage from "../pages/AcercaSimcoPage";
 import AltasPendientesPage from "../pages/AltasPendientesPage";
 import MiCuentaPage from "../pages/MiCuentaPage";
+import EstadisticasPage from "../pages/EstadisticasPage";
 
 import PrivateRoute from "../auth/PrivateRoute";
 import MainLayout from "../layouts/MainLayout";
@@ -51,6 +52,7 @@ export default function AppRouter() {
                     <Route path="/acerca-simco" element={<AcercaSimcoPage />} />
                     <Route path="/altas-pendientes" element={<AltasPendientesPage />} />
                     <Route path="/mi-cuenta" element={<MiCuentaPage />} />
+                    <Route path="/estadisticas" element={<EstadisticasPage />} />
 
                 {/* fallback */}
                 <Route path="*" element={<Login />} />

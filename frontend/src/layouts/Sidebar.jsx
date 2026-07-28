@@ -21,11 +21,13 @@ export default function Sidebar() {
         ...(perms.canViewCargaDatos ? [{ label: "Carga de Datos", path: "/carga-datos" }] : []),
         ...(perms.canViewAuditoria ? [{ label: "Auditoria", path: "/auditoria" }] : []),
         ...(perms.canViewReportes ? [{ label: "Reportes", path: "/reportes" }] : []),
+        ...(perms.canViewReportes ? [{ label: "Estadísticas", path: "/estadisticas" }] : []),
         ...(perms.canViewAltasPendientes ? [{ label: "Altas Pendientes", path: "/altas-pendientes" }] : []),
     ];
 
     const simcoMenu = [
         ...(perms.canViewSimco ? [{ label: "Panel de Solicitudes", path: "/simco" }] : []),
+        ...(perms.canViewReportes ? [{ label: "Estadísticas", path: "/estadisticas" }] : []),
     ];
 
     const handleLogout = async () => {

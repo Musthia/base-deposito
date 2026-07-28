@@ -10,6 +10,7 @@ import database.modelos_simco  # noqa
 import database.modelos_notificaciones  # noqa
 import database.modelos_registro  # noqa
 import database.modelos_blacklist  # noqa
+import database.modelos_mensajes  # noqa
 
 
 def crear_tablas():

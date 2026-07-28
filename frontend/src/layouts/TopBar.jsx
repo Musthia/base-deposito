@@ -1,8 +1,12 @@
 import { useState, useRef, useEffect, useMemo, useCallback, memo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import {
+    Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button,
+} from "@mui/material";
 import { useAuthStore } from "../auth/authStore";
 import { usePermissions } from "../auth/usePermissions";
 import api from "../api/axiosClient";
+import { getUsuariosEnLinea } from "../services/estadisticasService";
 
 const btnBase = {
     background: "transparent",
@@ -25,6 +29,38 @@ function TopBar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [acercaOpen, setAcercaOpen] = useState(false);
     const acercaBtnRef = useRef(null);
+    const [onlineCount, setOnlineCount] = useState(0);
+    const [onlineUsuarios, setOnlineUsuarios] = useState([]);
+    const [onlineOpen, setOnlineOpen] = useState(false);
+    const onlineBtnRef = useRef(null);
+    const [msgDialogOpen, setMsgDialogOpen] = useState(false);
+    const [msgDestinatario, setMsgDestinatario] = useState(null);
+    const [msgGeneral, setMsgGeneral] = useState(false);
+    const [msgAsunto, setMsgAsunto] = useState("");
+    const [msgCuerpo, setMsgCuerpo] = useState("");
+    const [msgSending, setMsgSending] = useState(false);
+
+    useEffect(() => {
+        const fetch = () => {
+            getUsuariosEnLinea()
+                .then((d) => { setOnlineCount(d.cantidad); setOnlineUsuarios(d.usuarios); })
+                .catch(() => {});
+        };
+        fetch();
+        const id = setInterval(fetch, 30000);
+        return () => clearInterval(id);
+    }, []);
+
+    useEffect(() => {
+        if (!onlineOpen) return;
+        const handler = (e) => {
+            if (onlineBtnRef.current && !onlineBtnRef.current.contains(e.target)) {
+                setOnlineOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, [onlineOpen]);
 
     const datcorrMenu = useMemo(() => [
         { label: "Panel de Control", path: "/dashboard" },
@@ -33,6 +69,7 @@ function TopBar() {
         ...(perms.canViewCargaDatos ? [{ label: "Carga de Datos", path: "/carga-datos" }] : []),
         ...(perms.canViewAuditoria ? [{ label: "Auditoria", path: "/auditoria" }] : []),
         ...(perms.canViewReportes ? [{ label: "Reportes", path: "/reportes" }] : []),
+        ...(perms.canViewReportes ? [{ label: "Estadísticas", path: "/estadisticas" }] : []),
         ...(perms.canViewAltasPendientes ? [{ label: "Altas Pendientes", path: "/altas-pendientes" }] : []),
         ...(perms.canViewSimco ? [{ label: "SiMCo", path: "/simco" }] : []),
         ...(perms.canViewMensajes ? [{ label: "Mensajes", path: "/mensajes" }] : []),
@@ -180,6 +217,111 @@ function TopBar() {
                 )}
             </div>
 
+            <div ref={onlineBtnRef} style={{ position: "relative", flexShrink: 0, marginRight: 4 }}>
+                <button
+                    onClick={() => setOnlineOpen((p) => !p)}
+                    style={{
+                        ...btnBase,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 5,
+                        fontSize: 12,
+                        padding: "6px 10px",
+                    }}
+                    title="Usuarios en línea"
+                    aria-haspopup="true"
+                    aria-expanded={onlineOpen}
+                >
+                    <span style={{
+                        width: 8, height: 8, borderRadius: "50%",
+                        background: onlineCount > 0 ? "#22c55e" : "#6b7280",
+                        display: "inline-block", flexShrink: 0,
+                    }} />
+                    {onlineCount}
+                </button>
+                {onlineOpen && (
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: "100%",
+                            right: 0,
+                            background: "#373838",
+                            border: "1px solid #334155",
+                            borderRadius: 4,
+                            minWidth: 200,
+                            zIndex: 1001,
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                            padding: "8px 0",
+                        }}
+                    >
+                        <div style={{ padding: "4px 16px 8px", fontSize: 11, color: "#94a3b8", borderBottom: "1px solid #334155", marginBottom: 4 }}>
+                            Usuarios en línea
+                        </div>
+                        {onlineUsuarios.length === 0 ? (
+                            <div style={{ padding: "8px 16px", fontSize: 13, color: "#94a3b8" }}>
+                                Ninguno
+                            </div>
+                        ) : (
+                            onlineUsuarios.map((u) => (
+                                <div key={u} style={{
+                                    padding: "6px 16px",
+                                    fontSize: 13,
+                                    color: "#e2e8f0",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                }}>
+                                    <span>{u}</span>
+                                    <button
+                                        onClick={() => {
+                                            setMsgDestinatario(u);
+                                            setMsgGeneral(false);
+                                            setMsgAsunto("");
+                                            setMsgCuerpo("");
+                                            setMsgDialogOpen(true);
+                                            setOnlineOpen(false);
+                                        }}
+                                        style={{
+                                            background: "transparent",
+                                            border: "1px solid #8b5cf6",
+                                            color: "#8b5cf6",
+                                            borderRadius: 4,
+                                            padding: "2px 8px",
+                                            fontSize: 11,
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        Mensaje
+                                    </button>
+                                </div>
+                            ))
+                        )}
+                        <div style={{ borderTop: "1px solid #334155", marginTop: 4, paddingTop: 4 }}>
+                            <button
+                                onClick={() => {
+                                    setMsgDestinatario(null);
+                                    setMsgGeneral(true);
+                                    setMsgAsunto("");
+                                    setMsgCuerpo("");
+                                    setMsgDialogOpen(true);
+                                    setOnlineOpen(false);
+                                }}
+                                style={{
+                                    ...btnBase,
+                                    width: "100%",
+                                    textAlign: "left",
+                                    padding: "8px 16px",
+                                    fontSize: 12,
+                                    color: "#8b5cf6",
+                                }}
+                            >
+                                + Mensaje general a todos
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+
             <div
                 style={{
                     display: "flex",
@@ -252,6 +394,56 @@ function TopBar() {
                     Cerrar sesion
                 </button>
             </div>
+
+            <Dialog open={msgDialogOpen} onClose={() => setMsgDialogOpen(false)} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ fontSize: 15, fontWeight: 600 }}>
+                    {msgGeneral ? "Mensaje general a todos los usuarios" : `Mensaje para ${msgDestinatario}`}
+                </DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        label="Asunto (opcional)"
+                        fullWidth
+                        size="small"
+                        value={msgAsunto}
+                        onChange={(e) => setMsgAsunto(e.target.value)}
+                        sx={{ mt: 1, mb: 2 }}
+                    />
+                    <TextField
+                        label="Mensaje"
+                        fullWidth
+                        multiline
+                        rows={4}
+                        value={msgCuerpo}
+                        onChange={(e) => setMsgCuerpo(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setMsgDialogOpen(false)}>Cancelar</Button>
+                    <Button
+                        variant="contained"
+                        disabled={!msgCuerpo.trim() || msgSending}
+                        onClick={async () => {
+                            setMsgSending(true);
+                            try {
+                                await api.post("/api/mensajes/enviar", {
+                                    destinatario_usuario: msgGeneral ? null : msgDestinatario,
+                                    es_general: msgGeneral,
+                                    asunto: msgAsunto.trim() || null,
+                                    cuerpo: msgCuerpo.trim(),
+                                });
+                                setMsgDialogOpen(false);
+                            } catch {
+                                // silent
+                            } finally {
+                                setMsgSending(false);
+                            }
+                        }}
+                    >
+                        {msgSending ? "Enviando..." : "Enviar"}
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             {menuOpen && (
                 <div

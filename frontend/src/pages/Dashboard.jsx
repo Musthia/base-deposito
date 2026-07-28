@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../auth/authStore";
+
 import { usePermissions } from "../auth/usePermissions";
-import api from "../api/axiosClient";
+//import api from "../api/axiosClient";
 import { getDashboardStats } from "../services/dashboardService";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    const logout = useAuthStore((s) => s.logout);
+    
     const perms = usePermissions();
     const [stats, setStats] = useState(null);
 
@@ -17,16 +17,6 @@ export default function Dashboard() {
             .then(setStats)
             .catch(console.error);
     }, []);
-
-    const handleLogout = async () => {
-        try {
-            await api.post("/auth/logout");
-        } catch (err) {
-            console.error("Logout error:", err);
-        }
-        logout();
-        navigate("/");
-    };
 
     if (!stats) {
         return (
@@ -49,11 +39,8 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={welcomeStyles.badge}>
-                        <span style={welcomeStyles.badgeText}>v6.0</span>
+                        <span style={welcomeStyles.badgeText}>v6.7</span>
                     </div>
-                    <button onClick={handleLogout} style={logoutBtnStyles}>
-                        Cerrar sesion
-                    </button>
                 </div>
             </div>
 
@@ -349,18 +336,6 @@ const welcomeStyles = {
         fontWeight: "600",
         color: "#64748b",
     }
-};
-
-const logoutBtnStyles = {
-    backgroundColor: "var(--danger)",
-    color: "#ffffff",
-    border: "none",
-    padding: "8px 16px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    fontWeight: "500",
-    fontSize: "14px",
-    transition: "background-color 0.15s ease"
 };
 
 const kpiStyles = {

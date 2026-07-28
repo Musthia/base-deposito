@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
     Box, Typography, Paper, Button, Snackbar, Alert, CircularProgress,
 } from "@mui/material";
-import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import api from "../api/axiosClient";
 import { useThemeMode } from "../context/ThemeModeContext";
 

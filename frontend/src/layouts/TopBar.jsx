@@ -13,6 +13,15 @@ const btnBase = {
     fontSize: 16,
     whiteSpace: "nowrap",
 };
+const btnBase1 = {
+    background: "#0fc409",
+    color: "#ffffff",
+    border: "none",
+    padding: "10px 14px",
+    cursor: "pointer",
+    fontSize: 16,
+    whiteSpace: "nowrap",
+};
 
 function TopBar() {
     const navigate = useNavigate();
@@ -23,8 +32,6 @@ function TopBar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [acercaOpen, setAcercaOpen] = useState(false);
     const acercaBtnRef = useRef(null);
-
-    const isActive = useCallback((path) => location.pathname === path, [location.pathname]);
 
     const datcorrMenu = useMemo(() => [
         { label: "Panel de Control", path: "/dashboard" },
@@ -44,7 +51,7 @@ function TopBar() {
     ], [perms.isConsulta]);
 
     const handleLogout = useCallback(async () => {
-        try { await api.post("/auth/logout"); } catch {}
+        try { await api.post("/auth/logout"); } catch { /* ignore */ }
         logout();
         navigate("/");
     }, [logout, navigate]);
@@ -62,7 +69,7 @@ function TopBar() {
 
     const btnActive = useCallback((path) => ({
         ...btnBase,
-        background: location.pathname === path ? "#334155" : "transparent",
+        background: location.pathname === path ? "#424147" : "transparent",
     }), [location.pathname]);
 
     const handleAcercaToggle = useCallback(() => setAcercaOpen((p) => !p), []);
@@ -88,8 +95,8 @@ function TopBar() {
                 left: 0,
                 right: 0,
                 height: 56,
-                background: "#000205",
-                color: "#ffffff",
+                background: "#646363",
+                color: "#000000",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -153,12 +160,12 @@ function TopBar() {
                             top: 56,
                             left: "84%",
                             transform: "translateX(-50%)",
-                            background: "#1e293b",
+                            background: "#373838",
                             border: "1px solid #334155",
                             borderRadius: 4,
                             minWidth: 220,
                             zIndex: 1001,
-                            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+                            boxShadow: "0 4px 12px rgb(82, 33, 33)",
                         }}
                     >
                         {acercaItems.map((item) => (
@@ -193,7 +200,7 @@ function TopBar() {
                     style={{
                         background: "transparent",
                         border: "none",
-                        color: "#ffffff",
+                        color: "#2e0505",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
@@ -234,9 +241,9 @@ function TopBar() {
                 <button
                     onClick={handleLogout}
                     style={{
-                        background: "transparent",
+                        background: "#fafafa",
                         border: "1px solid rgba(255,255,255,0.3)",
-                        color: "#ff6b6b",
+                        color: "#f80404",
                         cursor: "pointer",
                         padding: "6px 12px",
                         fontSize: 13,
@@ -290,7 +297,7 @@ function TopBar() {
                                 padding: "12px 16px",
                                 fontSize: 13,
                                 opacity: 0.8,
-                                background: location.pathname === item.path ? "#334155" : "transparent",
+                                background: location.pathname === item.path ? "#f5f3f3" : "transparent",
                             }}
                         >
                             {item.label}
@@ -299,16 +306,11 @@ function TopBar() {
                     <hr style={{ border: "none", borderTop: "1px solid #334155", margin: "8px 0" }} />
                     <button
                         onClick={() => { navigate("/mi-cuenta"); setMenuOpen(false); }}
-                        style={{ ...btnBase, textAlign: "left", width: "100%", padding: "12px 16px" }}
+                        style={{ ...btnBase1, textAlign: "left", width: "100%", padding: "12px 16px" }}
                     >
                         Mi cuenta
                     </button>
-                    <button
-                        onClick={() => { handleLogout(); setMenuOpen(false); }}
-                        style={{ ...btnBase, textAlign: "left", width: "100%", padding: "12px 16px", color: "#ff6b6b" }}
-                    >
-                        Cerrar sesion
-                    </button>
+                    
                 </div>
             )}
         </header>

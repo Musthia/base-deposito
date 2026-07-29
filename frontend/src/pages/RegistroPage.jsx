@@ -54,7 +54,7 @@ export default function RegistroPage() {
                     <Typography sx={{ mb: 3, color: "var(--text-muted)" }}>
                         Su solicitud de registro fue enviada correctamente. Recibirá un email cuando un administrador la apruebe.
                     </Typography>
-                    <Button variant="contained" onClick={() => navigate("/")} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>Volver al inicio</Button>
+                    <Button variant="contained" onClick={() => navigate("/")} sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" } }}>Volver al inicio</Button>
                 </Paper>
             </Box>
         );
@@ -83,7 +83,7 @@ export default function RegistroPage() {
                     <TextField label="Organización" fullWidth value={form.organizacion} onChange={handleChange("organizacion")} disabled={loading} />
                     <TextField label="Motivo de la solicitud" multiline rows={3} fullWidth value={form.motivo} onChange={handleChange("motivo")} disabled={loading} />
 
-                    <Button type="submit" variant="contained" size="large" disabled={loading || !form.nombre || !form.apellido || !form.email || !form.username || !form.password || !form.confirmPassword} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>
+                    <Button type="submit" variant="contained" size="large" disabled={loading || !form.nombre || !form.apellido || !form.email || !form.username || !form.password || !form.confirmPassword} sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" } }}>
                         {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
                         {loading ? "Enviando..." : "Enviar solicitud"}
                     </Button>

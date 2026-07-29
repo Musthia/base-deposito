@@ -118,7 +118,7 @@ export default function UsuariosPage() {
                         setSelectedUser(null);
                         setOpenModal(true);
                     }}
-                    sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}
+                    sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" } }}
                 >
                     Nuevo Usuario
                 </Button>

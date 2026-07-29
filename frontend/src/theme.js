@@ -10,27 +10,27 @@ export const TOPBAR = {
 export const BORDER_SUBTLE = "#e2e8f0";
 
 export const LIGHT = {
-    bgPage: "#000000",
-    bgCard: "#111111",
-    border: "#333333",
-    textMain: "#e5e5e5",
-    textMain1: "#070707",
-    textMuted: "#9ca3af",
-    primary: "#60a5fa",
+    bgPage: "#0a0e1a",
+    bgCard: "#141a2e",
+    border: "#2a3050",
+    textMain: "#f0f2f5",
+    textMain1: "#e4e4ec",
+    textMuted: "#8896b8",
+    primary: "#2563eb",
     success: "#34d399",
-    warning: "#fbbf24",
+    warning: "#f59e0b",
     danger: "#f87171",
 };
 
 export const DARK = {
-    bgPage: "#1e1e2e",
-    bgCard: "#2a2a3e",
-    border: "#3d3d5c",
-    textMain: "#e4e4ec",
-    textMuted: "#9ca3af",
-    primary: "#60a5fa",
+    bgPage: "#1a2040",
+    bgCard: "#222a4a",
+    border: "#334470",
+    textMain: "#f0f2f5",
+    textMuted: "#8896b8",
+    primary: "#2563eb",
     success: "#34d399",
-    warning: "#fbbf24",
+    warning: "#f59e0b",
     danger: "#f87171",
 };
 

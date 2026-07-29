@@ -98,7 +98,7 @@ function TopBar() {
 
     const btnActive = useCallback((path) => ({
         ...btnBase,
-        background: location.pathname === path ? "#424147" : "transparent",
+        background: location.pathname === path ? "#1a2245" : "transparent",
     }), [location.pathname]);
 
     const handleAcercaToggle = useCallback(() => setAcercaOpen((p) => !p), []);
@@ -124,8 +124,8 @@ function TopBar() {
                 left: 0,
                 right: 0,
                 height: 56,
-                background: "#646363",
-                color: "#ffffff",
+                background: "#0f1425",
+                color: "#f0f2f5",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -188,8 +188,8 @@ function TopBar() {
                             position: "absolute",
                             top: "100%",
                             right: 0,
-                            background: "#373838",
-                            border: "1px solid #334155",
+                            background: "#1a2040",
+                            border: "1px solid #2a3050",
                             borderRadius: 4,
                             minWidth: 220,
                             zIndex: 1001,
@@ -205,9 +205,9 @@ function TopBar() {
                                     width: "100%",
                                     textAlign: "left",
                                     padding: "12px 16px",
-                                    background: location.pathname === item.path ? "#334155" : "transparent",
+                                    background: location.pathname === item.path ? "#1a2245" : "transparent",
                                 }}
-                                onMouseEnter={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "#424147"; }}
+                                onMouseEnter={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "#141a2e"; }}
                                 onMouseLeave={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "transparent"; }}
                             >
                                 {item.label}
@@ -245,8 +245,8 @@ function TopBar() {
                             position: "absolute",
                             top: "100%",
                             right: 0,
-                            background: "#373838",
-                            border: "1px solid #334155",
+                            background: "#1a2040",
+                            border: "1px solid #2a3050",
                             borderRadius: 4,
                             minWidth: 200,
                             zIndex: 1001,
@@ -254,11 +254,11 @@ function TopBar() {
                             padding: "8px 0",
                         }}
                     >
-                        <div style={{ padding: "4px 16px 8px", fontSize: 11, color: "#94a3b8", borderBottom: "1px solid #334155", marginBottom: 4 }}>
+                        <div style={{ padding: "4px 16px 8px", fontSize: 11, color: "#8896b8", borderBottom: "1px solid #2a3050", marginBottom: 4 }}>
                             Usuarios en línea
                         </div>
                         {onlineUsuarios.length === 0 ? (
-                            <div style={{ padding: "8px 16px", fontSize: 13, color: "#94a3b8" }}>
+                            <div style={{ padding: "8px 16px", fontSize: 13, color: "#8896b8" }}>
                                 Ninguno
                             </div>
                         ) : (
@@ -283,8 +283,8 @@ function TopBar() {
                                         }}
                                         style={{
                                             background: "transparent",
-                                            border: "1px solid #8b5cf6",
-                                            color: "#8b5cf6",
+                                            border: "1px solid #2563eb",
+                                            color: "#2563eb",
                                             borderRadius: 4,
                                             padding: "2px 8px",
                                             fontSize: 11,
@@ -296,7 +296,7 @@ function TopBar() {
                                 </div>
                             ))
                         )}
-                        <div style={{ borderTop: "1px solid #334155", marginTop: 4, paddingTop: 4 }}>
+                        <div style={{ borderTop: "1px solid #2a3050", marginTop: 4, paddingTop: 4 }}>
                             <button
                                 onClick={() => {
                                     setMsgDestinatario(null);
@@ -312,7 +312,7 @@ function TopBar() {
                                     textAlign: "left",
                                     padding: "8px 16px",
                                     fontSize: 12,
-                                    color: "#8b5cf6",
+                                    color: "#2563eb",
                                 }}
                             >
                                 + Mensaje general a todos
@@ -354,7 +354,7 @@ function TopBar() {
                             width: 28,
                             height: 28,
                             borderRadius: "50%",
-                            background: "#3f51b5",
+                            background: "#2563eb",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -452,8 +452,8 @@ function TopBar() {
                         top: 56,
                         left: 0,
                         right: 0,
-                        background: "#b6e4da",
-                        borderTop: "1px solid #334155",
+                        background: "#1a2040",
+                        borderTop: "1px solid #2a3050",
                         display: "flex",
                         flexDirection: "column",
                         zIndex: 999,
@@ -470,7 +470,7 @@ function TopBar() {
                                 textAlign: "left",
                                 width: "100%",
                                 padding: "12px 16px",
-                                background: location.pathname === item.path ? "#334155" : "transparent",
+                                background: location.pathname === item.path ? "#1a2245" : "transparent",
                             }}
                         >
                             {item.label}
@@ -487,13 +487,13 @@ function TopBar() {
                                 padding: "12px 16px",
                                 fontSize: 13,
                                 opacity: 0.8,
-                                background: location.pathname === item.path ? "#334155" : "transparent",
+                                background: location.pathname === item.path ? "#1a2245" : "transparent",
                             }}
                         >
                             {item.label}
                         </button>
                     ))}
-                    <hr style={{ border: "none", borderTop: "1px solid #334155", margin: "8px 0" }} />
+                    <hr style={{ border: "none", borderTop: "1px solid #2a3050", margin: "8px 0" }} />
                     <button
                         onClick={() => { navigate("/mi-cuenta"); setMenuOpen(false); }}
                         style={{ ...btnBase, textAlign: "left", width: "100%", padding: "12px 16px" }}

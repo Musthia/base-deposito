@@ -194,7 +194,7 @@ export default function ReportesPage() {
                     variant="contained"
                     onClick={handleGenerate}
                     disabled={!consultaId || loading}
-                    sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" }, textTransform: "none" }}
+                    sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" }, textTransform: "none" }}
                 >
                     {loading ? <CircularProgress size={20} sx={{ mr: 1, color: "var(--text-main)" }} /> : null}
                     Generar
@@ -247,7 +247,7 @@ export default function ReportesPage() {
                     <Button
                         variant="contained"
                         onClick={handleGenerate}
-                        sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" }, textTransform: "none" }}
+                        sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" }, textTransform: "none" }}
                     >Reintentar</Button>
                 </Box>
             )}

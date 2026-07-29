@@ -129,8 +129,8 @@ export default function AuditoriaPage() {
                     <button
                         onClick={() => loadData(paginationModel.page, paginationModel.pageSize)}
                         style={{
-                            background: "#0f172a",
-                            color: "var(--bg-card)",
+                            background: "#2563eb",
+                            color: "#ffffff",
                             border: "none",
                             borderRadius: "8px",
                             padding: "12px 24px",

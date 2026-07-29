@@ -76,7 +76,7 @@ export default function MensajesPage() {
                     sx={{
                         p: 2, mb: 1.5, borderRadius: 2,
                         border: `1px solid ${colors.border}`,
-                        borderLeft: m.leido ? `4px solid ${colors.border}` : "4px solid #8b5cf6",
+                        borderLeft: m.leido ? `4px solid ${colors.border}` : "4px solid #2563eb",
                         bgcolor: colors.bgCard,
                         display: "flex", alignItems: "flex-start", gap: 2,
                     }}
@@ -117,7 +117,7 @@ export default function MensajesPage() {
                             onClick={async () => {
                                 try { await api.put(`/api/mensajes/${m.id}/leer`); fetch(); } catch {}
                             }}
-                            sx={{ color: "#8b5cf6" }}
+                            sx={{ color: "#2563eb" }}
                             title="Marcar como leído"
                         >
                             <DeleteIcon fontSize="small" />

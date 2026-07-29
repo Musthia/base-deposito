@@ -344,7 +344,7 @@ export default function CargaDatosPage() {
                             variant="contained"
                             disabled={saving}
                             startIcon={saving ? <CircularProgress size={20} /> : null}
-                            sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}
+                            sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" } }}
                         >
                             {saving ? "Guardando..." : "Guardar registro"}
                         </Button>
@@ -443,7 +443,7 @@ export default function CargaDatosPage() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={cerrarEditar}>Cancelar</Button>
-                    <Button variant="contained" onClick={guardarEdicion} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>Guardar cambios</Button>
+                    <Button variant="contained" onClick={guardarEdicion} sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" } }}>Guardar cambios</Button>
                 </DialogActions>
             </Dialog>
 

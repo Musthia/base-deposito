@@ -254,7 +254,7 @@ export default function DatabasePage() {
                     sx={{ minWidth: 300 }}
                 />
 
-                <Button variant="contained" onClick={handleBuscar} startIcon={<SearchIcon />} sx={{ backgroundColor: "#0f172a", "&:hover": { backgroundColor: "#1e293b" } }}>
+                <Button variant="contained" onClick={handleBuscar} startIcon={<SearchIcon />} sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" } }}>
                     Buscar
                 </Button>
 

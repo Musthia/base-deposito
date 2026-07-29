@@ -12,7 +12,7 @@ import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
 import { getEstadisticasDatcorr, getEstadisticasSimco } from "../services/estadisticasService";
 
-const COLORS = ["#0f172a", "#0284c7", "#16a34a", "#d97706", "#dc2626", "#8b5cf6"];
+const COLORS = ["#2563eb", "#0284c7", "#16a34a", "#d97706", "#dc2626", "#8b5cf6"];
 
 const PERIODOS = [
     { value: "semanal", label: "Semanal" },
@@ -234,7 +234,7 @@ export default function EstadisticasPage() {
                                 <YAxis tick={{ fill: "#ccc" }} />
                                 <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
                                 <Legend wrapperStyle={{ color: "#ccc" }} />
-                                <Bar dataKey="DatCorr" stackId="a" fill="#0f172a" />
+                                <Bar dataKey="DatCorr" stackId="a" fill="#2563eb" />
                                 <Bar dataKey="Verificado" stackId="a" fill="#16a34a" />
                                 <Bar dataKey="Otros" stackId="a" fill="var(--border)" />
                             </BarChart>
@@ -271,7 +271,7 @@ export default function EstadisticasPage() {
                                 <YAxis tick={{ fill: "#ccc" }} />
                                 <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
                                 <Legend wrapperStyle={{ color: "#ccc" }} />
-                                <Line type="monotone" dataKey="accesos" name="Accesos" stroke="#0f172a" strokeWidth={2} />
+                                <Line type="monotone" dataKey="accesos" name="Accesos" stroke="#2563eb" strokeWidth={2} />
                             </LineChart>
                         </ResponsiveContainer>
                     </Paper>

@@ -51,7 +51,7 @@ export default function Sidebar() {
         borderRadius: "6px",
         marginBottom: "2px",
         fontSize: 14,
-        background: location.pathname === path ? "#4db53f3b" : "transparent",
+            background: location.pathname === path ? "#2563eb33" : "transparent",
         transition: "background 0.15s",
     });
 
@@ -63,7 +63,7 @@ export default function Sidebar() {
             justifyContent: "center",
             lineHeight: 1,
             // Opcional: puedes forzar el color aquí si no quieres que herede el del padre
-            color: "#94a3b8", 
+            color: "#8896b8", 
         }
     };
 
@@ -71,7 +71,7 @@ export default function Sidebar() {
         <aside style={{
             width: "220px",
             height: "100vh",
-            background: "#222433",
+            background: "#0a0e1a",
             color: "white",
             display: "flex",
             flexDirection: "column",
@@ -95,8 +95,8 @@ export default function Sidebar() {
                 ))}
 
                 {perms.canViewSimco && <>
-                    <div style={{ height: 1, background: "#333", margin: "12px 0" }} />
-                    <h4 style={{ margin: "0 0 10px 0", fontSize: 12, letterSpacing: "1px", color: "#94a3b8", textTransform: "uppercase" }}>SiMCo</h4>
+                    <div style={{ height: 1, background: "#2a3050", margin: "12px 0" }} />
+                    <h4 style={{ margin: "0 0 10px 0", fontSize: 12, letterSpacing: "1px", color: "#8896b8", textTransform: "uppercase" }}>SiMCo</h4>
 
                     {simcoMenu.map(item => (
                         <div
@@ -110,7 +110,7 @@ export default function Sidebar() {
                 </>}
 
                 {perms.canViewMensajes && <>
-                    <div style={{ height: 1, background: "#333", margin: "12px 0" }} />
+                    <div style={{ height: 1, background: "#2a3050", margin: "12px 0" }} />
                     <div
                         onClick={() => navigate("/mensajes")}
                         style={activeStyle("/mensajes")}
@@ -123,7 +123,7 @@ export default function Sidebar() {
             <div style={{
                 flexShrink: 0,
                 padding: "0 10px 10px 10px",
-                borderTop: "1px solid #333",
+                borderTop: "1px solid #2a3050",
             }}>
                 <div style={{ padding: "6px 0" }}>
                     {!perms.isConsulta && (
@@ -134,13 +134,13 @@ export default function Sidebar() {
                             cursor: "pointer",
                             borderRadius: "6px",
                             fontSize: 13,
-                            color: "#94a3b8",
+                            color: "#8896b8",
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
                             transition: "background 0.15s",
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#2a2a3d"}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "#141a2e"}
                         onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
                         {/* Nuevo ícono basado en SPAN */}
@@ -156,13 +156,13 @@ export default function Sidebar() {
                             cursor: "pointer",
                             borderRadius: "6px",
                             fontSize: 13,
-                            color: "#94a3b8",
+                            color: "#8896b8",
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
                             transition: "background 0.15s",
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#2a2a3d"}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "#141a2e"}
                         onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
                         {/* Nuevo ícono basado en SPAN */}
@@ -173,7 +173,7 @@ export default function Sidebar() {
                 </div>
                 <div style={{
                     padding: "12px",
-                    background: "#2a2a3d",
+                    background: "#1a2040",
                     borderRadius: 8,
                     marginTop: 4,
                     marginBottom: 8,
@@ -223,7 +223,7 @@ export default function Sidebar() {
                         padding: "10px 12px",
                         cursor: "pointer",
                         borderRadius: "6px",
-                        color: "#94a3b8",
+                        color: "#8896b8",
                         fontSize: 13,
                         display: "flex",
                         alignItems: "center",
@@ -231,7 +231,7 @@ export default function Sidebar() {
                         transition: "background 0.15s",
                         userSelect: "none",
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "#2a2a3d"}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "#141a2e"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                 >
                     <span style={{ fontSize: 16, lineHeight: 1 }}>{mode === "dark" ? "\u2600" : "\u263E"}</span>

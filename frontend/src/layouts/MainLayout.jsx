@@ -18,6 +18,7 @@ export default function MainLayout() {
                     p: "24px",
                     pt: "80px",
                     backgroundColor: "var(--bg-page)",
+                    backgroundImage: "var(--bg-gradient)",
                     overflow: "auto",
                 }}
             >

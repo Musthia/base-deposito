@@ -35,7 +35,8 @@ export default function RegistroPage() {
         }
         setLoading(true);
         try {
-            const { confirmPassword, ...payload } = form;
+            const payload = { ...form };
+            delete payload.confirmPassword;
             await api.post("/registro/solicitar", payload);
             setSuccess(true);
         } catch (err) {
@@ -47,7 +48,7 @@ export default function RegistroPage() {
 
     if (success) {
         return (
-            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "var(--bg-page)" }}>
+            <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-gradient, var(--bg-page))" }}>
                 <Paper elevation={0} sx={{ p: 6, maxWidth: 500, textAlign: "center", borderRadius: 3 }}>
                     <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: "var(--text-main)" }}>Solicitud enviada</Typography>
                     <Typography sx={{ mb: 3, color: "var(--text-muted)" }}>
@@ -60,7 +61,7 @@ export default function RegistroPage() {
     }
 
     return (
-        <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", bgcolor: "var(--bg-page)", p: 2 }}>
+        <Box sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-gradient, var(--bg-page))", p: 2 }}>
             <Paper elevation={0} sx={{ p: 4, maxWidth: 520, width: "100%", borderRadius: 3 }}>
                 <Typography variant="h5" sx={{ fontWeight: 700, color: "var(--text-main)", mb: 1 }}>Solicitar registro</Typography>
                 <Typography variant="body2" sx={{ color: "var(--text-muted)", mb: 3 }}>

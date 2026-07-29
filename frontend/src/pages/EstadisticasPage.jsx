@@ -181,7 +181,7 @@ export default function EstadisticasPage() {
                 sx={{ mb: 3 }}
             >
                 {PERIODOS.map((p) => (
-                    <ToggleButton key={p.value} value={p.value} sx={{ textTransform: "none" }}>
+                    <ToggleButton key={p.value} value={p.value} sx={{ textTransform: "none", color: "#ccc" }}>
                         {p.label}
                     </ToggleButton>
                 ))}
@@ -206,19 +206,19 @@ export default function EstadisticasPage() {
 
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 3 }}>
                         {[
-                            { label: "Bases", value: datcorr.schemas.length, color: "#0f172a" },
-                            { label: "Registros totales", value: datcorr.schemas.reduce((a, b) => a + b.total, 0), color: "#0f172a" },
+                            { label: "Bases", value: datcorr.schemas.length, color: "#94a3b8" },
+                            { label: "Registros totales", value: datcorr.schemas.reduce((a, b) => a + b.total, 0), color: "#94a3b8" },
                             { label: "Estado DATCORR", value: datcorr.schemas.reduce((a, b) => a + b.datcorr, 0), color: "#0284c7" },
                             { label: "Estado VERIFICADO", value: datcorr.schemas.reduce((a, b) => a + b.verificado, 0), color: "#16a34a" },
                         ].map((kpi) => (
-                            <Paper elevation={0} key={kpi.label} sx={{ p: 2, minWidth: 160, border: "1px solid #d1d5db", borderRadius: 2 }}>
+                            <Paper elevation={0} key={kpi.label} sx={{ p: 2, minWidth: 160, border: "1px solid #444", borderRadius: 2 }}>
                                 <Typography variant="h4" sx={{ color: kpi.color, fontWeight: 700 }}>{kpi.value.toLocaleString()}</Typography>
-                                <Typography variant="body2" color="text.secondary">{kpi.label}</Typography>
+                                <Typography variant="body2" sx={{ color: "#aaa" }}>{kpi.label}</Typography>
                             </Paper>
                         ))}
                     </Box>
 
-                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
+                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #444", borderRadius: 2 }}>
                         <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Composición por base de datos
                         </Typography>
@@ -229,11 +229,11 @@ export default function EstadisticasPage() {
                                 Verificado: s.verificado,
                                 Otros: s.total - s.datcorr - s.verificado,
                             }))}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="nombre" tick={{ fontSize: 12 }} />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                                <XAxis dataKey="nombre" tick={{ fontSize: 12, fill: "#ccc" }} />
+                                <YAxis tick={{ fill: "#ccc" }} />
+                                <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
+                                <Legend wrapperStyle={{ color: "#ccc" }} />
                                 <Bar dataKey="DatCorr" stackId="a" fill="#0f172a" />
                                 <Bar dataKey="Verificado" stackId="a" fill="#16a34a" />
                                 <Bar dataKey="Otros" stackId="a" fill="var(--border)" />
@@ -241,17 +241,17 @@ export default function EstadisticasPage() {
                         </ResponsiveContainer>
                     </Paper>
 
-                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
+                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #444", borderRadius: 2 }}>
                         <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Movimientos por período
                         </Typography>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={datcorr.movimientos}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="periodo" tick={{ fontSize: 11 }} />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                                <XAxis dataKey="periodo" tick={{ fontSize: 11, fill: "#ccc" }} />
+                                <YAxis tick={{ fill: "#ccc" }} />
+                                <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
+                                <Legend wrapperStyle={{ color: "#ccc" }} />
                                 <Bar dataKey="creaciones" name="Creaciones" fill="#16a34a" />
                                 <Bar dataKey="actualizaciones" name="Actualizaciones" fill="#0284c7" />
                                 <Bar dataKey="eliminaciones" name="Eliminaciones" fill="#dc2626" />
@@ -266,11 +266,11 @@ export default function EstadisticasPage() {
                         </Typography>
                         <ResponsiveContainer width="100%" height={250}>
                             <LineChart data={datcorr.movimientos}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="periodo" tick={{ fontSize: 11 }} />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                                <XAxis dataKey="periodo" tick={{ fontSize: 11, fill: "#ccc" }} />
+                                <YAxis tick={{ fill: "#ccc" }} />
+                                <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
+                                <Legend wrapperStyle={{ color: "#ccc" }} />
                                 <Line type="monotone" dataKey="accesos" name="Accesos" stroke="#0f172a" strokeWidth={2} />
                             </LineChart>
                         </ResponsiveContainer>
@@ -285,52 +285,52 @@ export default function EstadisticasPage() {
 
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 3 }}>
                         {[
-                            { label: "Solicitudes totales", value: simco.solicitudes.reduce((a, b) => a + b.total, 0), color: "#0f172a" },
+                            { label: "Solicitudes totales", value: simco.solicitudes.reduce((a, b) => a + b.total, 0), color: "#94a3b8" },
                             { label: "Pendientes", value: simco.solicitudes.reduce((a, b) => a + b.pendientes, 0), color: "#d97706" },
                             { label: "Respondidas", value: simco.solicitudes.reduce((a, b) => a + b.respondidas, 0), color: "#16a34a" },
                             { label: "Respuestas", value: simco.respuestas.reduce((a, b) => a + b.total, 0), color: "#0284c7" },
                         ].map((kpi) => (
-                            <Paper elevation={0} key={kpi.label} sx={{ p: 2, minWidth: 160, border: "1px solid #d1d5db", borderRadius: 2 }}>
+                            <Paper elevation={0} key={kpi.label} sx={{ p: 2, minWidth: 160, border: "1px solid #444", borderRadius: 2 }}>
                                 <Typography variant="h4" sx={{ color: kpi.color, fontWeight: 700 }}>{kpi.value.toLocaleString()}</Typography>
-                                <Typography variant="body2" color="text.secondary">{kpi.label}</Typography>
+                                <Typography variant="body2" sx={{ color: "#aaa" }}>{kpi.label}</Typography>
                             </Paper>
                         ))}
                     </Box>
 
-                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
+                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #444", borderRadius: 2 }}>
                         <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Solicitudes por período
                         </Typography>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={simco.solicitudes}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="periodo" tick={{ fontSize: 11 }} />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                                <XAxis dataKey="periodo" tick={{ fontSize: 11, fill: "#ccc" }} />
+                                <YAxis tick={{ fill: "#ccc" }} />
+                                <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
+                                <Legend wrapperStyle={{ color: "#ccc" }} />
                                 <Bar dataKey="pendientes" name="Pendientes" fill="#d97706" />
                                 <Bar dataKey="respondidas" name="Respondidas" fill="#16a34a" />
                             </BarChart>
                         </ResponsiveContainer>
                     </Paper>
 
-                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
+                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #444", borderRadius: 2 }}>
                         <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Respuestas por período
                         </Typography>
                         <ResponsiveContainer width="100%" height={250}>
                             <LineChart data={simco.respuestas}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="periodo" tick={{ fontSize: 11 }} />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                                <XAxis dataKey="periodo" tick={{ fontSize: 11, fill: "#ccc" }} />
+                                <YAxis tick={{ fill: "#ccc" }} />
+                                <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
+                                <Legend wrapperStyle={{ color: "#ccc" }} />
                                 <Line type="monotone" dataKey="total" name="Respuestas" stroke="#0284c7" strokeWidth={2} />
                             </LineChart>
                         </ResponsiveContainer>
                     </Paper>
 
-                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #d1d5db", borderRadius: 2 }}>
+                    <Paper elevation={0} sx={{ p: 2, mb: 3, border: "1px solid #444", borderRadius: 2 }}>
                         <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: "var(--text-main)" }}>
                             Solicitudes por tipo de documento
                         </Typography>
@@ -349,7 +349,7 @@ export default function EstadisticasPage() {
                                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip />
+                                <Tooltip contentStyle={{ backgroundColor: "#222", border: "1px solid #555", color: "#eee" }} />
                             </PieChart>
                         </ResponsiveContainer>
                     </Paper>

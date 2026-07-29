@@ -55,7 +55,7 @@ export default function Dashboard() {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={welcomeStyles.badge}>
-                        <span style={welcomeStyles.badgeText}>v7.1</span>
+                        <span style={welcomeStyles.badgeText}>v8.0</span>
                     </div>
                 </div>
             </div>
@@ -461,12 +461,12 @@ const tlStyles = {
     time: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" },
 };
 const loadingStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-page)" },
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-gradient, var(--bg-page))" },
     text: { marginTop: 12, color: "var(--text-muted)", fontSize: 14 },
 };
 
 const errorStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-page)", padding: "24px" },
+    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-gradient, var(--bg-page))", padding: "24px" },
     card: { background: "var(--bg-card)", borderRadius: "16px", padding: "32px", textAlign: "center", maxWidth: "400px" },
     title: { fontSize: "18px", fontWeight: "600", color: "var(--text-main)", margin: "16px 0 8px 0" },
     desc: { fontSize: "14px", color: "var(--text-muted)", margin: "0 0 24px 0" },

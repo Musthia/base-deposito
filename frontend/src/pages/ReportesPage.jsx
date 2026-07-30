@@ -95,7 +95,7 @@ export default function ReportesPage() {
                     label={f.label}
                     type="date"
                     size="small"
-                    InputLabelProps={{ shrink: true }}
+                    slotProps={{ inputLabel: { shrink: true } }}
                     value={filtros[f.key] || ""}
                     onChange={(e) => handleFiltroChange(f.key, e.target.value)}
                     sx={{ minWidth: 180 }}
@@ -146,7 +146,7 @@ export default function ReportesPage() {
                         { label: "Total Usuarios", value: kpis.total_usuarios, color: "var(--text-main)" },
                         { label: "Alertas Pendientes", value: kpis.alertas_pendientes, color: kpis.alertas_pendientes > 0 ? "#dc2626" : "var(--text-main)" },
                     ].map((kpi) => (
-                        <Grid item xs={6} sm={3} key={kpi.label}>
+                        <Grid size={{ xs: 6, sm: 3 }} key={kpi.label}>
                             <Card sx={{ borderRadius: "8px", boxShadow: "none", border: "none" }}>
                                 <CardContent sx={{ textAlign: "center", py: 2 }}>
                                     <Typography variant="h4" sx={{ color: kpi.color, fontWeight: 700 }}>

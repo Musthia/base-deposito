@@ -76,6 +76,20 @@ def crear_tablas():
                 ) THEN
                     ALTER TABLE registros_pendientes ADD COLUMN password_hash VARCHAR(255);
                 END IF;
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_schema='simco' AND table_name='solicitudes' AND column_name='archivo_nombre'
+                ) THEN
+                    ALTER TABLE simco.solicitudes ADD COLUMN archivo_nombre VARCHAR(500);
+                END IF;
+
+                IF NOT EXISTS (
+                    SELECT 1 FROM information_schema.columns
+                    WHERE table_schema='simco' AND table_name='respuestas' AND column_name='archivo_nombre'
+                ) THEN
+                    ALTER TABLE simco.respuestas ADD COLUMN archivo_nombre VARCHAR(500);
+                END IF;
             END $$;
         """))
         conn.commit()

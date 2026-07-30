@@ -1,7 +1,7 @@
 import logging
 import io
 
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
 
 logger = logging.getLogger("datcorr")
 
@@ -53,9 +53,10 @@ class PDFExporter:
 
             doc.build(elements)
             buffer.seek(0)
+            content = buffer.getvalue()
 
-            return StreamingResponse(
-                buffer,
+            return Response(
+                content=content,
                 media_type="application/pdf",
                 headers={
                     "Content-Disposition": f'attachment; filename="{nombre_archivo}.pdf"',

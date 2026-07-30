@@ -20,6 +20,7 @@ class Solicitud(Base):
     creado_por_usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=True)
     creado_por = Column(String, nullable=True)
     fecha_creacion = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+    archivo_nombre = Column(String, nullable=True)
 
 
 class Respuesta(Base):
@@ -33,3 +34,4 @@ class Respuesta(Base):
     estado_documento = Column(String, nullable=False)
     observacion = Column(Text, nullable=True)
     fecha_respuesta = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+    archivo_nombre = Column(String, nullable=True)

@@ -11,6 +11,8 @@ from backend.services.notificaciones_service import (
     crear_notificaciones_respuesta,
 )
 from backend.services.auditoria_service import registrar_auditoria
+from backend.services.archivo_helper import guardar_archivo, eliminar_archivo
+from fastapi import UploadFile
 
 logger = logging.getLogger("datcorr")
 
@@ -48,6 +50,7 @@ def listar_solicitudes(db: Session):
             "creado_por": sol.creado_por,
             "creado_por_usuario_id": sol.creado_por_usuario_id,
             "fecha_creacion": sol.fecha_creacion,
+            "archivo_nombre": resp.archivo_nombre if resp else None,
             "respuesta": {
                 "id": resp.id,
                 "solicitud_id": resp.solicitud_id,
@@ -56,6 +59,7 @@ def listar_solicitudes(db: Session):
                 "usuario_responde": resp.usuario_responde,
                 "usuario_responde_id": resp.usuario_responde_id,
                 "fecha_respuesta": resp.fecha_respuesta,
+                "archivo_nombre": resp.archivo_nombre,
             } if resp else None,
         }
         resultado.append(sol_dict)
@@ -102,12 +106,14 @@ def dashboard_hoy(db: Session):
         solicitudes_data.append({
             "id": s.id, "codigo": s.codigo, "tipo_documento": s.tipo_documento,
             "identificador_documento": s.identificador_documento, "detalle": s.detalle,
-            "estado": s.estado, "creado_por": s.creado_por,
+            "estado": s.estado,             "creado_por": s.creado_por,
             "fecha_creacion": s.fecha_creacion.isoformat() if s.fecha_creacion else None,
+            "archivo_nombre": s.archivo_nombre,
             "respuesta": {
                 "id": r.id, "estado_documento": r.estado_documento,
                 "usuario_responde": r.usuario_responde,
                 "fecha_respuesta": r.fecha_respuesta.isoformat() if r.fecha_respuesta else None,
+                "archivo_nombre": r.archivo_nombre,
             } if r else None,
         })
 
@@ -121,6 +127,7 @@ def dashboard_hoy(db: Session):
             "observacion": r.observacion,
             "usuario_responde": r.usuario_responde,
             "fecha_respuesta": r.fecha_respuesta.isoformat() if r.fecha_respuesta else None,
+            "archivo_nombre": r.archivo_nombre,
         })
 
     return {
@@ -169,12 +176,14 @@ def buscar(db: Session, q: str):
             "estado": sol.estado,
             "creado_por": sol.creado_por,
             "fecha_creacion": sol.fecha_creacion.isoformat() if sol.fecha_creacion else None,
+            "archivo_nombre": sol.archivo_nombre,
             "respuesta": {
                 "id": resp.id,
                 "estado_documento": resp.estado_documento,
                 "observacion": resp.observacion,
                 "usuario_responde": resp.usuario_responde,
                 "fecha_respuesta": resp.fecha_respuesta.isoformat() if resp.fecha_respuesta else None,
+                "archivo_nombre": resp.archivo_nombre,
             } if resp else None,
         })
 
@@ -191,6 +200,7 @@ def buscar(db: Session, q: str):
             "observacion": r.observacion,
             "usuario_responde": r.usuario_responde,
             "fecha_respuesta": r.fecha_respuesta.isoformat() if r.fecha_respuesta else None,
+            "archivo_nombre": r.archivo_nombre,
         })
 
     return {"solicitudes": sol_list, "respuestas": resp_list}
@@ -223,4 +233,54 @@ def responder_solicitud(db: Session, data: RespuestaCreate, usuario):
     )
     crear_notificaciones_respuesta(db, sol)
     _safe_create_task(manager.notify_solicitud_respondida(sol.codigo))
+    return resp
+
+
+def agregar_archivo_solicitud(db: Session, solicitud_id: int, archivo: UploadFile):
+    sol = db.query(Solicitud).filter(Solicitud.id == solicitud_id).first()
+    if not sol:
+        raise ValueError("Solicitud no encontrada")
+    if sol.archivo_nombre:
+        eliminar_archivo(sol.archivo_nombre)
+    nombre = guardar_archivo(archivo)
+    sol.archivo_nombre = nombre
+    db.commit()
+    db.refresh(sol)
+    return sol
+
+
+def agregar_archivo_respuesta(db: Session, respuesta_id: int, archivo: UploadFile):
+    resp = db.query(Respuesta).filter(Respuesta.id == respuesta_id).first()
+    if not resp:
+        raise ValueError("Respuesta no encontrada")
+    if resp.archivo_nombre:
+        eliminar_archivo(resp.archivo_nombre)
+    nombre = guardar_archivo(archivo)
+    resp.archivo_nombre = nombre
+    db.commit()
+    db.refresh(resp)
+    return resp
+
+
+def eliminar_archivo_solicitud(db: Session, solicitud_id: int):
+    sol = db.query(Solicitud).filter(Solicitud.id == solicitud_id).first()
+    if not sol:
+        raise ValueError("Solicitud no encontrada")
+    if not sol.archivo_nombre:
+        raise ValueError("La solicitud no tiene archivo adjunto")
+    eliminar_archivo(sol.archivo_nombre)
+    sol.archivo_nombre = None
+    db.commit()
+    return sol
+
+
+def eliminar_archivo_respuesta(db: Session, respuesta_id: int):
+    resp = db.query(Respuesta).filter(Respuesta.id == respuesta_id).first()
+    if not resp:
+        raise ValueError("Respuesta no encontrada")
+    if not resp.archivo_nombre:
+        raise ValueError("La respuesta no tiene archivo adjunto")
+    eliminar_archivo(resp.archivo_nombre)
+    resp.archivo_nombre = None
+    db.commit()
     return resp

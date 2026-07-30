@@ -326,7 +326,7 @@ export default function CargaDatosPage() {
                     <Box component="form" onSubmit={handleSubmit}>
                         <Grid container spacing={2} sx={{ mb: 3 }}>
                             {tabActual.columnas.map((col) => (
-                                <Grid item xs={12} sm={6} md={4} key={col.nombre}>
+                                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={col.nombre}>
                                     <TextField
                                         fullWidth
                                         size="small"
@@ -426,7 +426,7 @@ export default function CargaDatosPage() {
                 <DialogContent>
                     <Grid container spacing={2} sx={{ mt: 0.5 }}>
                         {colEditables.map((col) => (
-                            <Grid item xs={12} sm={6} key={col.nombre}>
+                            <Grid size={{ xs: 12, sm: 6 }} key={col.nombre}>
                                 <TextField
                                     fullWidth
                                     size="small"

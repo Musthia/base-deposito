@@ -2,7 +2,7 @@ import logging
 import io
 from datetime import datetime
 
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response
 
 logger = logging.getLogger("datcorr")
 
@@ -41,9 +41,10 @@ class ExcelExporter:
             output = io.BytesIO()
             wb.save(output)
             output.seek(0)
+            content = output.getvalue()
 
-            return StreamingResponse(
-                output,
+            return Response(
+                content=content,
                 media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 headers={
                     "Content-Disposition": f'attachment; filename="{nombre_archivo}.xlsx"',

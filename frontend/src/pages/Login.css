@@ -192,18 +192,21 @@
   color: var(--text-muted);
 }
 
-/* Caja de Error */
+/* Caja de Error (destacada en amarillo en la parte superior) */
 .form-error {
-  background-color: rgba(248, 113, 113, 0.1);
-  border-left: 4px solid var(--error-color);
+  background-color: #fff4cc;
+  border: 2px solid #f5c542;
+  border-left: 4px solid #e0a800;
   padding: 12px 16px;
   border-radius: 6px;
-  color: #fca5a5;
+  color: #7a5600;
   font-size: 0.87rem;
+  font-weight: 600;
   margin-bottom: 24px;
   display: flex;
   align-items: center;
   gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Inputs Modernizados (Bordes nítidos y enfoque interactivo suave) */

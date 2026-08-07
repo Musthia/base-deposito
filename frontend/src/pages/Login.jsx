@@ -28,14 +28,13 @@ export default function Login() {
         setLoading(true);
 
         try {
-            const res = await api.post("/auth/login", { usuario, password });
+            const res = await api.post("/auth/login", { usuario, password }, { _authLogin: true });
             setTokens(res.data.token);
             navigate("/dashboard", { replace: true });
-        } catch (err) {
-            const mensaje = err.response?.data?.detail
-                || err.response?.data?.mensaje
-                || "Usuario o contraseña incorrectos.";
+} catch {
+            const mensaje = "El Usuario o la Contraseña no coinciden. Revisarlos e inténtalo de nuevo.";
             setError(mensaje);
+            document.getElementById("usuario-input")?.focus();
         } finally {
             setLoading(false);
         }
@@ -207,6 +206,12 @@ export default function Login() {
                             </div>
                         </div>
 
+                        <div className="form-links">
+                        <Link to="/forgot-password" className="form-link">¿Olvidó su contraseña?</Link>
+                        <span className="form-link-sep">|</span>
+                        <Link to="/registro" className="form-link">Registrarse</Link>
+                    </div>
+
                         <button
                             type="submit"
                             className="login-button"
@@ -231,12 +236,6 @@ export default function Login() {
                             shape="rectangular"
                             disabled={googleLoading}
                         />
-                    </div>
-
-                    <div className="form-links">
-                        <Link to="/forgot-password" className="form-link">¿Olvidó su contraseña?</Link>
-                        <span className="form-link-sep">|</span>
-                        <Link to="/registro" className="form-link">Registrarse</Link>
                     </div>
 
                     <footer className="trust-footer">

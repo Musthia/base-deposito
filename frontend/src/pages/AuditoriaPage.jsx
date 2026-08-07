@@ -29,23 +29,23 @@ const actionColor = (accion) => {
 
 const actionLabel = (accion, tabla) => {
     const map = {
-        CREATE: tabla?.includes("usuarios") ? "Creacion de usuario" : "Creacion de registro",
-        UPDATE: "Edicion de datos",
-        DELETE: "Eliminacion de registro",
-        DELETE_LOGICO: "Desactivacion de usuario",
+        CREATE: tabla?.includes("usuarios") ? "Creación de usuario" : "Creación de registro",
+        UPDATE: "Edición de datos",
+        DELETE: "Eliminación de registro",
+        DELETE_LOGICO: "Desactivación de usuario",
         DELETE_LOGICO_ERROR: "Error al desactivar usuario",
-        LOGIN_SUCCESS: "Inicio de sesion",
-        LOGIN_FAILED: "Error de inicio de sesion",
-        LOGOUT_SUCCESS: "Cierre de sesion",
+        LOGIN_SUCCESS: "Inicio de sesión",
+        LOGIN_FAILED: "Error de inicio de sesión",
+        LOGOUT_SUCCESS: "Cierre de sesión",
         CONSULTA: "Consulta de datos",
-        BUSQUEDA: "Busqueda de datos",
+        BUSQUEDA: "Búsqueda de datos",
         SOLICITUD_REGISTRO: "Solicitud de registro",
         ALTA_USUARIO: "Alta de usuario aprobada",
         RECHAZO_USUARIO: "Rechazo de registro",
         GOOGLE_LOGIN_SUCCESS: "Login con Google",
         GOOGLE_LOGIN_FAILED: "Error login Google",
-        GOOGLE_LINK: "Vinculacion Google",
-        GOOGLE_UNLINK: "Desvinculacion Google",
+        GOOGLE_LINK: "Vinculación Google",
+        GOOGLE_UNLINK: "Desvinculación Google",
     };
     return map[accion] || accion;
 };
@@ -56,7 +56,7 @@ export default function AuditoriaPage() {
     if (!permissions.canViewAuditoria) {
         return (
             <Box sx={{ p: 3, display: "flex", justifyContent: "center", alignItems: "center", minHeight: 200 }}>
-                <Typography color="text.secondary">Sin permisos para acceder a esta seccion</Typography>
+                <Typography color="text.secondary">Sin permisos para acceder a esta sección</Typography>
             </Box>
         );
     }
@@ -97,7 +97,7 @@ export default function AuditoriaPage() {
         { field: "usuario", headerName: "Usuario", width: 120 },
         {
             field: "accion",
-            headerName: "Accion",
+            headerName: "Acción",
             width: 220,
             sortable: false,
             renderCell: (params) => (
@@ -129,8 +129,8 @@ export default function AuditoriaPage() {
                     <button
                         onClick={() => loadData(paginationModel.page, paginationModel.pageSize)}
                         style={{
-                            background: "#2563eb",
-                            color: "#ffffff",
+                            background: "var(--primary)",
+                            color: "var(--text-main)",
                             border: "none",
                             borderRadius: "8px",
                             padding: "12px 24px",

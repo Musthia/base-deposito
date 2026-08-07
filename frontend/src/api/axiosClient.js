@@ -27,7 +27,7 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/usuarios/refresh")) {
+        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes("/usuarios/refresh") && !originalRequest._authLogin) {
             if (isRefreshing) {
                 return new Promise((resolve) => {
                     pendingRequests.push(() => resolve(api(originalRequest)));

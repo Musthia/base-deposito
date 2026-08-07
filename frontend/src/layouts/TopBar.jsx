@@ -10,7 +10,7 @@ import { getUsuariosEnLinea } from "../services/estadisticasService";
 
 const btnBase = {
     background: "transparent",
-    color: "#ffffff",
+    color: "var(--text-main)",
     border: "none",
     padding: "10px 14px",
     cursor: "pointer",
@@ -63,7 +63,7 @@ function TopBar() {
     }, [onlineOpen]);
 
     const datcorrMenu = useMemo(() => [
-        { label: "Panel de Control", path: "/dashboard" },
+        { label: "Centro de Gestión", path: "/dashboard" },
         ...(perms.canViewUsers ? [{ label: "Usuarios", path: "/usuarios" }] : []),
         ...(perms.canViewDatabase ? [{ label: "Consultar Bases", path: "/database" }] : []),
         ...(perms.canViewCargaDatos ? [{ label: "Carga de Datos", path: "/carga-datos" }] : []),
@@ -98,7 +98,7 @@ function TopBar() {
 
     const btnActive = useCallback((path) => ({
         ...btnBase,
-        background: location.pathname === path ? "#1a2245" : "transparent",
+        background: location.pathname === path ? "var(--bg-muted)" : "transparent",
     }), [location.pathname]);
 
     const handleAcercaToggle = useCallback(() => setAcercaOpen((p) => !p), []);
@@ -124,8 +124,8 @@ function TopBar() {
                 left: 0,
                 right: 0,
                 height: 56,
-                background: "#0f1425",
-                color: "#f0f2f5",
+                background: "var(--bg-page)",
+                color: "var(--text-main)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -139,7 +139,7 @@ function TopBar() {
                     display: "none",
                     background: "none",
                     border: "none",
-                    color: "#ffffff",
+                    color: "var(--text-main)",
                     fontSize: 24,
                     cursor: "pointer",
                     padding: "4px 8px",
@@ -188,8 +188,8 @@ function TopBar() {
                             position: "absolute",
                             top: "100%",
                             right: 0,
-                            background: "#1a2040",
-                            border: "1px solid #2a3050",
+                            background: "var(--bg-muted)",
+                            border: "1px solid var(--border)",
                             borderRadius: 4,
                             minWidth: 220,
                             zIndex: 1001,
@@ -205,9 +205,9 @@ function TopBar() {
                                     width: "100%",
                                     textAlign: "left",
                                     padding: "12px 16px",
-                                    background: location.pathname === item.path ? "#1a2245" : "transparent",
+                                    background: location.pathname === item.path ? "var(--bg-muted)" : "transparent",
                                 }}
-                                onMouseEnter={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "#141a2e"; }}
+                                onMouseEnter={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "var(--bg-card)"; }}
                                 onMouseLeave={(e) => { if (location.pathname !== item.path) e.currentTarget.style.background = "transparent"; }}
                             >
                                 {item.label}
@@ -234,7 +234,7 @@ function TopBar() {
                 >
                     <span style={{
                         width: 8, height: 8, borderRadius: "50%",
-                        background: onlineCount > 0 ? "#22c55e" : "#6b7280",
+                        background: onlineCount > 0 ? "var(--success)" : "var(--text-muted)",
                         display: "inline-block", flexShrink: 0,
                     }} />
                     {onlineCount}
@@ -245,8 +245,8 @@ function TopBar() {
                             position: "absolute",
                             top: "100%",
                             right: 0,
-                            background: "#1a2040",
-                            border: "1px solid #2a3050",
+                            background: "var(--bg-muted)",
+                            border: "1px solid var(--border)",
                             borderRadius: 4,
                             minWidth: 200,
                             zIndex: 1001,
@@ -254,11 +254,11 @@ function TopBar() {
                             padding: "8px 0",
                         }}
                     >
-                        <div style={{ padding: "4px 16px 8px", fontSize: 11, color: "#8896b8", borderBottom: "1px solid #2a3050", marginBottom: 4 }}>
+                        <div style={{ padding: "4px 16px 8px", fontSize: 11, color: "var(--text-muted)", borderBottom: "1px solid var(--border)", marginBottom: 4 }}>
                             Usuarios en línea
                         </div>
                         {onlineUsuarios.length === 0 ? (
-                            <div style={{ padding: "8px 16px", fontSize: 13, color: "#8896b8" }}>
+                            <div style={{ padding: "8px 16px", fontSize: 13, color: "var(--text-muted)" }}>
                                 Ninguno
                             </div>
                         ) : (
@@ -283,8 +283,8 @@ function TopBar() {
                                         }}
                                         style={{
                                             background: "transparent",
-                                            border: "1px solid #2563eb",
-                                            color: "#2563eb",
+                                            border: "1px solid var(--primary)",
+                                            color: "var(--primary)",
                                             borderRadius: 4,
                                             padding: "2px 8px",
                                             fontSize: 11,
@@ -296,7 +296,7 @@ function TopBar() {
                                 </div>
                             ))
                         )}
-                        <div style={{ borderTop: "1px solid #2a3050", marginTop: 4, paddingTop: 4 }}>
+                        <div style={{ borderTop: "1px solid var(--border)", marginTop: 4, paddingTop: 4 }}>
                             <button
                                 onClick={() => {
                                     setMsgDestinatario(null);
@@ -312,7 +312,7 @@ function TopBar() {
                                     textAlign: "left",
                                     padding: "8px 16px",
                                     fontSize: 12,
-                                    color: "#2563eb",
+                                    color: "var(--primary)",
                                 }}
                             >
                                 + Mensaje general a todos
@@ -335,7 +335,7 @@ function TopBar() {
                     style={{
                         background: "transparent",
                         border: "none",
-                        color: "#ffffff",
+                        color: "var(--text-main)",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
@@ -354,7 +354,7 @@ function TopBar() {
                             width: 28,
                             height: 28,
                             borderRadius: "50%",
-                            background: "#2563eb",
+                            background: "var(--primary)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -380,7 +380,7 @@ function TopBar() {
                     style={{
                         background: "transparent",
                         border: "1px solid rgba(255,255,255,0.3)",
-                        color: "#dc2626",
+                        color: "var(--danger)",
                         cursor: "pointer",
                         padding: "6px 12px",
                         fontSize: 13,
@@ -389,9 +389,9 @@ function TopBar() {
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.background = "rgba(220,38,38,0.12)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-                    aria-label="Cerrar sesion"
+                    aria-label="Cerrar sesión"
                 >
-                    Cerrar sesion
+                    Cerrar sesión
                 </button>
             </div>
 
@@ -452,8 +452,8 @@ function TopBar() {
                         top: 56,
                         left: 0,
                         right: 0,
-                        background: "#1a2040",
-                        borderTop: "1px solid #2a3050",
+                        background: "var(--bg-muted)",
+                        borderTop: "1px solid var(--border)",
                         display: "flex",
                         flexDirection: "column",
                         zIndex: 999,
@@ -470,7 +470,7 @@ function TopBar() {
                                 textAlign: "left",
                                 width: "100%",
                                 padding: "12px 16px",
-                                background: location.pathname === item.path ? "#1a2245" : "transparent",
+                                background: location.pathname === item.path ? "var(--bg-muted)" : "transparent",
                             }}
                         >
                             {item.label}
@@ -487,13 +487,13 @@ function TopBar() {
                                 padding: "12px 16px",
                                 fontSize: 13,
                                 opacity: 0.8,
-                                background: location.pathname === item.path ? "#1a2245" : "transparent",
+                                background: location.pathname === item.path ? "var(--bg-muted)" : "transparent",
                             }}
                         >
                             {item.label}
                         </button>
                     ))}
-                    <hr style={{ border: "none", borderTop: "1px solid #2a3050", margin: "8px 0" }} />
+                    <hr style={{ border: "none", borderTop: "1px solid var(--border)", margin: "8px 0" }} />
                     <button
                         onClick={() => { navigate("/mi-cuenta"); setMenuOpen(false); }}
                         style={{ ...btnBase, textAlign: "left", width: "100%", padding: "12px 16px" }}

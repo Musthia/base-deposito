@@ -254,7 +254,7 @@ export default function DatabasePage() {
                     sx={{ minWidth: 300 }}
                 />
 
-                <Button variant="contained" onClick={handleBuscar} startIcon={<SearchIcon />} sx={{ backgroundColor: "#2563eb", "&:hover": { backgroundColor: "#1d4ed8" } }}>
+                <Button variant="contained" onClick={handleBuscar} startIcon={<SearchIcon />} sx={{ backgroundColor: "var(--primary)", "&:hover": { backgroundColor: "var(--primaryHover)" } }}>
                     Buscar
                 </Button>
 
@@ -405,13 +405,13 @@ export default function DatabasePage() {
                 onClose={() => setDeleteDialog({ open: false, base: "", idRegistro: null, claveTab: "", row: null })}
                 maxWidth="xs"
             >
-                <DialogTitle>Confirmar eliminacion</DialogTitle>
+                <DialogTitle>Confirmar eliminación</DialogTitle>
                 <DialogContent>
                     <Typography>
                         ¿Eliminar el registro <strong>#{deleteDialog.idRegistro}</strong>?
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Esta accion eliminara el registro de la base <strong>{deleteDialog.base}</strong> y quedara registrado en la auditoria.
+                        Esta acción eliminará el registro de la base <strong>{deleteDialog.base}</strong> y quedará registrado en la auditoría.
                     </Typography>
                 </DialogContent>
                 <DialogActions>

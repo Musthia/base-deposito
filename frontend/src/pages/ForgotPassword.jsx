@@ -46,8 +46,8 @@ export default function ForgotPassword() {
 
                 <section className="login-brand" aria-label="Información institucional">
                     <div className="brand-content">
-                        <div className="brand-logo" aria-hidden="true">D</div>
-                        <h1 className="brand-title">DatCorr</h1>
+                        <img src="/images/login/logo.webp" alt="" className="brand-logo-img" />
+                        
                         <p className="brand-description">
                             Digitalización, archivo y custodia segura de documentos institucionales.
                         </p>

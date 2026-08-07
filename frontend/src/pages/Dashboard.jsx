@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import { usePermissions } from "../auth/usePermissions";
 import { getDashboardStats } from "../services/dashboardService";
-import CircularProgress from "@mui/material/CircularProgress";
+
+import { Card, SectionTitle, KpiCard, TimelineItem, ProgressBar, LoadingState, ErrorState } from "../components/ui";
 
 export default function Dashboard() {
     const navigate = useNavigate();
-    
     const perms = usePermissions();
     const [stats, setStats] = useState(null);
     const [error, setError] = useState(null);
@@ -18,66 +18,51 @@ export default function Dashboard() {
             .catch((err) => setError(err?.message || "Error al cargar el panel"));
     }, []);
 
+    const reload = () => { setError(null); setStats(null); getDashboardStats().then(setStats).catch((err) => setError(err?.message || "Error")); };
+
     if (error) {
-        return (
-            <div style={errorStyles.container}>
-                <div style={errorStyles.card}>
-                    <span style={{ fontSize: 32 }}>⚠</span>
-                    <h2 style={errorStyles.title}>Error al cargar el panel</h2>
-                    <p style={errorStyles.desc}>{error}</p>
-                    <button
-                        onClick={() => { setError(null); setStats(null); getDashboardStats().then(setStats).catch((err) => setError(err?.message || "Error")); }}
-                        style={errorStyles.button}
-                    >Reintentar</button>
-                </div>
-            </div>
-        );
+        return <ErrorState title="Error al cargar el panel" description={error} onRetry={reload} />;
     }
 
     if (!stats) {
-        return (
-            <div style={loadingStyles.container}>
-                <CircularProgress size={32} />
-                <p style={loadingStyles.text}>Cargando panel...</p>
-            </div>
-        );
+        return <LoadingState text="Cargando panel..." />;
     }
 
     return (
-        <div style={dashboardStyles.wrapper}>
-            {/* ── Welcome Card ── */}
-            <div style={welcomeStyles.card}>
-                <div style={welcomeStyles.content}>
-                    <h1 style={welcomeStyles.title}>Panel de control</h1>
-                    <p style={welcomeStyles.desc}>
-                        Gestione y supervise las bases de datos documentales del sistema DatCorr.
-                    </p>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={welcomeStyles.badge}>
-                        <span style={welcomeStyles.badgeText}>v8.1</span>
+        <div style={{ fontFamily: "var(--font-family)", boxSizing: "border-box" }}>
+            {/* ── Welcome / Header de página ── */}
+            <Card style={{ margin: "0 0 var(--space-6)", padding: "var(--space-5) var(--space-6)", borderBottom: "2px solid var(--border)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "var(--space-3)" }}>
+                    <div>
+                        <h1 style={{ margin: 0, fontSize: "var(--text-2xl)", fontWeight: "var(--weight-bold)", color: "var(--text-main)" }}>Centro de Gestión</h1>
+                        <p style={{ margin: "var(--space-1) 0 0 0", fontSize: "var(--text-sm)", color: "var(--text-secondary)" }}>
+                            Gestione y supervise las bases de datos documentales del sistema DatCorr.
+                        </p>
                     </div>
+                    <span style={{ background: "var(--bg-muted)", padding: "var(--space-1) var(--space-2)", borderRadius: "var(--radius-sm)", fontSize: "var(--text-xs)", fontWeight: "var(--weight-semibold)", color: "var(--text-muted)" }}>v8.1</span>
                 </div>
-            </div>
+            </Card>
 
-            {/* ── KPI Metrics ── */}
-            <div style={kpiStyles.row}>
-                <KpiCard
-                    icon="B"
-                    iconBg="#eff6ff"
-                    iconColor="#0284c7"
-                    label="Bases activas"
-                    value={stats.total_bases}
-                    sub="Total de Organismos"
-                    details={stats.bases?.slice(0, 3).map((b) => ({
-                        label: b.nombre.replace(/_/g, " "),
-                        value: b.registros.toLocaleString(),
-                    }))}
-                />
+            {/* ── KPI Row ── */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "var(--space-4)", margin: "0 0 var(--space-6)" }}>
+                {!perms.isConsulta && (
+                    <KpiCard
+                        icon="⚠"
+                        iconColor="var(--danger)"
+                        iconBg="var(--danger-light)"
+                        label="Altas pendientes"
+                        value={stats.altas_pendientes}
+                        sub="Solicitudes de registro"
+                        details={[{ label: "Pendientes", value: stats.altas_pendientes }]}
+                        critical={stats.altas_pendientes > 0}
+                        onClick={() => navigate("/altas-pendientes")}
+                    />
+                )}
+
                 <KpiCard
                     icon="R"
-                    iconBg="#f0fdf4"
-                    iconColor="#16a34a"
+                    iconColor="var(--info)"
+                    iconBg="var(--info-light)"
                     label="Registros totales"
                     value={stats.total_registros.toLocaleString()}
                     sub="Suma de todas las bases"
@@ -87,10 +72,11 @@ export default function Dashboard() {
                         { label: "Bases activas", value: stats.total_bases },
                     ]}
                 />
+
                 <KpiCard
                     icon="U"
-                    iconBg="#faf5ff"
-                    iconColor="#9333ea"
+                    iconColor="var(--warning)"
+                    iconBg="var(--warning-light)"
                     label="Usuarios activos"
                     value={stats.usuarios_activos}
                     sub={`De ${stats.total_usuarios} registrados`}
@@ -100,22 +86,24 @@ export default function Dashboard() {
                         { label: "Inactivos", value: (stats.total_usuarios - stats.usuarios_activos) },
                     ]}
                 />
-                {!perms.isConsulta && <KpiCard
-                    icon="+"
-                    iconBg="#fef2f2"
-                    iconColor="#dc2626"
-                    label="Altas pendientes"
-                    value={stats.altas_pendientes}
-                    sub="Solicitudes de registro"
-                    details={[
-                        { label: "Pendientes", value: stats.altas_pendientes },
-                    ]}
-                    onClick={() => navigate("/altas-pendientes")}
-                />}
+
+                <KpiCard
+                    icon="B"
+                    iconColor="var(--success)"
+                    iconBg="var(--success-light)"
+                    label="Bases activas"
+                    value={stats.total_bases}
+                    sub="Total de Organismos"
+                    details={stats.bases?.slice(0, 3).map((b) => ({
+                        label: b.nombre.replace(/_/g, " "),
+                        value: b.registros.toLocaleString(),
+                    }))}
+                />
+
                 <KpiCard
                     icon="A"
-                    iconBg="#fff7ed"
-                    iconColor="#ea580c"
+                    iconColor="var(--primary)"
+                    iconBg="var(--primary-light)"
                     label="Actividad reciente"
                     value={stats.actividad.length}
                     sub="Últimas acciones"
@@ -126,85 +114,84 @@ export default function Dashboard() {
                 />
             </div>
 
-            {/* ── Bottom: Bases table + Timeline ── */}
-            <div style={bottomStyles.row}>
-                <div style={bottomStyles.left}>
-                    <div style={cardStyles.card}>
-                        <h2 style={sectionTitle}>Registros por base</h2>
-                        <div style={tableStyles.container}>
-                            <table style={tableStyles.table}>
-                                <thead>
-                                    <tr>
-                                        <th style={thStyles}>Base</th>
-                                        <th style={tableStyles.thRight}>Registros</th>
-                                        <th style={tableStyles.thRight}>DATCORR</th>
-                                        <th style={tableStyles.thRight}>VERIFICADO</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {stats.bases.map((b) => (
-                                        <tr key={b.nombre} style={tableStyles.tr}>
-                                            <td style={tdStyles}>{b.nombre.replace(/_/g, " ")}</td>
-                                            <td style={tableStyles.tdValue}>
-                                                {b.registros.toLocaleString()}
-                                            </td>
-                                            <td style={tableStyles.tdDatcorr}>
-                                                {(b.datcorr || 0).toLocaleString()}
-                                            </td>
-                                            <td style={tableStyles.tdVerificado}>
-                                                {(b.verificado || 0).toLocaleString()}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                                <tfoot>
-                                    <tr style={tableStyles.tfootTr}>
-                                        <td style={tableStyles.tfootTdLabel}>TOTAL</td>
-                                        <td style={tableStyles.tfootTdValue}>
-                                            {stats.total_registros.toLocaleString()}
+            {/* ── Bottom: Tabla + Timeline ── */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-6)" }}>
+                <Card style={{ overflow: "hidden" }}>
+                    <SectionTitle
+                        action={<span style={{ color: "var(--primary)", fontWeight: "var(--weight-semibold)", fontSize: "var(--text-xs)" }}>Ver más →</span>}
+                    >
+                        Registros por base
+                    </SectionTitle>
+                    <div style={{ overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", captionSide: "top" }}>
+                            <caption style={{ fontSize: "var(--text-xs)", color: "var(--text-muted)", textAlign: "left", padding: "0 0 var(--space-2)" }}>
+                                Registros por cada base y su progreso de verificación.
+                            </caption>
+                            <thead>
+                                <tr style={{ background: "var(--bg-muted)" }}>
+                                    <th style={thLeft}>Base</th>
+                                    <th style={thRight}>Registros</th>
+                                    <th style={thRight}>DATCORR</th>
+                                    <th style={thRight}>VERIFICADO</th>
+                                    <th style={{ ...thRight, minWidth: 140 }}>% Progreso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {stats.bases.map((b) => (
+                                    <tr key={b.nombre} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+                                        <td style={td}>{b.nombre.replace(/_/g, " ")}</td>
+                                        <td className="num" style={{ ...td, textAlign: "right", fontWeight: "var(--weight-semibold)" }}>
+                                            {b.registros.toLocaleString()}
                                         </td>
-                                        <td style={tableStyles.tfootTdDatcorr}>
-                                            {(stats.total_datcorr || 0).toLocaleString()}
+                                        <td style={{ ...td, textAlign: "right", color: "var(--accent-datcorr)" }}>
+                                            {(b.datcorr || 0).toLocaleString()}
                                         </td>
-                                        <td style={tableStyles.tfootTdVerificado}>
-                                            {(stats.total_verificado || 0).toLocaleString()}
+                                        <td style={{ ...td, textAlign: "right", color: "var(--accent-verificado)" }}>
+                                            {(b.verificado || 0).toLocaleString()}
+                                        </td>
+                                        <td style={{ ...td, background: "var(--success-light)" }}>
+                                            <ProgressBar value={b.verificado || 0} max={b.registros || 1} tone="success" />
                                         </td>
                                     </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                                ))}
+                            </tbody>
+                            <tfoot>
+                                <tr style={{ background: "var(--bg-muted)", borderTop: "2px solid var(--border)" }}>
+                                    <td style={{ ...td, fontWeight: "var(--weight-bold)" }}>TOTAL</td>
+                                    <td style={{ ...td, textAlign: "right", fontWeight: "var(--weight-bold)" }}>{stats.total_registros.toLocaleString()}</td>
+                                    <td className="num" style={{ ...td, textAlign: "right", fontWeight: "var(--weight-bold)", color: "var(--accent-datcorr)" }}>{(stats.total_datcorr || 0).toLocaleString()}</td>
+                                    <td className="num" style={{ ...td, textAlign: "right", fontWeight: "var(--weight-bold)", color: "var(--accent-verificado)" }}>{(stats.total_verificado || 0).toLocaleString()}</td>
+                                    <td style={td}><ProgressBar value={stats.total_verificado || 0} max={stats.total_registros || 1} tone="success" /></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-                </div>
+                </Card>
 
-                {!perms.isConsulta && <div style={bottomStyles.right}>
-                    <div style={cardStyles.card}>
-                        <h2 style={sectionTitle}>Actividad reciente</h2>
-                        <div style={{ marginTop: 8 }}>
+                {!perms.isConsulta && (
+                    <Card>
+                        <SectionTitle
+                            action={<span style={{ color: "var(--primary)", fontWeight: "var(--weight-semibold)", fontSize: "var(--text-xs)" }}>Ver todo →</span>}
+                        >
+                            Actividad reciente
+                        </SectionTitle>
+                        <div>
                             {stats.actividad.length === 0 && (
-                                <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Sin actividad registrada</p>
+                                <p style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>Sin actividad registrada</p>
                             )}
-                            {stats.actividad.map((item, i) => (
-                                <div key={i} style={tlStyles.row}>
-                                    <div style={tlStyles.iconCol}>
-                                        <div style={{
-                                            ...tlStyles.icon,
-                                            background: actionColor(item.accion),
-                                        }}>
-                                            {actionIcon(item.accion)}
-                                        </div>
-                                        {i < stats.actividad.length - 1 && <div style={tlStyles.line} />}
-                                    </div>
-                                    <div style={tlStyles.textCol}>
-                                        <div style={tlStyles.label}>{formatAction(item)}</div>
-                                        <div style={tlStyles.time}>
-                                            {item.usuario} &middot; {formatDate(item.fecha)}
-                                        </div>
-                                    </div>
-                                </div>
+                            {stats.actividad.slice(0, 8).map((item, i) => (
+                                <TimelineItem
+                                    key={i}
+                                    tone={actionTone(item.accion)}
+                                    icon={actionIcon(item.accion)}
+                                    label={formatAction(item)}
+                                    meta={`${item.usuario} · ${formatDate(item.fecha)}`}
+                                    style={{ borderBottom: i < Math.min(stats.actividad.length, 8) - 1 ? "1px solid var(--border-subtle)" : "none" }}
+                                />
                             ))}
                         </div>
-                    </div>
-                </div>}
+                    </Card>
+                )}
             </div>
         </div>
     );
@@ -212,19 +199,19 @@ export default function Dashboard() {
 
 /* ── Helpers ── */
 
-function actionColor(accion) {
+function actionTone(accion) {
     const map = {
-        LOGIN_SUCCESS: "#16a34a",
-        LOGIN_FAILED: "#dc2626",
-        LOGOUT_SUCCESS: "#64748b",
-        LOGOUT_FAILED: "#dc2626",
-        CREATE: "#0284c7",
-        UPDATE: "#ea580c",
-        DELETE_LOGICO: "#dc2626",
-        TOKEN_REUSE_DETECTED: "#9333ea",
-        TOKEN_REVOKED_GLOBAL: "#9333ea",
+        LOGIN_SUCCESS: "success",
+        LOGIN_FAILED: "danger",
+        LOGOUT_SUCCESS: "neutral",
+        LOGOUT_FAILED: "danger",
+        CREATE: "info",
+        UPDATE: "warning",
+        DELETE_LOGICO: "danger",
+        TOKEN_REUSE_DETECTED: "warning",
+        TOKEN_REVOKED_GLOBAL: "warning",
     };
-    return map[accion] || "#64748b";
+    return map[accion] || "neutral";
 }
 
 function actionIcon(accion) {
@@ -241,13 +228,13 @@ function actionIcon(accion) {
 
 function formatAction(item) {
     const labels = {
-        LOGIN_SUCCESS: "Inicio de sesion",
+        LOGIN_SUCCESS: "Inicio de sesión",
         LOGIN_FAILED: "Inicio fallido",
-        LOGOUT_SUCCESS: "Cierre de sesion",
+        LOGOUT_SUCCESS: "Cierre de sesión",
         LOGOUT_FAILED: "Cierre fallido",
-        CREATE: "Creacion",
-        UPDATE: "Actualizacion",
-        DELETE_LOGICO: "Eliminacion logica",
+        CREATE: "Creación",
+        UPDATE: "Actualización",
+        DELETE_LOGICO: "Eliminación lógica",
         TOKEN_REUSE_DETECTED: "Reuso de token detectado",
         TOKEN_REVOKED_GLOBAL: "Token revocado globalmente",
     };
@@ -259,8 +246,7 @@ function formatDate(iso) {
     if (!iso) return "";
     const d = new Date(iso);
     const now = new Date();
-    const diffMs = now - d;
-    const diffMin = Math.floor(diffMs / 60000);
+    const diffMin = Math.floor((now - d) / 60000);
     if (diffMin < 1) return "Ahora";
     if (diffMin < 60) return `Hace ${diffMin} min`;
     const diffHr = Math.floor(diffMin / 60);
@@ -270,205 +256,25 @@ function formatDate(iso) {
     return d.toLocaleDateString("es-AR", { day: "numeric", month: "short" });
 }
 
-/* ── KPI Card ── */
-
-function KpiCard({ icon, iconBg, iconColor, label, value, sub, details, onClick }) {
-    const [showDetails, setShowDetails] = useState(false);
-    const [hovered, setHovered] = useState(false);
-    return (
-        <div
-            style={{
-                ...kpiStyles.card,
-                ...(onClick ? kpiStyles.cardClickable : {}),
-                ...(hovered && onClick ? kpiStyles.cardHovered : {}),
-            }}
-            onMouseEnter={() => { setShowDetails(true); setHovered(true); }}
-            onMouseLeave={() => { setShowDetails(false); setHovered(false); }}
-            onClick={onClick}
-        >
-            <div style={{ ...kpiStyles.iconWrap, background: iconBg }}>
-                <span style={{ fontSize: 16, fontWeight: 700, color: iconColor }}>{icon}</span>
-            </div>
-            <div style={{ flex: 1 }}>
-                <div style={kpiStyles.label}>{label}</div>
-                <div style={kpiStyles.value}>{value}</div>
-                <div style={kpiStyles.sub}>{sub}</div>
-                {showDetails && details && (
-                    <div style={{ marginTop: 8, borderTop: "1px solid var(--border)", paddingTop: 6 }}>
-                        {details.map((d, i) => (
-                            <div key={i} style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                fontSize: 12,
-                                color: "var(--text-muted)",
-                                padding: "2px 0",
-                            }}>
-                                <span>{d.label}</span>
-                                <span style={{ fontWeight: 600 }}>{d.value}</span>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-}
-
-// ── Definición Unificada de Estilos ──
-const dashboardStyles = {
-    wrapper: {
-        fontFamily: "'Open Sans', system-ui, sans-serif",
-        boxSizing: "border-box"
-    }
-};
-
-const welcomeStyles = {
-    card: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "var(--bg-card)",
-        borderRadius: "8px",
-        padding: "20px 24px",
-        marginBottom: "24px",
-    },
-    content: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "4px"
-    },
-    title: {
-        fontSize: "22px",
-        fontWeight: "700",
-        color: "var(--text-main)",
-        margin: 0,
-    },
-    desc: {
-        fontSize: "14px",
-        color: "var(--text-muted)",
-        margin: "4px 0 0 0",
-    },
-    badge: {
-        background: "var(--border)",
-        padding: "4px 10px",
-        borderRadius: "4px",
-    },
-    badgeText: {
-        fontSize: "12px",
-        fontWeight: "600",
-        color: "var(--text-muted)",
-    }
-};
-
-const kpiStyles = {
-    row: {
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-        gap: "16px",
-        marginBottom: "24px"
-    },
-    card: {
-        background: "var(--bg-card)",
-        borderRadius: "8px",
-        padding: "18px 20px",
-        display: "flex",
-        alignItems: "center",
-        gap: "16px",
-        position: "relative",
-        transition: "box-shadow 0.15s, transform 0.15s",
-    },
-    cardClickable: {
-        cursor: "pointer",
-    },
-    cardHovered: {
-        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-        transform: "translateY(-1px)",
-    },
-    iconWrap: {
-        width: "40px",
-        height: "40px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
-        borderRadius: "8px",
-    },
-    label: { fontSize: "13px", color: "var(--text-muted)", fontWeight: "500" },
-    value: { fontSize: "24px", fontWeight: "700", color: "var(--text-main)", lineHeight: 1.2 },
-    sub: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }
-};
-
-const bottomStyles = {
-    row: {
-        display: "flex",
-        flexDirection: "column",
-        gap: "24px",
-    },
-    left: { minWidth: 0 },
-    right: { minWidth: 0 }
-};
-
-const cardStyles = {
-    card: {
-        background: "var(--bg-card)",
-        borderRadius: "8px",
-        padding: "20px 24px",
-    }
-};
-
-const sectionTitle = {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "var(--text-main)",
-    margin: "0 0 16px 0",
-};
-
-const thStyles = {
-    padding: "10px 14px",
-    fontSize: "12px",
-    fontWeight: "600",
+/* ── Estilos de tabla ── */
+const thLeft = {
+    padding: "var(--space-3) var(--space-4)",
+    fontSize: "var(--text-xs)",
+    fontWeight: "var(--weight-semibold)",
     color: "var(--text-muted)",
-    borderBottom: "1px solid var(--border)",
-    textAlign: "left"
+    textAlign: "left",
+    borderBottom: "2px solid var(--border)",
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
 };
-const tdStyles = {
-    padding: "12px 14px",
-    fontSize: "14px",
+const thRight = {
+    ...thLeft,
+    textAlign: "right",
+};
+const td = {
+    padding: "var(--space-3) var(--space-4)",
+    fontSize: "var(--text-base)",
     color: "var(--text-main)",
-    borderBottom: "1px solid var(--border)"
-};
-const tableStyles = {
-    container: { overflowX: "auto" },
-    table: { width: "100%", borderCollapse: "collapse", textAlign: "left" },
-    tr: {},
-    thRight: { ...thStyles, textAlign: "right" },
-    tdValue: { ...tdStyles, textAlign: "right", fontWeight: "600" },
-    tdDatcorr: { ...tdStyles, textAlign: "right", color: "#0284c7", fontWeight: "500" },
-    tdVerificado: { ...tdStyles, textAlign: "right", color: "#16a34a", fontWeight: "500" },
-    tfootTr: { background: "var(--bg-card)" },
-    tfootTdLabel: { ...tdStyles, fontWeight: "700", borderTop: "2px solid var(--border)", borderBottom: "none" },
-    tfootTdValue: { ...tdStyles, fontWeight: "700", textAlign: "right", borderTop: "2px solid var(--border)", borderBottom: "none" },
-    tfootTdDatcorr: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#0284c7", borderTop: "2px solid var(--border)", borderBottom: "none" },
-    tfootTdVerificado: { ...tdStyles, fontWeight: "700", textAlign: "right", color: "#16a34a", borderTop: "2px solid var(--border)", borderBottom: "none" }
-};
-const tlStyles = {
-    row: { display: "flex", gap: "12px" },
-    iconCol: { display: "flex", flexDirection: "column", alignItems: "center" },
-    icon: { width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", color: "#ffffff", fontWeight: "bold", borderRadius: "50%" },
-    line: { width: "1px", background: "var(--border)", flexGrow: 1, margin: "2px 0" },
-    textCol: { paddingBottom: "16px" },
-    label: { fontSize: "13px", fontWeight: "500", color: "var(--text-main)" },
-    time: { fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" },
-};
-const loadingStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-gradient, var(--bg-page))" },
-    text: { marginTop: 12, color: "var(--text-muted)", fontSize: 14 },
-};
-
-const errorStyles = {
-    container: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "var(--bg-gradient, var(--bg-page))", padding: "24px" },
-    card: { background: "var(--bg-card)", borderRadius: "16px", padding: "32px", textAlign: "center", maxWidth: "400px" },
-    title: { fontSize: "18px", fontWeight: "600", color: "var(--text-main)", margin: "16px 0 8px 0" },
-    desc: { fontSize: "14px", color: "var(--text-muted)", margin: "0 0 24px 0" },
-    button: { background: "var(--bg-card)", color: "var(--text-main)", border: "1px solid var(--border)", borderRadius: "8px", padding: "12px 24px", fontSize: "14px", fontWeight: 600, cursor: "pointer" },
+    borderBottom: "1px solid var(--border-subtle)",
+    minWidth: 60,
 };

@@ -15,7 +15,7 @@ export default function Sidebar() {
     const { mode, toggleMode } = useThemeMode();
 
     const datcorrMenu = [
-        { label: "Panel de Control", path: "/dashboard" },
+        { label: "Centro de Gestión", path: "/dashboard" },
         ...(perms.canViewUsers ? [{ label: "Usuarios", path: "/usuarios" }] : []),
         ...(perms.canViewDatabase ? [{ label: "Consultar Bases", path: "/database" }] : []),
         ...(perms.canViewCargaDatos ? [{ label: "Carga de Datos", path: "/carga-datos" }] : []),
@@ -51,7 +51,7 @@ export default function Sidebar() {
         borderRadius: "6px",
         marginBottom: "2px",
         fontSize: 14,
-            background: location.pathname === path ? "#2563eb33" : "transparent",
+            background: location.pathname === path ? "var(--primary-light)" : "transparent",
         transition: "background 0.15s",
     });
 
@@ -63,7 +63,7 @@ export default function Sidebar() {
             justifyContent: "center",
             lineHeight: 1,
             // Opcional: puedes forzar el color aquí si no quieres que herede el del padre
-            color: "#8896b8", 
+            color: "var(--text-muted)", 
         }
     };
 
@@ -71,8 +71,8 @@ export default function Sidebar() {
         <aside style={{
             width: "220px",
             height: "100vh",
-            background: "#0a0e1a",
-            color: "white",
+            background: "var(--bg-page)",
+            color: "var(--text-main)",
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
@@ -95,8 +95,8 @@ export default function Sidebar() {
                 ))}
 
                 {perms.canViewSimco && <>
-                    <div style={{ height: 1, background: "#2a3050", margin: "12px 0" }} />
-                    <h4 style={{ margin: "0 0 10px 0", fontSize: 12, letterSpacing: "1px", color: "#8896b8", textTransform: "uppercase" }}>SiMCo</h4>
+                    <div style={{ height: 1, background: "var(--border)", margin: "12px 0" }} />
+                    <h4 style={{ margin: "0 0 10px 0", fontSize: 12, letterSpacing: "1px", color: "var(--text-muted)", textTransform: "uppercase" }}>SiMCo</h4>
 
                     {simcoMenu.map(item => (
                         <div
@@ -110,7 +110,7 @@ export default function Sidebar() {
                 </>}
 
                 {perms.canViewMensajes && <>
-                    <div style={{ height: 1, background: "#2a3050", margin: "12px 0" }} />
+                    <div style={{ height: 1, background: "var(--border)", margin: "12px 0" }} />
                     <div
                         onClick={() => navigate("/mensajes")}
                         style={activeStyle("/mensajes")}
@@ -123,7 +123,7 @@ export default function Sidebar() {
             <div style={{
                 flexShrink: 0,
                 padding: "0 10px 10px 10px",
-                borderTop: "1px solid #2a3050",
+                borderTop: "1px solid var(--border)",
             }}>
                 <div style={{ padding: "6px 0" }}>
                     {!perms.isConsulta && (
@@ -134,16 +134,16 @@ export default function Sidebar() {
                             cursor: "pointer",
                             borderRadius: "6px",
                             fontSize: 13,
-                            color: "#8896b8",
+                            color: "var(--text-muted)",
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
                             transition: "background 0.15s",
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#141a2e"}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg-card)"}
                         onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
-                        {/* Nuevo ícono basado en SPAN */}
+{/* Nuevo ícono basado en SPAN */}
                         <span style={styles.menuIcon}>ℹ</span>
 
                         Acerca de Datcorr
@@ -156,16 +156,16 @@ export default function Sidebar() {
                             cursor: "pointer",
                             borderRadius: "6px",
                             fontSize: 13,
-                            color: "#8896b8",
+                            color: "var(--text-muted)",
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
                             transition: "background 0.15s",
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = "#141a2e"}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg-card)"}
                         onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
-                        {/* Nuevo ícono basado en SPAN */}
+{/* Nuevo ícono basado en SPAN */}
                         <span style={styles.menuIcon}>ℹ</span>
 
                         Acerca de SiMCo
@@ -173,7 +173,7 @@ export default function Sidebar() {
                 </div>
                 <div style={{
                     padding: "12px",
-                    background: "#1a2040",
+                    background: "var(--bg-muted)",
                     borderRadius: 8,
                     marginTop: 4,
                     marginBottom: 8,
@@ -184,7 +184,7 @@ export default function Sidebar() {
                             width: 36,
                             height: 36,
                             borderRadius: "50%",
-                            background: "#3f51b5",
+                            background: "var(--primary)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -206,7 +206,7 @@ export default function Sidebar() {
                             </div>
                             <div style={{
                                 fontSize: 11,
-                                color: "#94a3b8",
+                                color: "var(--text-muted)",
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
@@ -223,7 +223,7 @@ export default function Sidebar() {
                         padding: "10px 12px",
                         cursor: "pointer",
                         borderRadius: "6px",
-                        color: "#8896b8",
+                        color: "var(--text-muted)",
                         fontSize: 13,
                         display: "flex",
                         alignItems: "center",
@@ -231,7 +231,7 @@ export default function Sidebar() {
                         transition: "background 0.15s",
                         userSelect: "none",
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "#141a2e"}
+                    onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg-card)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                 >
                     <span style={{ fontSize: 16, lineHeight: 1 }}>{mode === "dark" ? "\u2600" : "\u263E"}</span>
@@ -244,12 +244,12 @@ export default function Sidebar() {
                         padding: "10px 12px",
                         cursor: "pointer",
                         borderRadius: "6px",
-                        color: "#ff6b6b",
+                        color: "var(--danger)",
                         fontSize: 14,
                         transition: "background 0.15s",
                     }}
                 >
-                    Cerrar sesion
+                    Cerrar sesión
                 </div>
             </div>
         </aside>

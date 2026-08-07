@@ -10,7 +10,7 @@ class PDFExporter:
 
     FORMATO = "pdf"
 
-    def exportar(self, datos: list[dict], nombre_archivo: str) -> StreamingResponse:
+    def exportar(self, datos: list[dict], nombre_archivo: str) -> Response:
         try:
             from reportlab.lib.pagesizes import A4, landscape
             from reportlab.lib import colors

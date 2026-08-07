@@ -59,7 +59,8 @@ tmp/
 # =========================
 #img/
 aplicaciones/
-llama cccp/
+llama ccp_cpu/
+llama cccp_nvidia_3080/
 
 
 # =========================

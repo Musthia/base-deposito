@@ -11,7 +11,7 @@ class ExcelExporter:
 
     FORMATO = "xlsx"
 
-    def exportar(self, datos: list[dict], nombre_archivo: str) -> StreamingResponse:
+    def exportar(self, datos: list[dict], nombre_archivo: str) -> Response:
         try:
             from openpyxl import Workbook
             from openpyxl.styles import Font, PatternFill

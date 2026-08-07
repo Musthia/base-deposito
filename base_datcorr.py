@@ -152,11 +152,11 @@ class InicioSesion(QMainWindow):
     
         descripcion_nivel = obtener_descripcion_nivel(nivel)
     
-        QMessageBox.information(
+        """ QMessageBox.information(
             self,
             "Inicio de Sesión",
             f"Bienvenido {nombre_usuario}\n\nRol: {rol}\nNivel: {descripcion_nivel}"
-        )
+        ) """
     
         # -----------------------------------
         # ABRIR SISTEMA

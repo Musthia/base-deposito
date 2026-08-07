@@ -12,11 +12,7 @@ export const BORDER_SUB = "#e2e8f0";
 export const LIGHT = {
     bgPage: "#0a0e1a",
     bgCard: "#141a2e",
-<<<<<<< HEAD
     bgMuted: "#0f1425",
-=======
-    bgCard1: "#fefeff",
->>>>>>> a3891d2413e0280edbfa0873595168efe2233e70
     border: "#2a3050",
     borderSubtle: "#1f2740",
     textMain: "#f0f2f5",

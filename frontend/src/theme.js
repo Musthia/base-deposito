@@ -12,11 +12,15 @@ export const BORDER_SUB = "#e2e8f0";
 export const LIGHT = {
     bgPage: "#0a0e1a",
     bgCard: "#141a2e",
+<<<<<<< HEAD
     bgMuted: "#0f1425",
+=======
+    bgCard1: "#fefeff",
+>>>>>>> a3891d2413e0280edbfa0873595168efe2233e70
     border: "#2a3050",
     borderSubtle: "#1f2740",
     textMain: "#f0f2f5",
-    textMain1: "#e4e4ec",
+    textMain1: "#000005",
     textMuted: "#8896b8",
     textSecondary: "#b7c0d9",
     primary: "#2563eb",
@@ -190,10 +194,10 @@ function buildTheme(colors) {
                     root: {
                         color: colors.textMain,
                         "&:hover": {
-                            backgroundColor: isDark ? "rgba(96, 165, 250, 0.12)" : "rgba(37, 99, 235, 0.08)",
+                            backgroundColor: isDark ? "waith" : "rgba(243, 236, 236, 0.08)",
                         },
                         "&.Mui-selected": {
-                            backgroundColor: isDark ? "rgba(96, 165, 250, 0.22)" : "rgba(37, 99, 235, 0.15)",
+                            backgroundColor: isDark ? "rgba(248, 250, 252, 0.22)" : "rgba(245, 246, 248, 0.15)",
                         },
                     },
                 },

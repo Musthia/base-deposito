@@ -3,11 +3,15 @@ import {
     Box, Typography, Button, Dialog, DialogTitle, DialogContent,
     DialogActions, TextField, MenuItem, Paper,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    CircularProgress, Snackbar, Alert,
+    CircularProgress, Snackbar, Alert, Tooltip, IconButton,
 } from "@mui/material";
 import ReplyIcon from "@mui/icons-material/Reply";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DownloadIcon from "@mui/icons-material/Download";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { usePermissions } from "../../auth/usePermissions";
-import { listarPendientes, responderSolicitud } from "../../services/simco/respuestasService";
+import { listarPendientes, responderSolicitud, subirArchivoRespuesta, eliminarArchivoRespuesta, getArchivoUrlRespuesta } from "../../services/simco/respuestasService";
 import { useThemeMode } from "../../context/ThemeModeContext";
 
 const ESTADOS_DOCUMENTO = [
@@ -16,6 +20,37 @@ const ESTADOS_DOCUMENTO = [
     { value: "retirado", label: "Retirado" },
     { value: "no_localizado", label: "No localizado" },
 ];
+
+const AttachmentDisplay = ({ archivoNombre, url, onDownload, onDelete, showDelete }) => {
+    const { colors } = useThemeMode();
+    if (!archivoNombre) return null;
+    const nombreOriginal = archivoNombre.includes("::") ? archivoNombre.split("::")[1] : archivoNombre;
+    return (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.5, p: 0.5, bgcolor: "var(--bg-page)", borderRadius: 1 }}>
+            <AttachFileIcon sx={{ color: colors.primary, fontSize: 16 }} />
+            <Typography variant="caption" sx={{ color: colors.textMain, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {nombreOriginal}
+            </Typography>
+            <Tooltip title="Descargar">
+                <IconButton size="small" onClick={onDownload} sx={{ color: colors.primary }}>
+                    <DownloadIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Abrir">
+                <IconButton size="small" component="a" href={url} target="_blank" rel="noopener" sx={{ color: colors.textMuted }}>
+                    <OpenInNewIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+            {showDelete && (
+                <Tooltip title="Eliminar">
+                    <IconButton size="small" onClick={onDelete} sx={{ color: "#ef4444" }}>
+                        <DeleteIcon fontSize="small" />
+                    </IconButton>
+                </Tooltip>
+            )}
+        </Box>
+    );
+};
 
 export default function RespuestasTab({ highlightId: propHighlightId }) {
     const { colors } = useThemeMode();
@@ -26,6 +61,7 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
     const [openResponder, setOpenResponder] = useState(false);
     const [selected, setSelected] = useState(null);
     const [form, setForm] = useState({ estado_documento: "", observacion: "" });
+    const [archivo, setArchivo] = useState(null);
     const [snack, setSnack] = useState({ open: false, msg: "", severity: "info" });
     const [sending, setSending] = useState(false);
 
@@ -63,6 +99,7 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
     const abrirResponder = (sol) => {
         setSelected(sol);
         setForm({ estado_documento: "", observacion: "" });
+        setArchivo(null);
         setOpenResponder(true);
     };
 
@@ -70,11 +107,14 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
         if (!form.estado_documento) return;
         try {
             setSending(true);
-            await responderSolicitud({
+            const result = await responderSolicitud({
                 solicitud_id: selected.id,
                 estado_documento: form.estado_documento,
                 observacion: form.observacion,
             });
+            if (archivo && result.respuesta) {
+                await subirArchivoRespuesta(result.respuesta.id, archivo);
+            }
             setSnack({ open: true, msg: "Respuesta registrada correctamente", severity: "success" });
             cargar();
         } catch {
@@ -82,6 +122,15 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
         } finally {
             setOpenResponder(false);
             setSending(false);
+        }
+    };
+
+    const handleEliminarArchivo = async (respuestaId) => {
+        try {
+            await eliminarArchivoRespuesta(respuestaId);
+            setSnack({ open: true, msg: "Archivo eliminado", severity: "success" });
+        } catch {
+            setSnack({ open: true, msg: "Error al eliminar archivo", severity: "error" });
         }
     };
 
@@ -193,6 +242,15 @@ export default function RespuestasTab({ highlightId: propHighlightId }) {
                             rows={4}
                             fullWidth
                         />
+                        <Button variant="outlined" component="label" startIcon={<AttachFileIcon />} sx={{ alignSelf: "flex-start" }}>
+                            {archivo ? archivo.name : "Adjuntar archivo"}
+                            <input type="file" hidden onChange={(e) => setArchivo(e.target.files[0] || null)} />
+                        </Button>
+                        {archivo && (
+                            <Typography variant="caption" sx={{ color: colors.textMuted }}>
+                                {archivo.name} ({(archivo.size / 1024).toFixed(1)} KB)
+                            </Typography>
+                        )}
                     </Box>
                 </DialogContent>
                 <DialogActions>

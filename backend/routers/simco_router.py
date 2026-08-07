@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from backend.database.conexion import get_db
@@ -12,8 +13,13 @@ from backend.services.simco_service import (
     responder_solicitud,
     dashboard_hoy,
     buscar,
+    agregar_archivo_solicitud,
+    agregar_archivo_respuesta,
+    eliminar_archivo_solicitud,
+    eliminar_archivo_respuesta,
 )
 from backend.services.auditoria_service import registrar_auditoria
+from backend.services.archivo_helper import obtener_ruta_archivo, extraer_nombre_original
 
 router = APIRouter(
     prefix="/api/simco",
@@ -128,5 +134,109 @@ def api_responder_solicitud(
                 "fecha_respuesta": resp.fecha_respuesta.isoformat() if resp.fecha_respuesta else None,
             },
         }
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@router.post("/solicitudes/{solicitud_id}/archivo")
+def api_subir_archivo_solicitud(
+    solicitud_id: int,
+    archivo: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    try:
+        sol = agregar_archivo_solicitud(db, solicitud_id, archivo)
+        registrar_auditoria(
+            db=db, usuario=usuario.usuario, accion="SUBIR_ARCHIVO",
+            tabla="simco.solicitudes", registro_id=solicitud_id,
+            detalle="Subió archivo a solicitud {}".format(sol.codigo),
+        )
+        return {"mensaje": "Archivo subido", "archivo_nombre": sol.archivo_nombre}
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@router.get("/solicitudes/{solicitud_id}/archivo")
+def api_descargar_archivo_solicitud(
+    solicitud_id: int,
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    from database.modelos_simco import Solicitud
+    sol = db.query(Solicitud).filter(Solicitud.id == solicitud_id).first()
+    if not sol or not sol.archivo_nombre:
+        raise HTTPException(404, "Archivo no encontrado")
+    ruta = obtener_ruta_archivo(sol.archivo_nombre)
+    nombre_original = extraer_nombre_original(sol.archivo_nombre)
+    return FileResponse(ruta, filename=nombre_original)
+
+
+@router.delete("/solicitudes/{solicitud_id}/archivo")
+def api_eliminar_archivo_solicitud(
+    solicitud_id: int,
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    try:
+        eliminar_archivo_solicitud(db, solicitud_id)
+        registrar_auditoria(
+            db=db, usuario=usuario.usuario, accion="ELIMINAR_ARCHIVO",
+            tabla="simco.solicitudes", registro_id=solicitud_id,
+            detalle="Eliminó archivo de solicitud",
+        )
+        return {"mensaje": "Archivo eliminado"}
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@router.post("/respuestas/{respuesta_id}/archivo")
+def api_subir_archivo_respuesta(
+    respuesta_id: int,
+    archivo: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    try:
+        resp = agregar_archivo_respuesta(db, respuesta_id, archivo)
+        registrar_auditoria(
+            db=db, usuario=usuario.usuario, accion="SUBIR_ARCHIVO",
+            tabla="simco.respuestas", registro_id=respuesta_id,
+            detalle="Subió archivo a respuesta",
+        )
+        return {"mensaje": "Archivo subido", "archivo_nombre": resp.archivo_nombre}
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@router.get("/respuestas/{respuesta_id}/archivo")
+def api_descargar_archivo_respuesta(
+    respuesta_id: int,
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    from database.modelos_simco import Respuesta
+    resp = db.query(Respuesta).filter(Respuesta.id == respuesta_id).first()
+    if not resp or not resp.archivo_nombre:
+        raise HTTPException(404, "Archivo no encontrado")
+    ruta = obtener_ruta_archivo(resp.archivo_nombre)
+    nombre_original = extraer_nombre_original(resp.archivo_nombre)
+    return FileResponse(ruta, filename=nombre_original)
+
+
+@router.delete("/respuestas/{respuesta_id}/archivo")
+def api_eliminar_archivo_respuesta(
+    respuesta_id: int,
+    db: Session = Depends(get_db),
+    usuario=Depends(obtener_usuario_actual),
+):
+    try:
+        eliminar_archivo_respuesta(db, respuesta_id)
+        registrar_auditoria(
+            db=db, usuario=usuario.usuario, accion="ELIMINAR_ARCHIVO",
+            tabla="simco.respuestas", registro_id=respuesta_id,
+            detalle="Eliminó archivo de respuesta",
+        )
+        return {"mensaje": "Archivo eliminado"}
     except ValueError as e:
         raise HTTPException(400, str(e))

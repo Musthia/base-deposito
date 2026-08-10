@@ -418,7 +418,10 @@ if __name__ == "__main__":
 
     from PySide6.QtWidgets import QApplication
 
+    from ui.styles import style_global_dark
+
     app = QApplication(sys.argv)
+    app.setStyleSheet(style_global_dark())
 
     ventana = VentanaUsuarios()
 

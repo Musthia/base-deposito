@@ -20,7 +20,35 @@
    <string>INICIO DE SESION</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(0, 89, 134);</string>
+   <string notr="true">background-color: #1e1e1e;
+QLabel {
+    color: #e0e0e0;
+}
+QLineEdit {
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 4px;
+    selection-background-color: #3daee9;
+}
+QLineEdit:focus {
+    border: 1px solid #3daee9;
+}
+QPushButton {
+    background-color: #3a6df0;
+    color: #ffffff;
+    border: 1px solid #1a252f;
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-weight: bold;
+}
+QPushButton:hover {
+    background-color: #4d7bff;
+}
+QPushButton:pressed {
+    background-color: #2f58cc;
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -259,7 +287,8 @@
     </property>
     <property name="styleSheet">
      <string notr="true">
-background-color: rgb(0, 127, 190);</string>
+background-color: #3a6df0;
+color: #ffffff;</string>
     </property>
     <property name="text">
      <string>Iniciar Sesión: D A T C O R R </string>
@@ -279,7 +308,7 @@ background-color: rgb(0, 127, 190);</string>
     </property>
     <property name="font">
      <font>
-      <familyset>Segoe UI</familyset>
+      <family>Segoe UI</family>
       <pointsize>9</pointsize>
       <italic>true</italic>
      </font>
@@ -683,7 +712,8 @@ background-color: rgb(0, 127, 190);</string>
      <enum>Qt::FocusPolicy::TabFocus</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+     <string notr="true">background-color: #2b2b2b;
+color: #e0e0e0;</string>
     </property>
     <property name="text">
      <string/>
@@ -1394,7 +1424,8 @@ background-color: rgb(0, 127, 190);</string>
      <enum>Qt::FocusPolicy::StrongFocus</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+     <string notr="true">background-color: #2b2b2b;
+color: #e0e0e0;</string>
     </property>
    </widget>
   </widget>

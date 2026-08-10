@@ -60,9 +60,11 @@ from controller.selector_bases import SelectorBasesDialog
 from controller.cargador_plantillas import cargar_plantilla
 
 from ui.styles import (
+    style_global_dark,
     style_dialog_dark,
     style_pushbutton_dark,
-    style_combobox_dark,
+    style_treeview_dark,
+    style_header_dark,
 )
 
 
@@ -194,12 +196,12 @@ class VentanaPrincipal(QMainWindow):
         )
 
         self.colores_columnas = {
-            "n_lote": QColor(180, 0, 255, 140),
-            #"cuit": QColor(255, 200, 200, 140),
-            "hh.cc": QColor(200, 25, 200, 140),
-            "expediente": QColor(200, 25, 200, 140),
-            "documento": QColor(0, 230, 150, 140),
-            "denominacion": QColor(0, 20, 255, 140),
+            "n_lote": QColor(180, 0, 255, 180),
+            #"cuit": QColor(255, 200, 200, 160),
+            "hh.cc": QColor(200, 25, 200, 170),
+            "expediente": QColor(200, 25, 200, 170),
+            "documento": QColor(0, 230, 150, 170),
+            "denominacion": QColor(80, 140, 255, 190),
         }
 
         self.pestanas_consulta = {
@@ -626,7 +628,6 @@ class VentanaPrincipal(QMainWindow):
 
         self.ui.combo_bases.blockSignals(True)
         self.ui.combo_bases.clear()
-        self.ui.combo_bases.setStyleSheet(style_combobox_dark())
 
         data = SessionManager.get_db_client().listar_bases()
         bases = [b["nombre"] for b in data.get("bases", [])] if data.get("success") else []
@@ -754,10 +755,10 @@ class VentanaPrincipal(QMainWindow):
             contenedor = QWidget()
     
             layout = QVBoxLayout(contenedor)
-    
+
             contenedor.setStyleSheet("""
                 QWidget {
-                    background-color: #80ccff;
+                    background-color: #252526;
                 }
             """)
     
@@ -797,23 +798,7 @@ class VentanaPrincipal(QMainWindow):
     
             header.setSortIndicatorShown(True)
     
-            tree.setStyleSheet("""
-            QHeaderView::section {
-                background-color: #cfcfcf;
-                color: #000020;
-                padding: 4px;
-                border: 1px solid #d7d7d7;
-                font-weight: bold;
-            }
-    
-            QHeaderView::section:hover {
-                background-color: #debef1;
-            }
-    
-            QHeaderView::section:checked {
-                background-color: #aedfff;
-            }
-            """)
+            tree.setStyleSheet(style_treeview_dark() + style_header_dark())
     
             # -----------------------------------
             # DELEGATE (SE CREA UNA SOLA VEZ)
@@ -1178,7 +1163,7 @@ class ResaltadoCoincidenciaDelegate(QStyledItemDelegate):
             # 🔹 color según nombre
             color_resaltado = self.colores.get(
                 nombre_col,
-                QColor(255, 230, 150, 140)  # color por defecto
+                QColor(255, 230, 150, 170)  # color por defecto sobre fondo oscuro
             )
 
             # Fondo normal / selección
@@ -1223,6 +1208,7 @@ class ResaltadoCoincidenciaDelegate(QStyledItemDelegate):
 # ----------------------------
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setStyleSheet(style_global_dark())
     ventana = VentanaPrincipal()
     ventana.show()
     sys.exit(app.exec())

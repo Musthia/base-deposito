@@ -5,6 +5,7 @@ from PySide6.QtWidgets import (
     QComboBox, QPushButton, QMessageBox
 )
 
+from ui.styles import style_global_dark
 from ui.styles import style_combobox_dark
 from ui.styles import style_pushbutton_dark
 
@@ -19,6 +20,7 @@ class SelectorBasesDialog(QDialog):
 
         self.setWindowTitle("Seleccionar base de datos")
         self.setMinimumWidth(300)
+        self.setStyleSheet(style_global_dark())
 
         self.layout = QVBoxLayout(self)
 

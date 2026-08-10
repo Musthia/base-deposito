@@ -23,6 +23,30 @@ class Ui_EditarUsuario(object):
         if not EditarUsuario.objectName():
             EditarUsuario.setObjectName(u"EditarUsuario")
         EditarUsuario.resize(389, 335)
+        EditarUsuario.setStyleSheet(u"QDialog {\n"
+"    background-color: #1e1e1e;\n"
+"}\n"
+"QLabel {\n"
+"    color: #e0e0e0;\n"
+"}\n"
+"QListView {\n"
+"    background-color: #2b2b2b;\n"
+"    color: #e0e0e0;\n"
+"    border: 1px solid #555555;\n"
+"}\n"
+"QPushButton {\n"
+"    background-color: #3a6df0;\n"
+"    color: #ffffff;\n"
+"    border: 1px solid #1a252f;\n"
+"    border-radius: 4px;\n"
+"    padding: 6px 12px;\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #4d7bff;\n"
+"}\n"
+"QPushButton:pressed {\n"
+"    background-color: #2f58cc;\n"
+"}")
         self.gridLayout = QGridLayout(EditarUsuario)
         self.gridLayout.setObjectName(u"gridLayout")
         self.listView_permisos_disponibles = QListView(EditarUsuario)
@@ -32,14 +56,18 @@ class Ui_EditarUsuario(object):
 
         self.pushButton_guardar = QPushButton(EditarUsuario)
         self.pushButton_guardar.setObjectName(u"pushButton_guardar")
-        self.pushButton_guardar.setStyleSheet(u"background-color: rgb(0, 170, 0);\n"
+        self.pushButton_guardar.setStyleSheet(u"background-color: #2e7d32;\n"
+"color: #ffffff;\n"
 "font: 900 9pt \"Segoe UI\";")
 
         self.gridLayout.addWidget(self.pushButton_guardar, 2, 2, 1, 1)
 
         self.pushButton_asignar = QPushButton(EditarUsuario)
         self.pushButton_asignar.setObjectName(u"pushButton_asignar")
-        self.pushButton_asignar.setStyleSheet(u"alternate-background-color: rgb(0, 170, 0);")
+        self.pushButton_asignar.setStyleSheet(u"background-color: #2e7d32;\n"
+"color: #ffffff;\n"
+"border: 1px solid #1a252f;\n"
+"border-radius: 4px;")
 
         self.gridLayout.addWidget(self.pushButton_asignar, 2, 0, 1, 1)
 
@@ -53,13 +81,17 @@ class Ui_EditarUsuario(object):
         self.pushButton_guardar_2.setObjectName(u"pushButton_guardar_2")
         self.pushButton_guardar_2.setStyleSheet(u"\n"
 "font: 700 11pt \"Arial\";\n"
-"background-color: rgb(252, 73, 2);")
+"background-color: #c94f42;\n"
+"color: #ffffff;")
 
         self.gridLayout.addWidget(self.pushButton_guardar_2, 2, 3, 1, 1)
 
         self.pushButton_quitar = QPushButton(EditarUsuario)
         self.pushButton_quitar.setObjectName(u"pushButton_quitar")
-        self.pushButton_quitar.setStyleSheet(u"alternate-background-color: rgb(170, 170, 0);")
+        self.pushButton_quitar.setStyleSheet(u"background-color: #c9a227;\n"
+"color: #ffffff;\n"
+"border: 1px solid #1a252f;\n"
+"border-radius: 4px;")
 
         self.gridLayout.addWidget(self.pushButton_quitar, 2, 1, 1, 1)
 

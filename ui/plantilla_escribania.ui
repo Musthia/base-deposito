@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(246, 255, 255);</string>
+   <string notr="true">background-color: #1e1e1e;</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="12" column="1">
@@ -239,17 +239,17 @@
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -832,17 +832,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -1074,17 +1074,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -1316,17 +1316,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -2234,17 +2234,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -2655,17 +2655,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -3069,17 +3069,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -3502,17 +3502,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>
@@ -3926,17 +3926,17 @@ background-color: transparent;
      </property>
      <property name="styleSheet">
       <string notr="true">QLineEdit {
-    background-color: #cfd8dc;          /* gris azulado claro */
-    border: 2px solid #455a64;          /* azul petróleo */
+    background-color: #2b2b2b;
+    border: 2px solid #555555;
   
     padding: 4px 10px;
-    color:  #000012;
+    color:  #e0e0e0;
     font-size: 13px;
 /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
    
 }
 </string>

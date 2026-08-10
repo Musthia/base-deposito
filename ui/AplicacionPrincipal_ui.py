@@ -55,7 +55,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowIcon(icon)
         MainWindow.setWindowOpacity(99.000000000000000)
         MainWindow.setStyleSheet(u"\n"
-"background-color: rgb(226, 255, 244);")
+"background-color: #1e1e1e;")
         self.menu_ayuda = QAction(MainWindow)
         self.menu_ayuda.setObjectName(u"menu_ayuda")
         icon1 = QIcon()
@@ -136,7 +136,7 @@ class Ui_MainWindow(object):
         self.mi_data_cons.setStyleSheet(u"QLabel[subtitulo=\"true\"] {\n"
 "background-color: transparent;\n"
 "  \n"
-"    border-bottom: 1px solid #b0bec5;\n"
+"    border-bottom: 1px solid #3a3a3a;\n"
 "    padding-bottom: 2px;\n"
 "}\n"
 "")
@@ -167,8 +167,8 @@ class Ui_MainWindow(object):
         font2.setBold(True)
         self.tabwidget_resultados_consulta.setFont(font2)
         self.tabwidget_resultados_consulta.setStyleSheet(u"QTabBar::tab {\n"
-"    background-color:#dfe6cf;\n"
-"    color: black;\n"
+"    background-color:#252526;\n"
+"    color: #e0e0e0;\n"
 "    font-weight: bold;\n"
 "    padding: 9px 14px;\n"
 "    margin-top: 2px;\n"
@@ -179,12 +179,12 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QTabBar::tab:selected {\n"
-"    background-color:#605b78;\n"
-"    color: white;\n"
+"    background-color:#333333;\n"
+"    color: #ffffff;\n"
 "    margin-top: 0px;\n"
 "    border-bottom: 2px solid #34495e;\n"
 "}\n"
-"background-color: rgb(182, 182, 182);\n"
+"background-color: #1e1e1e;\n"
 "")
         self.tabwidget_resultados_consulta.setTabPosition(QTabWidget.TabPosition.North)
         self.tabwidget_resultados_consulta.setTabShape(QTabWidget.TabShape.Triangular)
@@ -250,23 +250,23 @@ class Ui_MainWindow(object):
         self.entry_consultar.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.entry_consultar.setAutoFillBackground(False)
         self.entry_consultar.setStyleSheet(u"QLineEdit {\n"
-"    background-color: #cfd8dc;\n"
-"    border: 1px solid #455a64;\n"
+"    background-color: #2b2b2b;\n"
+"    border: 1px solid #555555;\n"
 "\n"
 "\n"
-"    color: #1a252f;\n"
+"    color: #e0e0e0;\n"
 "\n"
 "    /* relieve simulado */\n"
-"    border-top-color: #a7b1b7;   /* borde superior m\u00e1s claro */\n"
-"    border-left-color: #a7b1b7;  /* borde izquierdo m\u00e1s claro */\n"
-"    border-right-color: #2e3d45; /* borde derecho m\u00e1s oscuro */\n"
-"    border-bottom-color: #2e3d45;\n"
+"    border-top-color: #777777;\n"
+"    border-left-color: #777777;\n"
+"    border-right-color: #3a3a3a;\n"
+"    border-bottom-color: #3a3a3a;\n"
 "}\n"
 "\n"
 "QLineEdit:focus {\n"
-"    background-color: #b0bec5;\n"
-"    border: 2px solid #2e4053;\n"
-"    color: #0f1419;\n"
+"    background-color: #303030;\n"
+"    border: 2px solid #3daee9;\n"
+"    color: #ffffff;\n"
 "    outline: none;\n"
 "}")
         self.entry_consultar.setInputMethodHints(Qt.InputMethodHint.ImhNone)
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.frame.setObjectName(u"frame")
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
-        self.frame.setStyleSheet(u"background-color: rgb(255, 170, 127);")
+        self.frame.setStyleSheet(u"background-color: #5a3a34;")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout = QGridLayout(self.frame)
@@ -308,8 +308,8 @@ class Ui_MainWindow(object):
         self.pushButton_consulta_bases.setObjectName(u"pushButton_consulta_bases")
         self.pushButton_consulta_bases.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.pushButton_consulta_bases.setStyleSheet(u"QPushButton {\n"
-"    background-color:#9b759e;\n"
-"    color: #ecf0f1;\n"
+"    background-color: #3a6df0;\n"
+"    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
 "    padding: 6px 12px;\n"
@@ -317,16 +317,16 @@ class Ui_MainWindow(object):
 "    font-size: 11px;\n"
 "}\n"
 "QPushButton:hover {\n"
-"    background-color: #948d76;     /* tono m\u00e1s claro al pasar el mouse */\n"
+"    background-color: #4d7bff;\n"
 "}\n"
 "QPushButton:pressed {\n"
-"    background-color: #bab9b5;     /* m\u00e1s oscuro al presionar */\n"
+"    background-color: #2f58cc;\n"
 "    border: 2px solid #1a252f;\n"
 "}\n"
 "QPushButton:disabled {\n"
-"    background-color: #a7b0b5;\n"
-"    color: #dfe4e8;\n"
-"    border: 1px solid #95a5a6;\n"
+"    background-color: #666666;\n"
+"    color: #b0b0b0;\n"
+"    border: 1px solid #555555;\n"
 "}")
 
         self.gridLayout.addWidget(self.pushButton_consulta_bases, 0, 0, 1, 1)
@@ -335,8 +335,8 @@ class Ui_MainWindow(object):
         self.pushButton_carga_datos.setObjectName(u"pushButton_carga_datos")
         self.pushButton_carga_datos.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.pushButton_carga_datos.setStyleSheet(u"QPushButton {\n"
-"    background-color: #455a50;\n"
-"    color: #ecf0f1;\n"
+"    background-color: #3a6df0;\n"
+"    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
 "    padding: 6px 12px;\n"
@@ -344,16 +344,16 @@ class Ui_MainWindow(object):
 "    font-size: 11px;\n"
 "}\n"
 "QPushButton:hover {\n"
-"    background-color: #546e7a;     /* tono m\u00e1s claro al pasar el mouse */\n"
+"    background-color: #4d7bff;\n"
 "}\n"
 "QPushButton:pressed {\n"
-"    background-color: #2e4053;     /* m\u00e1s oscuro al presionar */\n"
+"    background-color: #2f58cc;\n"
 "    border: 2px solid #1a252f;\n"
 "}\n"
 "QPushButton:disabled {\n"
-"    background-color: #a7b0b5;\n"
-"    color: #dfe4e8;\n"
-"    border: 1px solid #95a5a6;\n"
+"    background-color: #666666;\n"
+"    color: #b0b0b0;\n"
+"    border: 1px solid #555555;\n"
 "}")
 
         self.gridLayout.addWidget(self.pushButton_carga_datos, 2, 0, 1, 1)
@@ -362,8 +362,8 @@ class Ui_MainWindow(object):
         self.boton_cerrar_sesion.setObjectName(u"boton_cerrar_sesion")
         self.boton_cerrar_sesion.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.boton_cerrar_sesion.setStyleSheet(u"QPushButton {\n"
-"    background-color: #455a50;\n"
-"    color: #ecf0f1;\n"
+"    background-color: #3a6df0;\n"
+"    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
 "    padding: 6px 12px;\n"
@@ -371,16 +371,16 @@ class Ui_MainWindow(object):
 "    font-size: 11px;\n"
 "}\n"
 "QPushButton:hover {\n"
-"    background-color: #546e7a;     /* tono m\u00e1s claro al pasar el mouse */\n"
+"    background-color: #4d7bff;\n"
 "}\n"
 "QPushButton:pressed {\n"
-"    background-color: #2e4053;     /* m\u00e1s oscuro al presionar */\n"
+"    background-color: #2f58cc;\n"
 "    border: 2px solid #1a252f;\n"
 "}\n"
 "QPushButton:disabled {\n"
-"    background-color: #a7b0b5;\n"
-"    color: #dfe4e8;\n"
-"    border: 1px solid #95a5a6;\n"
+"    background-color: #666666;\n"
+"    color: #b0b0b0;\n"
+"    border: 1px solid #555555;\n"
 "}")
 
         self.gridLayout.addWidget(self.boton_cerrar_sesion, 0, 1, 1, 1)
@@ -400,8 +400,8 @@ class Ui_MainWindow(object):
         self.boton_adm_usuar.setObjectName(u"boton_adm_usuar")
         self.boton_adm_usuar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.boton_adm_usuar.setStyleSheet(u"QPushButton {\n"
-"    background-color: #455a50;\n"
-"    color: #ecf0f1;\n"
+"    background-color: #3a6df0;\n"
+"    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
 "    padding: 6px 12px;\n"
@@ -409,16 +409,16 @@ class Ui_MainWindow(object):
 "    font-size: 11px;\n"
 "}\n"
 "QPushButton:hover {\n"
-"    background-color: #546e7a;     /* tono m\u00e1s claro al pasar el mouse */\n"
+"    background-color: #4d7bff;\n"
 "}\n"
 "QPushButton:pressed {\n"
-"    background-color: #2e4053;     /* m\u00e1s oscuro al presionar */\n"
+"    background-color: #2f58cc;\n"
 "    border: 2px solid #1a252f;\n"
 "}\n"
 "QPushButton:disabled {\n"
-"    background-color: #a7b0b5;\n"
-"    color: #dfe4e8;\n"
-"    border: 1px solid #95a5a6;\n"
+"    background-color: #666666;\n"
+"    color: #b0b0b0;\n"
+"    border: 1px solid #555555;\n"
 "}")
 
         self.gridLayout.addWidget(self.boton_adm_usuar, 2, 1, 1, 1)

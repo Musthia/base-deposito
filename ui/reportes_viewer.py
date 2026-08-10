@@ -9,6 +9,8 @@ from PySide6.QtGui import QIcon
 
 from core.session_manager import SessionManager
 
+from ui.styles import style_global_dark
+
 
 class ReportesViewer(QDialog):
 
@@ -18,6 +20,7 @@ class ReportesViewer(QDialog):
         self.setWindowTitle("Reportes")
         self.setWindowIcon(QIcon("img/datcorr.ico"))
         self.resize(1000, 700)
+        self.setStyleSheet(style_global_dark())
 
         self._consultas = []
         self._consulta_actual = None
@@ -38,7 +41,7 @@ class ReportesViewer(QDialog):
             ("alertas_pendientes", "Alertas Pendientes"),
         ]):
             lbl = QLabel("--")
-            lbl.setStyleSheet("font-size: 18px; font-weight: bold; color: #1976d2;")
+            lbl.setStyleSheet("font-size: 18px; font-weight: bold; color: #8ab4f8;")
             self._kpi_labels[key] = lbl
             kpi_layout.addWidget(QLabel(label), 0, i)
             kpi_layout.addWidget(lbl, 1, i)

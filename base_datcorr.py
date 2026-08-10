@@ -10,6 +10,7 @@ from services.permisos_service import (
 )
 
 from ui.inicio_sesion_ui import Ui_MainWindow
+from ui.styles import style_global_dark
 from ventana_principal import VentanaPrincipal
 
 from core.session_manager import SessionManager
@@ -32,6 +33,10 @@ def configurar_logging():
 
 
 configurar_logging()
+
+
+def aplicar_tema_global(app):
+    app.setStyleSheet(style_global_dark())
 
 
 def iniciar_aplicacion_principal():
@@ -216,6 +221,7 @@ class InicioSesion(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    aplicar_tema_global(app)
     ventana = InicioSesion()
     ventana.show()
     sys.exit(app.exec())

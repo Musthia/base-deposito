@@ -158,7 +158,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">
-background-color: rgb(226, 255, 244);</string>
+background-color: #1e1e1e;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -469,7 +469,7 @@ background-color: rgb(226, 255, 244);</string>
        <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
   
-    border-bottom: 1px solid #b0bec5;
+    border-bottom: 1px solid #3a3a3a;
     padding-bottom: 2px;
 }
 </string>
@@ -523,8 +523,8 @@ background-color: transparent;
         </property>
         <property name="styleSheet">
          <string notr="true">QTabBar::tab {
-    background-color:#dfe6cf;
-    color: black;
+    background-color:#252526;
+    color: #e0e0e0;
     font-weight: bold;
     padding: 9px 14px;
     margin-top: 2px;
@@ -535,12 +535,12 @@ background-color: transparent;
 }
 
 QTabBar::tab:selected {
-    background-color:#605b78;
-    color: white;
+    background-color:#333333;
+    color: #ffffff;
     margin-top: 0px;
     border-bottom: 2px solid #34495e;
 }
-background-color: rgb(182, 182, 182);
+background-color: #1e1e1e;
 </string>
         </property>
         <property name="tabPosition">
@@ -812,23 +812,23 @@ background-color: rgb(182, 182, 182);
       </property>
       <property name="styleSheet">
        <string notr="true">QLineEdit {
-    background-color: #cfd8dc;
-    border: 1px solid #455a64;
+    background-color: #2b2b2b;
+    border: 1px solid #555555;
 
 
-    color: #1a252f;
+    color: #e0e0e0;
 
     /* relieve simulado */
-    border-top-color: #a7b1b7;   /* borde superior más claro */
-    border-left-color: #a7b1b7;  /* borde izquierdo más claro */
-    border-right-color: #2e3d45; /* borde derecho más oscuro */
-    border-bottom-color: #2e3d45;
+    border-top-color: #777777;
+    border-left-color: #777777;
+    border-right-color: #3a3a3a;
+    border-bottom-color: #3a3a3a;
 }
 
 QLineEdit:focus {
-    background-color: #b0bec5;
-    border: 2px solid #2e4053;
-    color: #0f1419;
+    background-color: #303030;
+    border: 2px solid #3daee9;
+    color: #ffffff;
     outline: none;
 }</string>
       </property>
@@ -867,7 +867,7 @@ QLineEdit:focus {
        </sizepolicy>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 170, 127);</string>
+       <string notr="true">background-color: #5a3a34;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -908,8 +908,8 @@ QLineEdit:focus {
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton {
-    background-color:#9b759e;
-    color: #ecf0f1;
+    background-color: #3a6df0;
+    color: #ffffff;
     border: 1px solid #1a252f;
  
     padding: 6px 12px;
@@ -917,16 +917,16 @@ QLineEdit:focus {
     font-size: 11px;
 }
 QPushButton:hover {
-    background-color: #948d76;     /* tono más claro al pasar el mouse */
+    background-color: #4d7bff;
 }
 QPushButton:pressed {
-    background-color: #bab9b5;     /* más oscuro al presionar */
+    background-color: #2f58cc;
     border: 2px solid #1a252f;
 }
 QPushButton:disabled {
-    background-color: #a7b0b5;
-    color: #dfe4e8;
-    border: 1px solid #95a5a6;
+    background-color: #666666;
+    color: #b0b0b0;
+    border: 1px solid #555555;
 }</string>
          </property>
          <property name="text">
@@ -944,8 +944,8 @@ QPushButton:disabled {
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton {
-    background-color: #455a50;
-    color: #ecf0f1;
+    background-color: #3a6df0;
+    color: #ffffff;
     border: 1px solid #1a252f;
  
     padding: 6px 12px;
@@ -953,16 +953,16 @@ QPushButton:disabled {
     font-size: 11px;
 }
 QPushButton:hover {
-    background-color: #546e7a;     /* tono más claro al pasar el mouse */
+    background-color: #4d7bff;
 }
 QPushButton:pressed {
-    background-color: #2e4053;     /* más oscuro al presionar */
+    background-color: #2f58cc;
     border: 2px solid #1a252f;
 }
 QPushButton:disabled {
-    background-color: #a7b0b5;
-    color: #dfe4e8;
-    border: 1px solid #95a5a6;
+    background-color: #666666;
+    color: #b0b0b0;
+    border: 1px solid #555555;
 }</string>
          </property>
          <property name="text">
@@ -981,8 +981,8 @@ Datos</string>
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton {
-    background-color: #455a50;
-    color: #ecf0f1;
+    background-color: #3a6df0;
+    color: #ffffff;
     border: 1px solid #1a252f;
  
     padding: 6px 12px;
@@ -990,16 +990,16 @@ Datos</string>
     font-size: 11px;
 }
 QPushButton:hover {
-    background-color: #546e7a;     /* tono más claro al pasar el mouse */
+    background-color: #4d7bff;
 }
 QPushButton:pressed {
-    background-color: #2e4053;     /* más oscuro al presionar */
+    background-color: #2f58cc;
     border: 2px solid #1a252f;
 }
 QPushButton:disabled {
-    background-color: #a7b0b5;
-    color: #dfe4e8;
-    border: 1px solid #95a5a6;
+    background-color: #666666;
+    color: #b0b0b0;
+    border: 1px solid #555555;
 }</string>
          </property>
          <property name="text">
@@ -1039,8 +1039,8 @@ QPushButton:disabled {
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton {
-    background-color: #455a50;
-    color: #ecf0f1;
+    background-color: #3a6df0;
+    color: #ffffff;
     border: 1px solid #1a252f;
  
     padding: 6px 12px;
@@ -1048,16 +1048,16 @@ QPushButton:disabled {
     font-size: 11px;
 }
 QPushButton:hover {
-    background-color: #546e7a;     /* tono más claro al pasar el mouse */
+    background-color: #4d7bff;
 }
 QPushButton:pressed {
-    background-color: #2e4053;     /* más oscuro al presionar */
+    background-color: #2f58cc;
     border: 2px solid #1a252f;
 }
 QPushButton:disabled {
-    background-color: #a7b0b5;
-    color: #dfe4e8;
-    border: 1px solid #95a5a6;
+    background-color: #666666;
+    color: #b0b0b0;
+    border: 1px solid #555555;
 }</string>
          </property>
          <property name="text">

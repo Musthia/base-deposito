@@ -4,6 +4,10 @@ from PySide6.QtWidgets import (
     QDialog, QFormLayout, QLineEdit, QPushButton
 )
 
+from ui.styles import style_global_dark
+from ui.styles import style_dialog_dark
+from ui.styles import style_pushbutton_dark
+
 
 class DynamicForm(QDialog):
 
@@ -18,6 +22,7 @@ class DynamicForm(QDialog):
         self.inputs = {}
 
         self.setWindowTitle("Editar Registro")
+        self.setStyleSheet(style_global_dark() + style_dialog_dark())
 
         self.layout = QFormLayout()
         self.setLayout(self.layout)
@@ -42,6 +47,7 @@ class DynamicForm(QDialog):
         # BOTÓN GUARDAR
         # -----------------------------------
         btn = QPushButton("Guardar")
+        btn.setStyleSheet(style_pushbutton_dark())
         btn.clicked.connect(self.save_data)
 
         self.layout.addRow(btn)

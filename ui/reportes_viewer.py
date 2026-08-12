@@ -9,7 +9,7 @@ from PySide6.QtGui import QIcon
 
 from core.session_manager import SessionManager
 
-from ui.styles import style_global_dark
+from ui.styles import style_global_dark, FUENTE_FAMILIA
 
 
 class ReportesViewer(QDialog):
@@ -41,7 +41,7 @@ class ReportesViewer(QDialog):
             ("alertas_pendientes", "Alertas Pendientes"),
         ]):
             lbl = QLabel("--")
-            lbl.setStyleSheet("font-size: 22px; font-weight: bold; color: #8ab4f8; font-family: 'Segoe UI';")
+            lbl.setStyleSheet(f"font-size: 22px; font-weight: bold; color: #8ab4f8; font-family: '{FUENTE_FAMILIA}';")
             self._kpi_labels[key] = lbl
             kpi_layout.addWidget(QLabel(label), 0, i)
             kpi_layout.addWidget(lbl, 1, i)

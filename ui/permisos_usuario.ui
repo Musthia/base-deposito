@@ -13,32 +13,7 @@
   <property name="windowTitle">
    <string>Editar Usuario</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">QDialog {
-    background-color: #1e1e1e;
-}
-QLabel {
-    color: #e0e0e0;
-}
-QListView {
-    background-color: #2b2b2b;
-    color: #e0e0e0;
-    border: 1px solid #555555;
-}
-QPushButton {
-    background-color: #3a6df0;
-    color: #ffffff;
-    border: 1px solid #1a252f;
-    border-radius: 4px;
-    padding: 8px 16px;
-}
-QPushButton:hover {
-    background-color: #4d7bff;
-}
-QPushButton:pressed {
-    background-color: #2f58cc;
-}</string>
-  </property>
+  
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
     <widget class="QListView" name="listView_permisos_disponibles"/>
@@ -119,5 +94,4 @@ border-radius: 4px;</string>
  <resources/>
  <connections/>
 </ui>
-
 

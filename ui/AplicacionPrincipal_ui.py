@@ -49,13 +49,10 @@ class Ui_MainWindow(object):
         palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, brush1)
         palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush1)
         palette.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ToolTipText, brush)
-        MainWindow.setPalette(palette)
         icon = QIcon()
         icon.addFile(u"../../Users/archivodatcorrsa/.designer/img/Escudo.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setWindowOpacity(99.000000000000000)
-        MainWindow.setStyleSheet(u"\n"
-"background-color: #1e1e1e;")
         self.menu_ayuda = QAction(MainWindow)
         self.menu_ayuda.setObjectName(u"menu_ayuda")
         icon1 = QIcon()
@@ -95,13 +92,6 @@ class Ui_MainWindow(object):
         palette1.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, brush1)
         palette1.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, brush1)
         palette1.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush1)
-        self.centralwidget.setPalette(palette1)
-        font = QFont()
-        font.setFamilies([u"Segoe UI"])
-        font.setPointSize(10)
-        font.setBold(False)
-        font.setItalic(False)
-        self.centralwidget.setFont(font)
         self.gridLayout_2 = QGridLayout(self.centralwidget)
         self.gridLayout_2.setSpacing(2)
         self.gridLayout_2.setContentsMargins(2, 2, 2, 2)
@@ -114,36 +104,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.mi_data_cons.sizePolicy().hasHeightForWidth())
         self.mi_data_cons.setSizePolicy(sizePolicy1)
         self.mi_data_cons.setMaximumSize(QSize(303, 26))
-        palette2 = QPalette()
-        palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, brush2)
-        palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Text, brush2)
-        palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Base, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Window, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.WindowText, brush2)
-        palette2.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Button, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Text, brush2)
-        palette2.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Base, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Window, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, brush2)
-        palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text, brush2)
-        palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, brush1)
-        palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush1)
-        self.mi_data_cons.setPalette(palette2)
-        font1 = QFont()
-        font1.setFamilies([u"Segoe UI"])
-        font1.setPointSize(12)
-        font1.setBold(True)
-        self.mi_data_cons.setFont(font1)
         self.mi_data_cons.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.mi_data_cons.setStyleSheet(u"QLabel[subtitulo=\"true\"] {\n"
-"background-color: transparent;\n"
-"  \n"
-"    border-bottom: 1px solid #3a3a3a;\n"
-"    padding-bottom: 2px;\n"
-"}\n"
-"")
         self.mi_data_cons.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_2.addWidget(self.mi_data_cons, 7, 1, 1, 1)
@@ -165,31 +126,6 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.tabwidget_resultados_consulta.sizePolicy().hasHeightForWidth())
         self.tabwidget_resultados_consulta.setSizePolicy(sizePolicy1)
         self.tabwidget_resultados_consulta.setMaximumSize(QSize(16777215, 16777215))
-        font2 = QFont()
-        font2.setFamilies([u"Segoe UI"])
-        font2.setPointSize(11)
-        font2.setBold(True)
-        self.tabwidget_resultados_consulta.setFont(font2)
-        self.tabwidget_resultados_consulta.setStyleSheet(u"QTabBar::tab {\n"
-"    background-color:#252526;\n"
-"    color: #e0e0e0;\n"
-"    font-weight: bold;\n"
-"    padding: 9px 14px;\n"
-"    margin-top: 2px;\n"
-"    border-top-left-radius: 38px;\n"
-"    border-top-right-radius: 38px;\n"
-"    border: 2px solid #1a252f;\n"
-"    border-bottom: none;\n"
-"}\n"
-"\n"
-"QTabBar::tab:selected {\n"
-"    background-color:#333333;\n"
-"    color: #ffffff;\n"
-"    margin-top: 0px;\n"
-"    border-bottom: 2px solid #34495e;\n"
-"}\n"
-"background-color: #1e1e1e;\n"
-"")
         self.tabwidget_resultados_consulta.setTabPosition(QTabWidget.TabPosition.North)
         self.tabwidget_resultados_consulta.setTabShape(QTabWidget.TabShape.Triangular)
         self.tabwidget_resultados_consulta.setElideMode(Qt.TextElideMode.ElideLeft)
@@ -199,7 +135,6 @@ class Ui_MainWindow(object):
         self.tabwidget_resultados_consulta.setTabBarAutoHide(False)
 
         self.gridLayout_8.addWidget(self.tabwidget_resultados_consulta, 0, 0, 1, 1)
-
 
         self.gridLayout_2.addLayout(self.gridLayout_8, 12, 0, 1, 7)
 
@@ -242,37 +177,10 @@ class Ui_MainWindow(object):
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         palette3.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.PlaceholderText, brush5)
 #endif
-        self.entry_consultar.setPalette(palette3)
-        font3 = QFont()
-        font3.setFamilies([u"Segoe UI"])
-        font3.setPointSize(14)
-        font3.setWeight(QFont.Bold)
-        font3.setItalic(False)
-        self.entry_consultar.setFont(font3)
         self.entry_consultar.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
         self.entry_consultar.setAcceptDrops(False)
         self.entry_consultar.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.entry_consultar.setAutoFillBackground(False)
-        self.entry_consultar.setStyleSheet(u"QLineEdit {\n"
-"    background-color: #2b2b2b;\n"
-"    border: 1px solid #555555;\n"
-"\n"
-"\n"
-"    color: #e0e0e0;\n"
-"\n"
-"    /* relieve simulado */\n"
-"    border-top-color: #777777;\n"
-"    border-left-color: #777777;\n"
-"    border-right-color: #3a3a3a;\n"
-"    border-bottom-color: #3a3a3a;\n"
-"}\n"
-"\n"
-"QLineEdit:focus {\n"
-"    background-color: #303030;\n"
-"    border: 2px solid #3daee9;\n"
-"    color: #ffffff;\n"
-"    outline: none;\n"
-"}")
         self.entry_consultar.setInputMethodHints(Qt.InputMethodHint.ImhNone)
         self.entry_consultar.setMaxLength(32768)
         self.entry_consultar.setFrame(True)
@@ -287,7 +195,6 @@ class Ui_MainWindow(object):
         self.frame.setObjectName(u"frame")
         sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
         self.frame.setSizePolicy(sizePolicy)
-        self.frame.setStyleSheet(u"background-color: #5a3a34;")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout = QGridLayout(self.frame)
@@ -311,81 +218,18 @@ class Ui_MainWindow(object):
         self.pushButton_consulta_bases = QPushButton(self.frame)
         self.pushButton_consulta_bases.setObjectName(u"pushButton_consulta_bases")
         self.pushButton_consulta_bases.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.pushButton_consulta_bases.setStyleSheet(u"QPushButton {\n"
-"    background-color: #3a6df0;\n"
-"    color: #ffffff;\n"
-"    border: 1px solid #1a252f;\n"
-" \n"
-"    padding: 10px 18px;\n"
-"    font-weight: bold;\n"
-"    font-size: 14px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: #4d7bff;\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: #2f58cc;\n"
-"    border: 2px solid #1a252f;\n"
-"}\n"
-"QPushButton:disabled {\n"
-"    background-color: #666666;\n"
-"    color: #b0b0b0;\n"
-"    border: 1px solid #555555;\n"
-"}")
 
         self.gridLayout.addWidget(self.pushButton_consulta_bases, 0, 0, 1, 1)
 
         self.pushButton_carga_datos = QPushButton(self.frame)
         self.pushButton_carga_datos.setObjectName(u"pushButton_carga_datos")
         self.pushButton_carga_datos.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.pushButton_carga_datos.setStyleSheet(u"QPushButton {\n"
-"    background-color: #3a6df0;\n"
-"    color: #ffffff;\n"
-"    border: 1px solid #1a252f;\n"
-" \n"
-"    padding: 10px 18px;\n"
-"    font-weight: bold;\n"
-"    font-size: 14px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: #4d7bff;\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: #2f58cc;\n"
-"    border: 2px solid #1a252f;\n"
-"}\n"
-"QPushButton:disabled {\n"
-"    background-color: #666666;\n"
-"    color: #b0b0b0;\n"
-"    border: 1px solid #555555;\n"
-"}")
 
         self.gridLayout.addWidget(self.pushButton_carga_datos, 2, 0, 1, 1)
 
         self.boton_cerrar_sesion = QPushButton(self.frame)
         self.boton_cerrar_sesion.setObjectName(u"boton_cerrar_sesion")
         self.boton_cerrar_sesion.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.boton_cerrar_sesion.setStyleSheet(u"QPushButton {\n"
-"    background-color: #3a6df0;\n"
-"    color: #ffffff;\n"
-"    border: 1px solid #1a252f;\n"
-" \n"
-"    padding: 10px 18px;\n"
-"    font-weight: bold;\n"
-"    font-size: 14px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: #4d7bff;\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: #2f58cc;\n"
-"    border: 2px solid #1a252f;\n"
-"}\n"
-"QPushButton:disabled {\n"
-"    background-color: #666666;\n"
-"    color: #b0b0b0;\n"
-"    border: 1px solid #555555;\n"
-"}")
 
         self.gridLayout.addWidget(self.boton_cerrar_sesion, 0, 1, 1, 1)
 
@@ -403,30 +247,8 @@ class Ui_MainWindow(object):
         self.boton_adm_usuar = QPushButton(self.frame)
         self.boton_adm_usuar.setObjectName(u"boton_adm_usuar")
         self.boton_adm_usuar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.boton_adm_usuar.setStyleSheet(u"QPushButton {\n"
-"    background-color: #3a6df0;\n"
-"    color: #ffffff;\n"
-"    border: 1px solid #1a252f;\n"
-" \n"
-"    padding: 10px 18px;\n"
-"    font-weight: bold;\n"
-"    font-size: 14px;\n"
-"}\n"
-"QPushButton:hover {\n"
-"    background-color: #4d7bff;\n"
-"}\n"
-"QPushButton:pressed {\n"
-"    background-color: #2f58cc;\n"
-"    border: 2px solid #1a252f;\n"
-"}\n"
-"QPushButton:disabled {\n"
-"    background-color: #666666;\n"
-"    color: #b0b0b0;\n"
-"    border: 1px solid #555555;\n"
-"}")
 
         self.gridLayout.addWidget(self.boton_adm_usuar, 2, 1, 1, 1)
-
 
         self.gridLayout_2.addWidget(self.frame, 7, 5, 2, 1)
 
@@ -437,18 +259,6 @@ class Ui_MainWindow(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.combo_bases.sizePolicy().hasHeightForWidth())
         self.combo_bases.setSizePolicy(sizePolicy3)
-        palette4 = QPalette()
-        palette4.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Base, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Window, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Button, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Base, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Window, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Button, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, brush1)
-        palette4.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush1)
-        self.combo_bases.setPalette(palette4)
-        self.combo_bases.setStyleSheet(u"")
         self.combo_bases.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
         self.combo_bases.setMinimumContentsLength(0)
 
@@ -471,7 +281,6 @@ class Ui_MainWindow(object):
 
         self.tabwidget_resultados_consulta.setCurrentIndex(-1)
         self.combo_bases.setCurrentIndex(-1)
-
 
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
@@ -514,5 +323,4 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.combo_bases.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Seleccione una Base", None))
     # retranslateUi
-
 

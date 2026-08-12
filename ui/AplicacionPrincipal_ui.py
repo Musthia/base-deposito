@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 ################################################################################
 ## Form generated from reading UI file 'AplicacionPrincipal.ui'
@@ -97,7 +97,10 @@ class Ui_MainWindow(object):
         palette1.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush1)
         self.centralwidget.setPalette(palette1)
         font = QFont()
-        font.setBold(True)
+        font.setFamilies([u"Segoe UI"])
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
         self.centralwidget.setFont(font)
         self.gridLayout_2 = QGridLayout(self.centralwidget)
         self.gridLayout_2.setSpacing(2)
@@ -110,7 +113,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.mi_data_cons.sizePolicy().hasHeightForWidth())
         self.mi_data_cons.setSizePolicy(sizePolicy1)
-        self.mi_data_cons.setMaximumSize(QSize(303, 15))
+        self.mi_data_cons.setMaximumSize(QSize(303, 26))
         palette2 = QPalette()
         palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, brush2)
         palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush1)
@@ -129,8 +132,9 @@ class Ui_MainWindow(object):
         palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush1)
         self.mi_data_cons.setPalette(palette2)
         font1 = QFont()
+        font1.setFamilies([u"Segoe UI"])
         font1.setPointSize(12)
-        font1.setBold(False)
+        font1.setBold(True)
         self.mi_data_cons.setFont(font1)
         self.mi_data_cons.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.mi_data_cons.setStyleSheet(u"QLabel[subtitulo=\"true\"] {\n"
@@ -162,7 +166,7 @@ class Ui_MainWindow(object):
         self.tabwidget_resultados_consulta.setSizePolicy(sizePolicy1)
         self.tabwidget_resultados_consulta.setMaximumSize(QSize(16777215, 16777215))
         font2 = QFont()
-        font2.setFamilies([u"Tahoma"])
+        font2.setFamilies([u"Segoe UI"])
         font2.setPointSize(11)
         font2.setBold(True)
         self.tabwidget_resultados_consulta.setFont(font2)
@@ -240,9 +244,9 @@ class Ui_MainWindow(object):
 #endif
         self.entry_consultar.setPalette(palette3)
         font3 = QFont()
-        font3.setFamilies([u"Calibri"])
-        font3.setPointSize(15)
-        font3.setWeight(QFont.Black)
+        font3.setFamilies([u"Segoe UI"])
+        font3.setPointSize(14)
+        font3.setWeight(QFont.Bold)
         font3.setItalic(False)
         self.entry_consultar.setFont(font3)
         self.entry_consultar.setFocusPolicy(Qt.FocusPolicy.WheelFocus)
@@ -312,9 +316,9 @@ class Ui_MainWindow(object):
 "    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
-"    padding: 6px 12px;\n"
+"    padding: 10px 18px;\n"
 "    font-weight: bold;\n"
-"    font-size: 11px;\n"
+"    font-size: 14px;\n"
 "}\n"
 "QPushButton:hover {\n"
 "    background-color: #4d7bff;\n"
@@ -339,9 +343,9 @@ class Ui_MainWindow(object):
 "    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
-"    padding: 6px 12px;\n"
+"    padding: 10px 18px;\n"
 "    font-weight: bold;\n"
-"    font-size: 11px;\n"
+"    font-size: 14px;\n"
 "}\n"
 "QPushButton:hover {\n"
 "    background-color: #4d7bff;\n"
@@ -366,9 +370,9 @@ class Ui_MainWindow(object):
 "    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
-"    padding: 6px 12px;\n"
+"    padding: 10px 18px;\n"
 "    font-weight: bold;\n"
-"    font-size: 11px;\n"
+"    font-size: 14px;\n"
 "}\n"
 "QPushButton:hover {\n"
 "    background-color: #4d7bff;\n"
@@ -404,9 +408,9 @@ class Ui_MainWindow(object):
 "    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 " \n"
-"    padding: 6px 12px;\n"
+"    padding: 10px 18px;\n"
 "    font-weight: bold;\n"
-"    font-size: 11px;\n"
+"    font-size: 14px;\n"
 "}\n"
 "QPushButton:hover {\n"
 "    background-color: #4d7bff;\n"
@@ -510,4 +514,5 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.combo_bases.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Seleccione una Base", None))
     # retranslateUi
+
 

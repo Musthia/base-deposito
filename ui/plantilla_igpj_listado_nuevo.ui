@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Form_igpj</class>
  <widget class="QWidget" name="Form_igpj">
@@ -244,7 +244,7 @@
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -486,7 +486,7 @@
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -728,7 +728,7 @@
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -898,7 +898,7 @@
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -908,7 +908,7 @@
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -1149,7 +1149,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -1319,7 +1319,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -1329,7 +1329,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -1498,7 +1498,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -1508,7 +1508,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -1677,7 +1677,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -1687,7 +1687,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -1928,7 +1928,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -2098,7 +2098,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -2108,7 +2108,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -2349,7 +2349,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -2519,7 +2519,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -2529,7 +2529,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -2837,7 +2837,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -2847,7 +2847,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -3016,7 +3016,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -3026,14 +3026,14 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
 </string>
      </property>
      <property name="text">
-      <string>AÑO:</string>
+      <string>AÃ‘O:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
@@ -3267,7 +3267,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -3437,7 +3437,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -3447,7 +3447,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -3688,7 +3688,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -3930,7 +3930,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -4100,7 +4100,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -4110,7 +4110,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -4351,7 +4351,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -4533,7 +4533,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -4543,7 +4543,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -4784,7 +4784,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -4954,7 +4954,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -4964,7 +4964,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -5205,7 +5205,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -5375,7 +5375,7 @@ background-color: transparent;
      </property>
      <property name="font">
       <font>
-       <family>Tahoma</family>
+       <family>Segoe UI</family>
        <pointsize>10</pointsize>
        <bold>false</bold>
        <kerning>true</kerning>
@@ -5385,7 +5385,7 @@ background-color: transparent;
       <string notr="true">QLabel[subtitulo=&quot;true&quot;] {
 background-color: transparent;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     border-bottom: 1px solid #b0bec5;
     padding-bottom: 2px;
 }
@@ -5626,7 +5626,7 @@ background-color: transparent;
   
     padding: 4px 10px;
     color:  #e0e0e0;
-    font-size: 13px;
+    font-size: 14px;
 /* relieve simulado */
     border-top-color: #777777;
     border-left-color: #777777;
@@ -5676,10 +5676,10 @@ background-color: transparent;
     font-size: 15px;
 }
 QPushButton:hover {
-    background-color: #546e7a;     /* tono más claro al pasar el mouse */
+    background-color: #546e7a;     /* tono mÃ¡s claro al pasar el mouse */
 }
 QPushButton:pressed {
-    background-color: #2e4053;     /* más oscuro al presionar */
+    background-color: #2e4053;     /* mÃ¡s oscuro al presionar */
     border: 2px solid #1a252f;
 }
 QPushButton:disabled {
@@ -5940,3 +5940,4 @@ QPushButton:disabled {
   </connection>
  </connections>
 </ui>
+

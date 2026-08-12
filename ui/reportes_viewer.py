@@ -41,7 +41,7 @@ class ReportesViewer(QDialog):
             ("alertas_pendientes", "Alertas Pendientes"),
         ]):
             lbl = QLabel("--")
-            lbl.setStyleSheet("font-size: 18px; font-weight: bold; color: #8ab4f8;")
+            lbl.setStyleSheet("font-size: 22px; font-weight: bold; color: #8ab4f8; font-family: 'Segoe UI';")
             self._kpi_labels[key] = lbl
             kpi_layout.addWidget(QLabel(label), 0, i)
             kpi_layout.addWidget(lbl, 1, i)

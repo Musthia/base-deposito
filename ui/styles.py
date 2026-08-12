@@ -9,6 +9,7 @@ BG_HOVER       = "#333333"
 TEXTO_PRINCIPAL = "#e0e0e0"
 TEXTO_SECUNDARIO = "#b0b0b0"
 TEXTO_PLACEHOLDER = "#7a7a7a"
+TEXTO_ENFATICO = "#ffffff"
 BORDE          = "#555555"
 BORDE_FOCUS    = "#3daee9"
 BTN_PRIMARIO   = "#3a6df0"
@@ -18,6 +19,17 @@ BTN_DANGER     = "#c94f42"
 BTN_SUCCESS    = "#2e7d32"
 SELECCION      = "#263238"
 DISABLED       = "#666666"
+
+# =========================
+# Tipografía legible (fuente única)
+# =========================
+
+FUENTE_FAMILIA      = "Segoe UI"
+FUENTE_TAMANO_BASE  = "14px"
+FUENTE_TAMANO_INPUT = "14px"
+FUENTE_TAMANO_BOTON = "14px"
+FUENTE_TAMANO_TITULO = "16px"
+FUENTE_KPI          = "18px"
 
 
 def style_global_dark():
@@ -34,12 +46,15 @@ def style_global_dark():
 
     QWidget {{
         color: {TEXTO_PRINCIPAL};
-        font-size: 13px;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QLabel {{
         color: {TEXTO_PRINCIPAL};
         background-color: transparent;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QLineEdit, QSpinBox, QDateEdit, QTextEdit, QPlainTextEdit {{
@@ -49,6 +64,8 @@ def style_global_dark():
         border-radius: 4px;
         padding: 6px;
         selection-background-color: {BORDE_FOCUS};
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_INPUT};
     }}
 
     QLineEdit:focus, QSpinBox:focus, QDateEdit:focus, QTextEdit:focus, QPlainTextEdit:focus {{
@@ -67,11 +84,14 @@ def style_global_dark():
 
     QPushButton {{
         background-color: {BTN_PRIMARIO};
-        color: #ffffff;
+        color: {TEXTO_ENFATICO};
         border: 1px solid #1a252f;
         border-radius: 4px;
-        padding: 8px 14px;
+        padding: 10px 16px;
         font-weight: bold;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BOTON};
+        min-height: 18px;
     }}
 
     QPushButton:hover {{
@@ -101,6 +121,8 @@ def style_global_dark():
         border-radius: 4px;
         padding: 6px;
         padding-right: 28px;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_INPUT};
     }}
 
     QComboBox:hover {{
@@ -130,6 +152,8 @@ def style_global_dark():
     QCheckBox {{
         color: {TEXTO_PRINCIPAL};
         spacing: 6px;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QCheckBox::indicator {{
@@ -155,14 +179,16 @@ def style_global_dark():
         background-color: {BG_ELEVADO};
         color: {TEXTO_PRINCIPAL};
         font-weight: bold;
-        padding: 8px 14px;
+        padding: 9px 16px;
         border: 1px solid {BORDE};
         border-bottom: none;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QTabBar::tab:selected {{
         background-color: {BG_HOVER};
-        color: #ffffff;
+        color: {TEXTO_ENFATICO};
     }}
 
     QTabBar::tab:hover {{
@@ -175,16 +201,20 @@ def style_global_dark():
         alternate-background-color: {BG_ELEVADO};
         border: 1px solid {BORDE};
         selection-background-color: {SELECCION};
-        selection-color: #ffffff;
+        selection-color: {TEXTO_ENFATICO};
         gridline-color: #3a3a3a;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QHeaderView::section {{
         background-color: {BG_HOVER};
         color: {TEXTO_PRINCIPAL};
-        padding: 5px;
+        padding: 6px;
         border: 1px solid #3a3a3a;
         font-weight: bold;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QHeaderView::section:hover {{
@@ -195,6 +225,8 @@ def style_global_dark():
         background-color: {BG_ELEVADO};
         color: {TEXTO_PRINCIPAL};
         border: 1px solid {BORDE};
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QMenu::item:selected {{
@@ -217,9 +249,11 @@ def style_global_dark():
 
     QToolTip {{
         background-color: #333333;
-        color: #ffffff;
+        color: {TEXTO_ENFATICO};
         border: 1px solid {BORDE};
-        padding: 4px;
+        padding: 6px;
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QGroupBox {{
@@ -228,12 +262,15 @@ def style_global_dark():
         margin-top: 10px;
         padding-top: 10px;
         color: {TEXTO_PRINCIPAL};
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QGroupBox::title {{
         subcontrol-origin: margin;
         left: 10px;
         padding: 0 4px;
+        font-weight: bold;
     }}
 
     QFrame {{
@@ -243,10 +280,18 @@ def style_global_dark():
     QMessageBox {{
         background-color: {BG_INPUT};
         color: {TEXTO_PRINCIPAL};
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
     }}
 
     QMessageBox QLabel {{
         color: {TEXTO_PRINCIPAL};
+        font-family: "{FUENTE_FAMILIA}";
+        font-size: {FUENTE_TAMANO_BASE};
+    }}
+
+    QMessageBox QPushButton {{
+        min-width: 90px;
     }}
 
     QProgressBar {{
@@ -271,6 +316,8 @@ def style_combobox_dark():
         border-radius: 4px;
         padding: 6px;
         padding-right: 28px; /* espacio para flecha nativa */
+        font-family: "Segoe UI";
+        font-size: 14px;
     }
 
     QComboBox:hover {
@@ -294,6 +341,8 @@ def style_combobox_dark():
         color: #fbfdfd;
         selection-color: #6fcc7e;
         outline: 0;
+        font-family: "Segoe UI";
+        font-size: 14px;
     }
     """
 
@@ -301,11 +350,13 @@ def style_pushbutton_dark():
     return """ 
     QPushButton {
     background-color: #455a50;
-    color: #ecf0f1;
+    color: #f9fbfb;
     border: 1px solid #1a252f;
-    padding: 6px 12px;
+    padding: 10px 18px;
+    min-height: 18px;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 14px;
+    font-family: "Segoe UI";
     }
     QPushButton:hover {
         background-color: #546e7a;     /* tono más claro al pasar el mouse */
@@ -328,8 +379,11 @@ def style_button_success():
         color: #ffffff;
         border: 1px solid #1a252f;
         border-radius: 4px;
-        padding: 8px 14px;
+        padding: 10px 18px;
+        min-height: 18px;
         font-weight: bold;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
     QPushButton:hover {
         background-color: #388e3c;
@@ -352,8 +406,11 @@ def style_button_danger():
         color: #ffffff;
         border: 1px solid #1a252f;
         border-radius: 4px;
-        padding: 8px 14px;
+        padding: 10px 18px;
+        min-height: 18px;
         font-weight: bold;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
     QPushButton:hover {
         background-color: #e05a4b;
@@ -377,7 +434,8 @@ def style_dialog_dark():
 
     QLabel {
         color: #e0e0e0;
-        font-size: 13px;
+        font-size: 14px;
+        font-family: "Segoe UI";
         background-color: #1e1e1e;
     }
 
@@ -387,6 +445,8 @@ def style_dialog_dark():
         border: 1px solid #555;
         border-radius: 4px;
         padding: 6px;
+        font-size: 14px;
+        font-family: "Segoe UI";
         selection-background-color: #3daee9;
     }
 
@@ -399,13 +459,42 @@ def style_dialog_dark():
         border: 1px solid #777;
     }
 
+    QComboBox {
+        background-color: #2b2b2b;
+        color: #f0f0f0;
+        border: 1px solid #555;
+        border-radius: 4px;
+        padding: 6px;
+        font-size: 14px;
+        font-family: "Segoe UI";
+    }
+
+    QCheckBox {
+        color: #e0e0e0;
+        font-size: 14px;
+        font-family: "Segoe UI";
+        spacing: 6px;
+    }
+
+    QToolTip {
+        background-color: #333333;
+        color: #ffffff;
+        border: 1px solid #555;
+        padding: 6px;
+        font-size: 14px;
+        font-family: "Segoe UI";
+    }
+
     QPushButton {
         background-color: #3a3a3a;
         color: #ffffff;
         border: 1px solid #555;
         border-radius: 4px;
-        padding: 8px 14px;
+        padding: 10px 18px;
+        min-height: 18px;
         font-weight: bold;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
 
     QPushButton:hover {
@@ -424,11 +513,14 @@ def style_messagebox_dark():
     QMessageBox {
         background-color: #2b2b2b;
         color: #e0e0e0;
-        font-size: 13px;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
 
     QMessageBox QLabel {
         color: #e0e0e0;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
 
     QMessageBox QPushButton {
@@ -436,8 +528,10 @@ def style_messagebox_dark():
         color: #ffffff;
         border: 1px solid #555;
         border-radius: 4px;
-        padding: 6px 14px;
-        min-width: 80px;
+        padding: 8px 16px;
+        min-width: 90px;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
 
     QMessageBox QPushButton:hover {
@@ -457,6 +551,8 @@ def style_lineedit_error():
         border: 2px solid #d9534f;
         background-color: #2b2b2b;
         color: #ffffff;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
     """
 
@@ -466,6 +562,8 @@ def style_lineedit_validation():
         border: 1px solid #e53935;
         background-color: #3b1f1f;
         color: #ffffff;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
     """
 
@@ -475,9 +573,11 @@ def style_tabbar_dark():
         background-color: #252526;
         color: #e0e0e0;
         font-weight: bold;
-        padding: 8px 14px;
+        padding: 9px 16px;
         border: 1px solid #555;
         border-bottom: none;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
     QTabBar::tab:selected {
         background-color: #333333;
@@ -497,6 +597,8 @@ def style_treeview_dark():
         border: 1px solid #555;
         selection-background-color: #263238;
         selection-color: #ffffff;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
     """
 
@@ -505,9 +607,11 @@ def style_header_dark():
     QHeaderView::section {
         background-color: #333333;
         color: #e0e0e0;
-        padding: 5px;
+        padding: 6px;
         border: 1px solid #3a3a3a;
         font-weight: bold;
+        font-size: 14px;
+        font-family: "Segoe UI";
     }
     QHeaderView::section:hover {
         background-color: #3e3e3e;

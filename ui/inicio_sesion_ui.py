@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 ################################################################################
 ## Form generated from reading UI file 'inicio_sesion.ui'
@@ -94,8 +94,8 @@ class Ui_MainWindow(object):
         self.boton_iniciar_sesion.setPalette(palette)
         font = QFont()
         font.setFamilies([u"Segoe UI"])
-        font.setPointSize(11)
-        font.setBold(False)
+        font.setPointSize(12)
+        font.setBold(True)
         font.setItalic(False)
         self.boton_iniciar_sesion.setFont(font)
         self.boton_iniciar_sesion.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -111,15 +111,16 @@ class Ui_MainWindow(object):
         self.boton_recuperar_contrasena.setGeometry(QRect(80, 180, 201, 25))
         font1 = QFont()
         font1.setFamilies([u"Segoe UI"])
-        font1.setPointSize(9)
-        font1.setItalic(True)
+        font1.setPointSize(10)
+        font1.setBold(True)
+        font1.setItalic(False)
         self.boton_recuperar_contrasena.setFont(font1)
         self.boton_recuperar_contrasena.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.boton_recuperar_contrasena.setStyleSheet(u"background-color: transparent; color: rgb(200, 220, 255); text-decoration: underline; border: none;")
         self.label_contrasena = QLabel(self.centralwidget)
         self.label_contrasena.setObjectName(u"label_contrasena")
         self.label_contrasena.setEnabled(True)
-        self.label_contrasena.setGeometry(QRect(60, 60, 95, 21))
+        self.label_contrasena.setGeometry(QRect(60, 60, 95, 24))
         palette1 = QPalette()
         palette1.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, brush2)
         brush4 = QBrush(QColor(0, 89, 134, 255))
@@ -139,10 +140,10 @@ class Ui_MainWindow(object):
         palette1.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Highlight, brush3)
         self.label_contrasena.setPalette(palette1)
         font2 = QFont()
-        font2.setFamilies([u"Franklin Gothic"])
-        font2.setPointSize(14)
+        font2.setFamilies([u"Segoe UI"])
+        font2.setPointSize(12)
         font2.setBold(True)
-        font2.setItalic(True)
+        font2.setItalic(False)
         self.label_contrasena.setFont(font2)
         self.label_contrasena.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
         self.label_contrasena.setStyleSheet(u"")
@@ -150,7 +151,7 @@ class Ui_MainWindow(object):
         self.label_contrasena.setIndent(0)
         self.entry_contrasena = QLineEdit(self.centralwidget)
         self.entry_contrasena.setObjectName(u"entry_contrasena")
-        self.entry_contrasena.setGeometry(QRect(180, 60, 116, 22))
+        self.entry_contrasena.setGeometry(QRect(178, 60, 122, 26))
         palette2 = QPalette()
         palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, brush)
         palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush2)
@@ -184,7 +185,7 @@ class Ui_MainWindow(object):
         self.label_usuario = QLabel(self.centralwidget)
         self.label_usuario.setObjectName(u"label_usuario")
         self.label_usuario.setEnabled(True)
-        self.label_usuario.setGeometry(QRect(30, 20, 63, 21))
+        self.label_usuario.setGeometry(QRect(26, 20, 71, 24))
         palette3 = QPalette()
         palette3.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, brush2)
         palette3.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush4)
@@ -209,7 +210,7 @@ class Ui_MainWindow(object):
         self.label_usuario.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.entry_usuario = QLineEdit(self.centralwidget)
         self.entry_usuario.setObjectName(u"entry_usuario")
-        self.entry_usuario.setGeometry(QRect(120, 20, 116, 22))
+        self.entry_usuario.setGeometry(QRect(118, 20, 122, 26))
         palette4 = QPalette()
         palette4.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText, brush)
         palette4.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Button, brush2)
@@ -289,8 +290,9 @@ class Ui_MainWindow(object):
 #endif
         self.entry_usuario.setPalette(palette4)
         font4 = QFont()
-        font4.setPointSize(9)
-        font4.setBold(True)
+        font4.setFamilies([u"Segoe UI"])
+        font4.setPointSize(12)
+        font4.setBold(False)
         self.entry_usuario.setFont(font4)
         self.entry_usuario.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.entry_usuario.setStyleSheet(u"background-color: #2b2b2b;\n"
@@ -318,4 +320,5 @@ class Ui_MainWindow(object):
         self.entry_contrasena.setText("")
         self.label_usuario.setText(QCoreApplication.translate("MainWindow", u"Usuario", None))
     # retranslateUi
+
 

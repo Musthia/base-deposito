@@ -28,18 +28,24 @@ class Ui_EditarUsuario(object):
 "}\n"
 "QLabel {\n"
 "    color: #e0e0e0;\n"
+"    font-size: 14px;\n"
+"    font-family: \"Segoe UI\";\n"
 "}\n"
 "QListView {\n"
 "    background-color: #2b2b2b;\n"
 "    color: #e0e0e0;\n"
 "    border: 1px solid #555555;\n"
+"    font-size: 14px;\n"
+"    font-family: \"Segoe UI\";\n"
 "}\n"
 "QPushButton {\n"
 "    background-color: #3a6df0;\n"
 "    color: #ffffff;\n"
 "    border: 1px solid #1a252f;\n"
 "    border-radius: 4px;\n"
-"    padding: 6px 12px;\n"
+"    padding: 8px 16px;\n"
+"    font-size: 14px;\n"
+"    font-family: \"Segoe UI\";\n"
 "}\n"
 "QPushButton:hover {\n"
 "    background-color: #4d7bff;\n"
@@ -58,7 +64,8 @@ class Ui_EditarUsuario(object):
         self.pushButton_guardar.setObjectName(u"pushButton_guardar")
         self.pushButton_guardar.setStyleSheet(u"background-color: #2e7d32;\n"
 "color: #ffffff;\n"
-"font: 900 9pt \"Segoe UI\";")
+"font: bold 12pt \"Segoe UI\";\n"
+"padding: 8px 16px;")
 
         self.gridLayout.addWidget(self.pushButton_guardar, 2, 2, 1, 1)
 
@@ -80,9 +87,10 @@ class Ui_EditarUsuario(object):
         self.pushButton_guardar_2 = QPushButton(EditarUsuario)
         self.pushButton_guardar_2.setObjectName(u"pushButton_guardar_2")
         self.pushButton_guardar_2.setStyleSheet(u"\n"
-"font: 700 11pt \"Arial\";\n"
+"font: bold 12pt \"Segoe UI\";\n"
 "background-color: #c94f42;\n"
-"color: #ffffff;")
+"color: #ffffff;\n"
+"padding: 8px 16px;")
 
         self.gridLayout.addWidget(self.pushButton_guardar_2, 2, 3, 1, 1)
 

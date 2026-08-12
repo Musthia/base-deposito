@@ -22,7 +22,7 @@ class Ui_VentanaUsuarios(object):
     def setupUi(self, VentanaUsuarios):
         if not VentanaUsuarios.objectName():
             VentanaUsuarios.setObjectName(u"VentanaUsuarios")
-        VentanaUsuarios.resize(400, 300)
+        VentanaUsuarios.resize(560, 360)
         self.gridLayout = QGridLayout(VentanaUsuarios)
         self.gridLayout.setObjectName(u"gridLayout")
         self.pushButton_desactivar_usuario = QPushButton(VentanaUsuarios)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>EditarUsuario</class>
  <widget class="QDialog" name="EditarUsuario">
@@ -30,7 +30,7 @@ QPushButton {
     color: #ffffff;
     border: 1px solid #1a252f;
     border-radius: 4px;
-    padding: 6px 12px;
+    padding: 8px 16px;
 }
 QPushButton:hover {
     background-color: #4d7bff;
@@ -48,7 +48,7 @@ QPushButton:pressed {
      <property name="styleSheet">
       <string notr="true">background-color: #2e7d32;
 color: #ffffff;
-font: 900 9pt &quot;Segoe UI&quot;;</string>
+font: bold 12pt &quot;Segoe UI&quot;; padding: 8px 16px;</string>
      </property>
      <property name="text">
       <string>ACEPTAR</string>
@@ -64,7 +64,7 @@ border: 1px solid #1a252f;
 border-radius: 4px;</string>
      </property>
      <property name="text">
-      <string>➕ Asignar</string>
+      <string>âž• Asignar</string>
      </property>
     </widget>
    </item>
@@ -79,7 +79,7 @@ border-radius: 4px;</string>
     <widget class="QPushButton" name="pushButton_guardar_2">
      <property name="styleSheet">
       <string notr="true">
-font: 700 11pt &quot;Arial&quot;;
+font: bold 12pt &quot;Segoe UI&quot; padding: 8px 16px;
 background-color: #c94f42;
 color: #ffffff;</string>
      </property>
@@ -97,7 +97,7 @@ border: 1px solid #1a252f;
 border-radius: 4px;</string>
      </property>
      <property name="text">
-      <string>➖ Quitar</string>
+      <string>âž– Quitar</string>
      </property>
     </widget>
    </item>
@@ -119,3 +119,5 @@ border-radius: 4px;</string>
  <resources/>
  <connections/>
 </ui>
+
+

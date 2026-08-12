@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
@@ -293,7 +293,8 @@ background-color: #1e1e1e;</string>
    </property>
    <property name="font">
     <font>
-     <bold>true</bold>
+     <family>Segoe UI</family>
+     <pointsize>10</pointsize>
     </font>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
@@ -308,7 +309,7 @@ background-color: #1e1e1e;</string>
       <property name="maximumSize">
        <size>
         <width>303</width>
-        <height>15</height>
+        <height>26</height>
        </size>
       </property>
       <property name="palette">
@@ -457,12 +458,13 @@ background-color: #1e1e1e;</string>
        </palette>
       </property>
       <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-        <bold>false</bold>
-       </font>
-      </property>
-      <property name="contextMenuPolicy">
+        <font>
+         <family>Segoe UI</family>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="contextMenuPolicy">
        <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
       </property>
       <property name="styleSheet">
@@ -516,7 +518,7 @@ background-color: transparent;
         </property>
         <property name="font">
          <font>
-          <family>Tahoma</family>
+          <family>Segoe UI</family>
           <pointsize>11</pointsize>
           <bold>true</bold>
          </font>
@@ -787,15 +789,15 @@ background-color: #1e1e1e;
         </disabled>
        </palette>
       </property>
-      <property name="font">
-       <font>
-        <family>Calibri</family>
-        <pointsize>15</pointsize>
-        <italic>false</italic>
-        <fontweight>Black</fontweight>
-       </font>
-      </property>
-      <property name="focusPolicy">
+<property name="font">
+        <font>
+         <family>Segoe UI</family>
+         <pointsize>14</pointsize>
+         <italic>false</italic>
+         <fontweight>Bold</fontweight>
+        </font>
+       </property>
+       <property name="focusPolicy">
        <enum>Qt::FocusPolicy::WheelFocus</enum>
       </property>
       <property name="acceptDrops">
@@ -912,9 +914,9 @@ QLineEdit:focus {
     color: #ffffff;
     border: 1px solid #1a252f;
  
-    padding: 6px 12px;
+    padding: 10px 18px;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 14px;
 }
 QPushButton:hover {
     background-color: #4d7bff;
@@ -948,9 +950,9 @@ QPushButton:disabled {
     color: #ffffff;
     border: 1px solid #1a252f;
  
-    padding: 6px 12px;
+    padding: 10px 18px;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 14px;
 }
 QPushButton:hover {
     background-color: #4d7bff;
@@ -985,9 +987,9 @@ Datos</string>
     color: #ffffff;
     border: 1px solid #1a252f;
  
-    padding: 6px 12px;
+    padding: 10px 18px;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 14px;
 }
 QPushButton:hover {
     background-color: #4d7bff;
@@ -1043,9 +1045,9 @@ QPushButton:disabled {
     color: #ffffff;
     border: 1px solid #1a252f;
  
-    padding: 6px 12px;
+    padding: 10px 18px;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 14px;
 }
 QPushButton:hover {
     background-color: #4d7bff;
@@ -1061,7 +1063,7 @@ QPushButton:disabled {
 }</string>
          </property>
          <property name="text">
-          <string>Administración 
+          <string>AdministraciÃ³n 
 Usuarios</string>
          </property>
         </widget>
@@ -1264,3 +1266,5 @@ Usuarios</string>
  <resources/>
  <connections/>
 </ui>
+
+

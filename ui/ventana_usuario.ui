@@ -14,14 +14,7 @@
    <string>Manejo De Usuarios</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="3">
-    <widget class="QPushButton" name="pushButton_desactivar_usuario">
-     <property name="text">
-      <string>Desactivar Usuario</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="4">
+   <item row="0" column="0" colspan="3">
     <widget class="QTableView" name="tableViewlistar_usuarios"/>
    </item>
    <item row="1" column="0">
@@ -31,31 +24,38 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
+   <item row="1" column="1">
     <widget class="QPushButton" name="pushButton_activar_usuario">
      <property name="text">
       <string>Activar Usuario</string>
      </property>
     </widget>
    </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="pushButton_desactivar_usuario">
+     <property name="text">
+      <string>Desactivar Usuario</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="0">
+    <widget class="QPushButton" name="pushButton_nuevo_usuario">
+     <property name="text">
+      <string>Nuevo</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
     <widget class="QPushButton" name="pushButton_editar_usuario">
      <property name="text">
       <string>Editar</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="3">
+   <item row="2" column="2">
     <widget class="QPushButton" name="pushButton_permiso_usuario">
      <property name="text">
       <string>Permisos de Usuario</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="pushButton_nuevo_usuario">
-     <property name="text">
-      <string>Nuevo</string>
      </property>
     </widget>
    </item>

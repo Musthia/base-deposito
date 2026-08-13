@@ -2,6 +2,15 @@
 # Paleta oscura central
 # =========================
 
+import os
+
+FONDO_WINDOWS = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "img",
+    "fondo_institucional_datcorr.png"
+).replace("\\", "/")
+
 BG_WINDOW      = "#1e1e1e"
 BG_ELEVADO     = "#252526"
 BG_INPUT       = "#2b2b2b"
@@ -24,12 +33,12 @@ DISABLED       = "#666666"
 # Tipografía legible (fuente única)
 # =========================
 
-FUENTE_FAMILIA      = "Segoe UI Variable, Segoe UI, Helvetica Neue, Arial, sans-serif"
-FUENTE_TAMANO_BASE  = "14pt"
-FUENTE_TAMANO_INPUT = "14pt"
-FUENTE_TAMANO_BOTON = "14pt"
-FUENTE_TAMANO_TITULO = "16pt"
-FUENTE_TAMANO_KPI   = "18pt"
+FUENTE_FAMILIA      = '"Segoe UI Variable", "Segoe UI", "Helvetica Neue", Arial, sans-serif'
+FUENTE_TAMANO_BASE  = "10pt"
+FUENTE_TAMANO_INPUT = "10pt"
+FUENTE_TAMANO_BOTON = "10pt"
+FUENTE_TAMANO_TITULO = "12pt"
+FUENTE_TAMANO_KPI   = "14pt"
 FUENTE_PESO_NORMAL  = "400"
 FUENTE_PESO_BOLD    = "600"
 
@@ -38,17 +47,23 @@ def style_global_dark():
     return f"""
     QMainWindow {{
         background-color: {BG_WINDOW};
+        background-image: url("{FONDO_WINDOWS}");
+        background-repeat: no-repeat;
+        background-position: center;
         color: {TEXTO_ENFATICO};
     }}
 
     QDialog {{
         background-color: {BG_WINDOW};
+        background-image: url("{FONDO_WINDOWS}");
+        background-repeat: no-repeat;
+        background-position: center;
         color: {TEXTO_ENFATICO};
     }}
 
     QWidget {{
         color: {TEXTO_ENFATICO};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
         selection-background-color: {BORDE_FOCUS};
@@ -58,7 +73,7 @@ def style_global_dark():
     QLabel {{
         color: {TEXTO_ENFATICO};
         background-color: transparent;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
         padding: 4px 0;
@@ -72,7 +87,7 @@ def style_global_dark():
         padding: 8px 10px;
         selection-background-color: {BORDE_FOCUS};
         selection-color: #ffffff;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_INPUT};
         font-weight: {FUENTE_PESO_NORMAL};
         min-height: 22px;
@@ -97,11 +112,11 @@ def style_global_dark():
         color: #ffffff;
         border: 1px solid #1a252f;
         border-radius: 6px;
-        padding: 12px 24px;
+        padding: 6px 12px;
         font-weight: {FUENTE_PESO_BOLD};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BOTON};
-        min-height: 30px;
+        min-height: 24px;
         text-align: center;
         outline: none;
     }}
@@ -133,7 +148,7 @@ def style_global_dark():
         border-radius: 6px;
         padding: 8px 10px;
         padding-right: 28px;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_INPUT};
         font-weight: {FUENTE_PESO_NORMAL};
         min-height: 22px;
@@ -161,14 +176,14 @@ def style_global_dark():
         selection-background-color: {SELECCION};
         selection-color: #6fcc7e;
         outline: 0;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_INPUT};
     }}
 
     QCheckBox {{
         color: {TEXTO_ENFATICO};
         spacing: 8px;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
@@ -199,7 +214,7 @@ def style_global_dark():
         padding: 10px 18px;
         border: 1px solid {BORDE};
         border-bottom: none;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         min-height: 24px;
     }}
@@ -213,7 +228,7 @@ def style_global_dark():
         background-color: #2e2e2e;
     }}
 
-    QTableView, QTreeView, QTableWidget, QListWidget {{
+    QTableView, QTreeView, QTableWidget, QListWidget, QListView {{
         background-color: {BG_INPUT};
         color: {TEXTO_ENFATICO};
         alternate-background-color: {BG_ELEVADO};
@@ -221,7 +236,7 @@ def style_global_dark():
         selection-background-color: {SELECCION};
         selection-color: #ffffff;
         gridline-color: #3a3a3a;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
@@ -232,7 +247,7 @@ def style_global_dark():
         padding: 8px;
         border: 1px solid #3a3a3a;
         font-weight: {FUENTE_PESO_BOLD};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         min-height: 24px;
     }}
@@ -245,7 +260,7 @@ def style_global_dark():
         background-color: {BG_ELEVADO};
         color: {TEXTO_ENFATICO};
         border: 1px solid {BORDE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
@@ -273,7 +288,7 @@ def style_global_dark():
         color: #ffffff;
         border: 1px solid {BORDE};
         padding: 8px;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
@@ -284,7 +299,7 @@ def style_global_dark():
         margin-top: 12px;
         padding-top: 12px;
         color: {TEXTO_ENFATICO};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_BOLD};
     }}
@@ -303,14 +318,14 @@ def style_global_dark():
     QMessageBox {{
         background-color: {BG_INPUT};
         color: {TEXTO_ENFATICO};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
 
     QMessageBox QLabel {{
         color: {TEXTO_ENFATICO};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
@@ -319,7 +334,7 @@ def style_global_dark():
         min-width: 100px;
         min-height: 30px;
         padding: 10px 20px;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BOTON};
         font-weight: {FUENTE_PESO_BOLD};
     }}
@@ -330,7 +345,7 @@ def style_global_dark():
         border-radius: 6px;
         text-align: center;
         color: {TEXTO_ENFATICO};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_BASE};
         min-height: 20px;
     }}
@@ -402,7 +417,7 @@ def style_combobox_dark():
         border-radius: 6px;
         padding: 8px 10px;
         padding-right: 28px;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_INPUT};
         font-weight: {FUENTE_PESO_NORMAL};
         min-height: 22px;
@@ -430,7 +445,7 @@ def style_combobox_dark():
         selection-background-color: {SELECCION};
         selection-color: #6fcc7e;
         outline: 0;
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-size: {FUENTE_TAMANO_INPUT};
     }}
     """
@@ -446,7 +461,7 @@ def style_pushbutton_dark():
         min-height: 30px;
         font-weight: {FUENTE_PESO_BOLD};
         font-size: {FUENTE_TAMANO_BOTON};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         text-align: center;
         outline: none;
     }}
@@ -476,7 +491,7 @@ def style_button_success():
         min-height: 30px;
         font-weight: {FUENTE_PESO_BOLD};
         font-size: {FUENTE_TAMANO_BOTON};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         text-align: center;
         outline: none;
     }}
@@ -505,7 +520,7 @@ def style_button_danger():
         min-height: 30px;
         font-weight: {FUENTE_PESO_BOLD};
         font-size: {FUENTE_TAMANO_BOTON};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         text-align: center;
         outline: none;
     }}
@@ -527,12 +542,15 @@ def style_dialog_dark():
     return f"""
     QDialog {{
         background-color: {BG_WINDOW};
+        background-image: url("{FONDO_WINDOWS}");
+        background-repeat: no-repeat;
+        background-position: center;
     }}
 
     QLabel {{
         color: {TEXTO_ENFATICO};
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
         background-color: {BG_WINDOW};
         padding: 4px 0;
@@ -545,7 +563,7 @@ def style_dialog_dark():
         border-radius: 6px;
         padding: 8px 10px;
         font-size: {FUENTE_TAMANO_INPUT};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
         selection-background-color: {BORDE_FOCUS};
         min-height: 22px;
@@ -567,7 +585,7 @@ def style_dialog_dark():
         border-radius: 6px;
         padding: 8px 10px;
         font-size: {FUENTE_TAMANO_INPUT};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
         min-height: 22px;
     }}
@@ -575,7 +593,7 @@ def style_dialog_dark():
     QCheckBox {{
         color: {TEXTO_ENFATICO};
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
         spacing: 8px;
     }}
@@ -586,7 +604,7 @@ def style_dialog_dark():
         border: 1px solid {BORDE};
         padding: 8px;
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
 
@@ -599,7 +617,7 @@ def style_dialog_dark():
         min-height: 30px;
         font-weight: {FUENTE_PESO_BOLD};
         font-size: {FUENTE_TAMANO_BOTON};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         text-align: center;
         outline: none;
     }}
@@ -621,14 +639,14 @@ def style_messagebox_dark():
         background-color: {BG_INPUT};
         color: {TEXTO_ENFATICO};
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
 
     QMessageBox QLabel {{
         color: {TEXTO_ENFATICO};
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
 
@@ -641,7 +659,7 @@ def style_messagebox_dark():
         min-width: 100px;
         min-height: 30px;
         font-size: {FUENTE_TAMANO_BOTON};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_BOLD};
     }}
 
@@ -663,7 +681,7 @@ def style_lineedit_error():
         background-color: #3b1f1f;
         color: #ffffff;
         font-size: {FUENTE_TAMANO_INPUT};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
         border-radius: 6px;
         padding: 8px 10px;
@@ -678,7 +696,7 @@ def style_lineedit_validation():
         background-color: #3b1f1f;
         color: #ffffff;
         font-size: {FUENTE_TAMANO_INPUT};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
         border-radius: 6px;
         padding: 8px 10px;
@@ -696,7 +714,7 @@ def style_tabbar_dark():
         border: 1px solid {BORDE};
         border-bottom: none;
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         min-height: 26px;
     }}
     QTabBar::tab:selected {{
@@ -718,7 +736,7 @@ def style_treeview_dark():
         selection-background-color: {SELECCION};
         selection-color: #ffffff;
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         font-weight: {FUENTE_PESO_NORMAL};
     }}
     """
@@ -732,7 +750,7 @@ def style_header_dark():
         border: 1px solid #3a3a3a;
         font-weight: {FUENTE_PESO_BOLD};
         font-size: {FUENTE_TAMANO_BASE};
-        font-family: "{FUENTE_FAMILIA}";
+        font-family: {FUENTE_FAMILIA};
         min-height: 26px;
     }}
     QHeaderView::section:hover {{

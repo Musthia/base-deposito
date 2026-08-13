@@ -22,39 +22,31 @@ class Ui_EditarUsuario(object):
     def setupUi(self, EditarUsuario):
         if not EditarUsuario.objectName():
             EditarUsuario.setObjectName(u"EditarUsuario")
-        EditarUsuario.resize(389, 335)
+        EditarUsuario.resize(520, 420)
+        EditarUsuario.setMinimumSize(QSize(480, 380))
         self.gridLayout = QGridLayout(EditarUsuario)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setVerticalSpacing(10)
+        self.gridLayout.setHorizontalSpacing(10)
+        self.gridLayout.setContentsMargins(20, 20, 20, 20)
+        self.gridLayout.setColumnStretch(0, 1)
+        self.gridLayout.setColumnStretch(1, 1)
+        self.gridLayout.setColumnStretch(2, 1)
+        self.gridLayout.setColumnStretch(3, 1)
+        self.gridLayout.setRowStretch(0, 1)
+        self.gridLayout.setRowStretch(1, 0)
+        self.gridLayout.setRowStretch(2, 0)
+
         self.listView_permisos_disponibles = QListView(EditarUsuario)
         self.listView_permisos_disponibles.setObjectName(u"listView_permisos_disponibles")
 
         self.gridLayout.addWidget(self.listView_permisos_disponibles, 0, 0, 1, 2)
-
-        self.pushButton_guardar = QPushButton(EditarUsuario)
-        self.pushButton_guardar.setObjectName(u"pushButton_guardar")
-
-        self.gridLayout.addWidget(self.pushButton_guardar, 2, 2, 1, 1)
-
-        self.pushButton_asignar = QPushButton(EditarUsuario)
-        self.pushButton_asignar.setObjectName(u"pushButton_asignar")
-
-        self.gridLayout.addWidget(self.pushButton_asignar, 2, 0, 1, 1)
 
         self.listView_permisos_asignados = QListView(EditarUsuario)
         self.listView_permisos_asignados.setObjectName(u"listView_permisos_asignados")
         self.listView_permisos_asignados.setEnabled(True)
 
         self.gridLayout.addWidget(self.listView_permisos_asignados, 0, 2, 1, 2)
-
-        self.pushButton_guardar_2 = QPushButton(EditarUsuario)
-        self.pushButton_guardar_2.setObjectName(u"pushButton_guardar_2")
-
-        self.gridLayout.addWidget(self.pushButton_guardar_2, 2, 3, 1, 1)
-
-        self.pushButton_quitar = QPushButton(EditarUsuario)
-        self.pushButton_quitar.setObjectName(u"pushButton_quitar")
-
-        self.gridLayout.addWidget(self.pushButton_quitar, 2, 1, 1, 1)
 
         self.line = QFrame(EditarUsuario)
         self.line.setObjectName(u"line")
@@ -65,16 +57,36 @@ class Ui_EditarUsuario(object):
 
         self.gridLayout.addWidget(self.line, 1, 0, 1, 4)
 
+        self.pushButton_asignar = QPushButton(EditarUsuario)
+        self.pushButton_asignar.setObjectName(u"pushButton_asignar")
+
+        self.gridLayout.addWidget(self.pushButton_asignar, 2, 0, 1, 1)
+
+        self.pushButton_quitar = QPushButton(EditarUsuario)
+        self.pushButton_quitar.setObjectName(u"pushButton_quitar")
+
+        self.gridLayout.addWidget(self.pushButton_quitar, 2, 1, 1, 1)
+
+        self.pushButton_guardar = QPushButton(EditarUsuario)
+        self.pushButton_guardar.setObjectName(u"pushButton_guardar")
+
+        self.gridLayout.addWidget(self.pushButton_guardar, 2, 2, 1, 1)
+
+        self.pushButton_guardar_2 = QPushButton(EditarUsuario)
+        self.pushButton_guardar_2.setObjectName(u"pushButton_guardar_2")
+
+        self.gridLayout.addWidget(self.pushButton_guardar_2, 2, 3, 1, 1)
+
         self.retranslateUi(EditarUsuario)
 
         QMetaObject.connectSlotsByName(EditarUsuario)
     # setupUi
 
     def retranslateUi(self, EditarUsuario):
-        EditarUsuario.setWindowTitle(QCoreApplication.translate("EditarUsuario", u"Editar Usuario", None))
-        self.pushButton_guardar.setText(QCoreApplication.translate("EditarUsuario", u"ACEPTAR", None))
+        EditarUsuario.setWindowTitle(QCoreApplication.translate("EditarUsuario", u"Permisos de Usuario", None))
         self.pushButton_asignar.setText(QCoreApplication.translate("EditarUsuario", u"\u2795 Asignar", None))
-        self.pushButton_guardar_2.setText(QCoreApplication.translate("EditarUsuario", u"CANCELAR", None))
         self.pushButton_quitar.setText(QCoreApplication.translate("EditarUsuario", u"\u2796 Quitar", None))
+        self.pushButton_guardar.setText(QCoreApplication.translate("EditarUsuario", u"ACEPTAR", None))
+        self.pushButton_guardar_2.setText(QCoreApplication.translate("EditarUsuario", u"CANCELAR", None))
     # retranslateUi
 

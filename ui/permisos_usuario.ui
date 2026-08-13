@@ -6,73 +6,47 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>389</width>
-    <height>335</height>
+    <width>520</width>
+    <height>420</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Editar Usuario</string>
+  <property name="minimumSize">
+   <size>
+    <width>480</width>
+    <height>380</height>
+   </size>
   </property>
-  
+  <property name="windowTitle">
+   <string>Permisos de Usuario</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="columnStretch">
+    <string>1,1,1,1</string>
+   </property>
+   <property name="rowStretch">
+    <string>1,0,0</string>
+   </property>
+   <property name="verticalSpacing">
+    <number>10</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>10</number>
+   </property>
+   <property name="contentsMargins">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>20</width>
+     <height>20</height>
+    </rect>
+   </property>
    <item row="0" column="0" colspan="2">
     <widget class="QListView" name="listView_permisos_disponibles"/>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="pushButton_guardar">
-     <property name="styleSheet">
-      <string notr="true">background-color: #2e7d32;
-color: #ffffff;
-font: bold 12pt &quot;Segoe UI&quot;; padding: 8px 16px;</string>
-     </property>
-     <property name="text">
-      <string>ACEPTAR</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="pushButton_asignar">
-     <property name="styleSheet">
-      <string notr="true">background-color: #2e7d32;
-color: #ffffff;
-border: 1px solid #1a252f;
-border-radius: 4px;</string>
-     </property>
-     <property name="text">
-      <string>âž• Asignar</string>
-     </property>
-    </widget>
    </item>
    <item row="0" column="2" colspan="2">
     <widget class="QListView" name="listView_permisos_asignados">
      <property name="enabled">
       <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <widget class="QPushButton" name="pushButton_guardar_2">
-     <property name="styleSheet">
-      <string notr="true">
-font: bold 12pt &quot;Segoe UI&quot; padding: 8px 16px;
-background-color: #c94f42;
-color: #ffffff;</string>
-     </property>
-     <property name="text">
-      <string>CANCELAR</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="pushButton_quitar">
-     <property name="styleSheet">
-      <string notr="true">background-color: #c9a227;
-color: #ffffff;
-border: 1px solid #1a252f;
-border-radius: 4px;</string>
-     </property>
-     <property name="text">
-      <string>âž– Quitar</string>
      </property>
     </widget>
    </item>
@@ -89,9 +63,36 @@ border-radius: 4px;</string>
      </property>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="pushButton_asignar">
+     <property name="text">
+      <string>&#10133; Asignar</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="pushButton_quitar">
+     <property name="text">
+      <string>&#10134; Quitar</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="pushButton_guardar">
+     <property name="text">
+      <string>ACEPTAR</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="pushButton_guardar_2">
+     <property name="text">
+      <string>CANCELAR</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
  <connections/>
 </ui>
-

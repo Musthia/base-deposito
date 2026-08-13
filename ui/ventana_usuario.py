@@ -28,12 +28,12 @@ class Ui_VentanaUsuarios(object):
         self.pushButton_desactivar_usuario = QPushButton(VentanaUsuarios)
         self.pushButton_desactivar_usuario.setObjectName(u"pushButton_desactivar_usuario")
 
-        self.gridLayout.addWidget(self.pushButton_desactivar_usuario, 1, 3, 1, 1)
+        self.gridLayout.addWidget(self.pushButton_desactivar_usuario, 1, 2, 1, 1)
 
         self.tableViewlistar_usuarios = QTableView(VentanaUsuarios)
         self.tableViewlistar_usuarios.setObjectName(u"tableViewlistar_usuarios")
 
-        self.gridLayout.addWidget(self.tableViewlistar_usuarios, 0, 0, 1, 4)
+        self.gridLayout.addWidget(self.tableViewlistar_usuarios, 0, 0, 1, 3)
 
         self.pushButton_actualizar_usuarios = QPushButton(VentanaUsuarios)
         self.pushButton_actualizar_usuarios.setObjectName(u"pushButton_actualizar_usuarios")
@@ -43,22 +43,22 @@ class Ui_VentanaUsuarios(object):
         self.pushButton_activar_usuario = QPushButton(VentanaUsuarios)
         self.pushButton_activar_usuario.setObjectName(u"pushButton_activar_usuario")
 
-        self.gridLayout.addWidget(self.pushButton_activar_usuario, 1, 1, 1, 2)
+        self.gridLayout.addWidget(self.pushButton_activar_usuario, 1, 1, 1, 1)
 
         self.pushButton_editar_usuario = QPushButton(VentanaUsuarios)
         self.pushButton_editar_usuario.setObjectName(u"pushButton_editar_usuario")
 
-        self.gridLayout.addWidget(self.pushButton_editar_usuario, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.pushButton_editar_usuario, 2, 1, 1, 1)
 
         self.pushButton_permiso_usuario = QPushButton(VentanaUsuarios)
         self.pushButton_permiso_usuario.setObjectName(u"pushButton_permiso_usuario")
 
-        self.gridLayout.addWidget(self.pushButton_permiso_usuario, 2, 3, 1, 1)
+        self.gridLayout.addWidget(self.pushButton_permiso_usuario, 2, 2, 1, 1)
 
         self.pushButton_nuevo_usuario = QPushButton(VentanaUsuarios)
         self.pushButton_nuevo_usuario.setObjectName(u"pushButton_nuevo_usuario")
 
-        self.gridLayout.addWidget(self.pushButton_nuevo_usuario, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.pushButton_nuevo_usuario, 2, 0, 1, 1)
 
 
         self.retranslateUi(VentanaUsuarios)

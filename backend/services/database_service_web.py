@@ -109,7 +109,10 @@ def buscar_en_base(
     return columnas_out, registros, total
 
 
-def actualizar_registro(base: str, registro_id: int, data: dict, tabla: str = "Datcorr_database"):
+def actualizar_registro(
+    base: str, registro_id: int, data: dict, tabla: str = "Datcorr_database",
+    usuario: str = None, detalle: str = None,
+):
     _validar_base(base)
     schema = _schema_para_base(base)
     set_clause = ", ".join(f'"{k}" = :{k}' for k in data.keys())
@@ -118,8 +121,20 @@ def actualizar_registro(base: str, registro_id: int, data: dict, tabla: str = "D
     sql = text(
         f'UPDATE "{schema}"."{tabla}" SET {set_clause} WHERE "id_Datcorr_database" = :id_value'
     )
+    # UPDATE + auditoría en UNA sola transacción/una conexión (evita 2 round-trips).
     with postgres_engine.begin() as conn:
         conn.execute(sql, params)
+        if usuario:
+            conn.execute(
+                text("""
+                    INSERT INTO public.auditoria
+                        (usuario, accion, tabla, registro_id, detalle, fecha)
+                    VALUES (:usuario, :accion, :tabla, :registro_id, :detalle, NOW())
+                """),
+                {"usuario": usuario, "accion": "UPDATE",
+                 "tabla": f"{schema}.{tabla}",
+                 "registro_id": registro_id, "detalle": detalle or ""},
+            )
     logging.debug(f"[DB WEB] Registro {registro_id} actualizado en {base}")
 
 

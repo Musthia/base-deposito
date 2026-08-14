@@ -4,12 +4,88 @@
 
 import os
 
-FONDO_WINDOWS = os.path.join(
+try:
+    from PIL import Image, ImageFilter
+    _PIL_DISPONIBLE = True
+except Exception:
+    _PIL_DISPONIBLE = False
+
+_FONDO_ORIGINAL = os.path.join(
     os.path.dirname(__file__),
     "..",
     "img",
     "fondo_institucional_datcorr.png"
 ).replace("\\", "/")
+
+# ===================================================================
+#  BLUR DEL FONDO DE TODA LA APP
+# -------------------------------------------------------------------
+#  AJUSTÁ ESTE VALOR según tu gusto:
+#    BLUR_RADIO = 0   -> sin blur (imagen original)
+#    BLUR_RADIO = 8   -> blur suave
+#    BLUR_RADIO = 14  -> blur medio (valor actual)
+#    BLUR_RADIO = 24  -> blur fuerte
+#
+#  SIN EDITAR CÓDIGO: también podés probar valores al vuelo con la
+#  variable de entorno BLUR_RADIO antes de lanzar la app. Ejemplos:
+#    PowerShell:
+#      $env:BLUR_RADIO=20; python base_datcorr.py
+#    CMD:
+#      set BLUR_RADIO=20 && python base_datcorr.py
+#
+#  Al cambiar el valor se genera automáticamente una versión
+#  difuminada cacheada en img/ (un archivo por valor).
+# ===================================================================
+BLUR_RADIO = int(os.environ.get("BLUR_RADIO", "14"))
+
+_FONDO_BLUR = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "img",
+    f"fondo_institucional_datcorr_blur_{BLUR_RADIO}.png"
+).replace("\\", "/")
+
+
+def _generar_fondo_blur(radio=None):
+    """Genera (una sola vez) la versión difuminada del fondo institucional."""
+    radio = BLUR_RADIO if radio is None else max(0, int(radio))
+    fondo_blur = os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "img",
+        f"fondo_institucional_datcorr_blur_{radio}.png"
+    ).replace("\\", "/")
+
+    if not _PIL_DISPONIBLE:
+        return _FONDO_ORIGINAL
+    if not os.path.exists(_FONDO_ORIGINAL):
+        return _FONDO_ORIGINAL
+    if os.path.exists(fondo_blur):
+        return fondo_blur
+    try:
+        with Image.open(_FONDO_ORIGINAL) as im:
+            im = im.convert("RGBA")
+            base = Image.new("RGBA", im.size, (30, 30, 30, 255))
+            base.paste(im, (0, 0), im)
+            difuminada = base.convert("RGB").filter(
+                ImageFilter.GaussianBlur(radio)
+            )
+            difuminada.save(fondo_blur)
+        return fondo_blur
+    except Exception:
+        return _FONDO_ORIGINAL
+
+
+FONDO_WINDOWS = _generar_fondo_blur()
+
+
+def cambiar_blur(radio):
+    """Regenera el fondo difuminado con un nuevo radio y actualiza la ruta global."""
+    global BLUR_RADIO, FONDO_WINDOWS
+    radio = max(0, int(radio))
+    BLUR_RADIO = radio
+    FONDO_WINDOWS = _generar_fondo_blur(radio)
+    return FONDO_WINDOWS
 
 BG_WINDOW      = "#1e1e1e"
 BG_ELEVADO     = "#252526"
@@ -28,6 +104,17 @@ BTN_DANGER     = "#c94f42"
 BTN_SUCCESS    = "#2e7d32"
 SELECCION      = "#263238"
 DISABLED       = "#666666"
+
+# =========================
+# Resaltado de filas por estado (plantillas)
+# =========================
+# Fondo rojo (claro pero contrastante) para filas cuyo campo "Estado"
+# contenga alguno de los patrones de ESTADOS_RESALTAR.
+FILA_ESTADO_ROJO = "#a9554d"
+
+# Patrones que activan el resaltado (se comparan en minúsculas, por
+# coincidencia de texto dentro del valor del campo estado).
+ESTADOS_RESALTAR = ["verificado"]
 
 # =========================
 # Tipografía legible (fuente única)

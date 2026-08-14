@@ -238,12 +238,13 @@ def actualizar(
 ):
     verificar_permiso(usuario_actual, nivel_minimo=5, accion="ACTUALIZAR_REGISTRO")
     try:
-        actualizar_registro(base, record_id, body.data, table)
         campos = ", ".join(f"{k}={v}" for k, v in body.data.items())
         usuario = _nombre_usuario(request)
-        _auditar(usuario, "UPDATE", f"{MAPA_BASE_SCHEMA.get(base, base)}.{table}",
-                 registro_id=record_id,
-                 detalle=f"Registro {record_id} actualizado en {base}: {campos}")
+        actualizar_registro(
+            base, record_id, body.data, table,
+            usuario=usuario,
+            detalle=f"Registro {record_id} actualizado en {base}: {campos}",
+        )
         return ActualizarResponse(success=True, mensaje="Registro actualizado correctamente")
     except (ValueError, FileNotFoundError) as e:
         raise HTTPException(status_code=404, detail=str(e))

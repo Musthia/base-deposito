@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (
     QStyledItemDelegate,
     QStyle,
     QToolBar,
+    QSlider,
 )
 
 # =========================
@@ -58,6 +59,12 @@ from PySide6.QtGui import (
 # =========================
 from controller.selector_bases import SelectorBasesDialog
 from controller.cargador_plantillas import cargar_plantilla
+from ui.excel_filtros import (
+    FiltroExcelProxy,
+    instalar_filtros_excel,
+    instalar_paginacion,
+    actualizar_columnas_barra,
+)
 
 from ui.styles import (
     style_global_dark,
@@ -65,6 +72,7 @@ from ui.styles import (
     style_pushbutton_dark,
     style_treeview_dark,
     style_header_dark,
+    BLUR_RADIO,
 )
 
 
@@ -256,9 +264,35 @@ class VentanaPrincipal(QMainWindow):
         self._btn_reportes.triggered.connect(self._abrir_reportes)
         self._toolbar.addAction(self._btn_reportes)
 
+        # -----------------------------------
+        # BLUR EN VIVO (SOLO PRUEBAS: BLUR_DEBUG=1)
+        # -----------------------------------
+        if os.environ.get("BLUR_DEBUG") == "1":
+            self._toolbar.addSeparator()
+            lbl = QLabel("Blur:", self)
+            self._toolbar.addWidget(lbl)
+            self._slider_blur = QSlider(Qt.Horizontal)
+            self._slider_blur.setRange(0, 40)
+            self._slider_blur.setValue(BLUR_RADIO)
+            self._slider_blur.setFixedWidth(160)
+            self._toolbar.addWidget(self._slider_blur)
+            self._lbl_blur_valor = QLabel(f"  {BLUR_RADIO}", self)
+            self._toolbar.addWidget(self._lbl_blur_valor)
+            self._slider_blur.valueChanged.connect(self._cambiar_blur_vivo)
+
         # statusbar con usuario logueado
         self.label_usuario = QLabel(f"  Usuario: {nombre} {apellido}  ({rol})  ")
         self.statusBar().addPermanentWidget(self.label_usuario)
+        
+    def _cambiar_blur_vivo(self, valor):
+        """Prueba en vivo del blur (re-aplica el tema global con el nuevo radio)."""
+        from ui.styles import cambiar_blur, style_global_dark
+        cambiar_blur(valor)
+        app = QApplication.instance()
+        if app is not None:
+            app.setStyleSheet(style_global_dark())
+        self._lbl_blur_valor.setText(f"  {valor}")
+        print(f"[BLUR DEBUG] radio={valor} -> {cambiar_blur(valor)}")
         
     def on_base_changed(self, index=None):
 
@@ -768,7 +802,7 @@ class VentanaPrincipal(QMainWindow):
     
             model = QStandardItemModel()
     
-            proxy = QSortFilterProxyModel()
+            proxy = FiltroExcelProxy()
     
             proxy.setSourceModel(model)
     
@@ -777,10 +811,6 @@ class VentanaPrincipal(QMainWindow):
             )
     
             proxy.setFilterKeyColumn(-1)
-    
-            proxy.setSortRole(
-                Qt.UserRole
-            )
     
             tree.setModel(proxy)
     
@@ -799,6 +829,25 @@ class VentanaPrincipal(QMainWindow):
             header.setSortIndicatorShown(True)
     
             tree.setStyleSheet(style_treeview_dark() + style_header_dark())
+    
+            # -----------------------------------
+            # FILTROS ESTILO EXCEL
+            # -----------------------------------
+    
+            _, barra_filtros = instalar_filtros_excel(
+                tree,
+                columnas=columnas,
+                proxy=proxy
+            )
+
+            # -----------------------------------
+            # PAGINACIÓN (25 filas por página)
+            # -----------------------------------
+
+            paginacion, barra_paginacion = instalar_paginacion(
+                tree,
+                proxy
+            )
     
             # -----------------------------------
             # DELEGATE (SE CREA UNA SOLA VEZ)
@@ -833,10 +882,13 @@ class VentanaPrincipal(QMainWindow):
                 "tree": tree,
                 "model": model,
                 "proxy": proxy,
+                "paginacion": paginacion,
                 "delegate": delegate,
                 "contenedor": contenedor,
                 "modo": modo,
-                "base": base
+                "base": base,
+                "barra_filtros": barra_filtros,
+                "barra_paginacion": barra_paginacion
             }
     
         # -----------------------------------
@@ -878,14 +930,30 @@ class VentanaPrincipal(QMainWindow):
         )
     
         # -----------------------------------
-        # CARGAR FILAS
+        # FILTROS ESTILO EXCEL (columnas dinámicas)
         # -----------------------------------
     
+        actualizar_columnas_barra(
+            datos_tab.get("barra_filtros"),
+            columnas
+        )
+    
+# -----------------------------------
+        # CARGAR FILAS
+        # -----------------------------------
+
+        filas_por_id = {}
+
         for fila in resultados:
-        
+
+            id_registro = fila[0]
+            filas_por_id[id_registro] = model.rowCount()
+
             model.appendRow(
                 self._crear_fila_modelo(fila)
             )
+
+        datos_tab["filas_por_id"] = filas_por_id
     
         # -----------------------------------
         # ACTUALIZAR TÍTULO
@@ -935,10 +1003,14 @@ class VentanaPrincipal(QMainWindow):
         if not datos_tab:
             return
 
-        proxy = datos_tab["proxy"]
+        paginacion = datos_tab.get("paginacion")
 
         # siempre convertir a source
-        index_source = proxy.mapToSource(index)
+        if paginacion is not None:
+            index_source = paginacion.map_to_fuente(index)
+        else:
+            proxy = datos_tab["proxy"]
+            index_source = proxy.mapToSource(index)
 
         fila = index_source.row()
 
@@ -1003,26 +1075,26 @@ class VentanaPrincipal(QMainWindow):
             if tab["base"] != base:
                 continue
             
+            filas_por_id = tab.get("filas_por_id") or {}
+            row = filas_por_id.get(id_registro)
+
+            if row is None:
+                continue
+            
             model = tab["model"]
     
-            for row in range(model.rowCount()):
-            
-                item = model.item(row, 0)
+            for col in range(model.columnCount()):
+                key = model.headerData(col, Qt.Horizontal)
+
+                if key in datos:
+                    idx = model.index(row, col)
+                    model.setData(idx, datos[key])
+
+            proxy = tab["proxy"]
+            proxy.invalidate()
+            tab["tree"].viewport().update()
     
-                if item and item.data(Qt.UserRole) == id_registro:
-                
-                    for col in range(model.columnCount()):
-                        key = model.headerData(col, Qt.Horizontal)
-    
-                        if key in datos:
-                            idx = model.index(row, col)
-                            model.setData(idx, datos[key])
-    
-                    proxy = tab["proxy"]
-                    proxy.invalidate()
-                    tab["tree"].viewport().update()
-    
-                    return
+            return
 
     def actualizar_resaltado(self, texto):
 
@@ -1064,6 +1136,7 @@ class VentanaEdicionRegistro(QDialog):
         self.base = base
         self.id_registro = id_registro
         self.campos = {}
+        self.valores_originales = {}
 
         self.setWindowIcon(QIcon("img/datcorr.ico"))
         self.resize(550, 500)
@@ -1093,6 +1166,7 @@ class VentanaEdicionRegistro(QDialog):
 
             layout.addRow(label, entry)
             self.campos[col] = entry
+            self.valores_originales[col] = "" if val is None else str(val)
 
         btn_guardar = QPushButton("Guardar cambios")
         btn_guardar.setStyleSheet(style_pushbutton_dark())
@@ -1101,11 +1175,29 @@ class VentanaEdicionRegistro(QDialog):
 
         layout.addRow(btn_guardar)
 
+    def _normalizar_valor(self, texto):
+        if texto is None:
+            return None
+        t = texto.strip()
+        if t == "" or t.lower() == "none":
+            return None
+        return t
+
     def guardar_cambios(self):
 
-        datos_actualizados = {
-            col: self.campos[col].text() for col in self.campos
-        }
+        # 🔥 enviar SOLO los campos modificados
+        datos_actualizados = {}
+
+        for col, entry in self.campos.items():
+            nuevo = self._normalizar_valor(entry.text())
+            original = self._normalizar_valor(self.valores_originales.get(col))
+
+            if nuevo != original:
+                datos_actualizados[col] = nuevo
+
+        if not datos_actualizados:
+            self.accept()
+            return
 
         try:
 

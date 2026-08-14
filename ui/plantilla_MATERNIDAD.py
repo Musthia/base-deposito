@@ -59,6 +59,11 @@ from ui.styles import (
 )
 
 # =========================
+# Filtros estilo Excel
+# =========================
+from ui.excel_filtros import instalar_filtros_paginacion
+
+# =========================
 # Recursos Qt (icons / png)
 # =========================
 import ui.labels_png_rc
@@ -152,6 +157,17 @@ class Plantilla(QWidget):
         self.ui.treeView_carga_maternidad.setAlternatingRowColors(True)  
 
         self.ui.treeView_carga_maternidad.setFocusPolicy(Qt.StrongFocus)
+
+        # ---------- FILTROS ESTILO EXCEL + PAGINACIÓN ----------
+        (
+            self.proxy_filtros,
+            self.barra_filtros,
+            self.paginacion,
+            self.barra_paginacion,
+            self.delegate_estado,
+        ) = instalar_filtros_paginacion(
+            self.ui.treeView_carga_maternidad
+        )
 
         # ---------- AUTOCOMPLETADO ----------
         self._init_autocompletado() 
@@ -594,6 +610,12 @@ class Plantilla(QWidget):
 
         if not index.isValid():
             return  # nada seleccionado, no molestamos
+
+        # Mapear fila del proxy (paginación + filtros/orden) -> fila del modelo fuente
+        if self.paginacion is not None:
+            index = self.paginacion.map_to_fuente(index)
+        elif self.proxy_filtros is not None:
+            index = self.proxy_filtros.mapToSource(index)
 
         fila = index.row()
 

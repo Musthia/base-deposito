@@ -2,12 +2,13 @@ from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QComboBox, QPushButton,
     QTableWidget, QTableWidgetItem, QLabel, QMessageBox,
     QHeaderView, QWidget, QFormLayout, QLineEdit, QDateEdit,
-    QGroupBox, QGridLayout, QFrame,
+    QGroupBox, QGridLayout, QFrame, QFileDialog,
 )
 from PySide6.QtCore import Qt, QDate
 from PySide6.QtGui import QIcon
 
 from core.session_manager import SessionManager
+from core.api_client import DownloadError
 
 from ui.styles import style_global_dark, FUENTE_FAMILIA
 
@@ -230,8 +231,47 @@ class ReportesViewer(QDialog):
         if not client:
             return
 
-        result = client.exportar_consulta(consulta_id, formato=formato, **filtros)
-        if isinstance(result, dict) and not result.get("success", True):
-            QMessageBox.critical(self, "Error", result.get("mensaje", "Error al exportar"))
-        else:
-            QMessageBox.information(self, "Exportar", f"Reporte exportado como {formato.upper()}")
+        try:
+            contenido = client.exportar_consulta(consulta_id, formato=formato, **filtros)
+        except DownloadError as e:
+            QMessageBox.critical(
+                self,
+                "Error",
+                str(e) or "Error al exportar el reporte."
+            )
+            return
+        except Exception:
+            QMessageBox.critical(
+                self,
+                "Error",
+                "Error de conexión con el servidor"
+            )
+            return
+
+        extensiones = {"csv": "csv", "xlsx": "xlsx", "pdf": "pdf"}
+        ruta, _ = QFileDialog.getSaveFileName(
+            self,
+            "Guardar reporte",
+            f"reporte_{consulta_id}.{extensiones.get(formato, 'csv')}",
+            f"{formato.upper()} (*.{extensiones.get(formato, 'csv')})"
+        )
+
+        if not ruta:
+            return
+
+        try:
+            with open(ruta, "wb") as f:
+                f.write(contenido)
+        except Exception:
+            QMessageBox.critical(
+                self,
+                "Error",
+                "No se pudo guardar el archivo."
+            )
+            return
+
+        QMessageBox.information(
+            self,
+            "Exportar",
+            f"Reporte exportado como {formato.upper()} en:\n{ruta}"
+        )

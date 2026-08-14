@@ -4,6 +4,16 @@ import urllib.request
 import urllib.error
 
 
+class DownloadError(Exception):
+
+    def __init__(self, data=None, status=None):
+        self.data = data
+        self.status = status
+        super().__init__(
+            data.get("detail") if isinstance(data, dict) else f"HTTP {status}"
+        )
+
+
 class ApiClient:
 
     def __init__(self, base_url):
@@ -64,6 +74,24 @@ class ApiClient:
             full_url += "?" + query
         req = urllib.request.Request(full_url, headers=self._headers(), method="GET")
         return self._open(req)
+
+    def download(self, url, params=None):
+        full_url = self.base_url + url
+        if params:
+            query = urllib.parse.urlencode(params, doseq=True)
+            full_url += "?" + query
+        req = urllib.request.Request(full_url, headers=self._headers(), method="GET")
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as e:
+            try:
+                data = json.loads(e.read().decode("utf-8"))
+            except Exception:
+                data = None
+            raise DownloadError(data, e.code)
+        except Exception:
+            raise DownloadError(None, None)
 
     def post(self, url, data):
         req = urllib.request.Request(

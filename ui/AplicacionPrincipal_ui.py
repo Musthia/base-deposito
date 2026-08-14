@@ -127,7 +127,7 @@ class Ui_MainWindow(object):
         self.tabwidget_resultados_consulta.setSizePolicy(sizePolicy1)
         self.tabwidget_resultados_consulta.setMaximumSize(QSize(16777215, 16777215))
         self.tabwidget_resultados_consulta.setTabPosition(QTabWidget.TabPosition.North)
-        self.tabwidget_resultados_consulta.setTabShape(QTabWidget.TabShape.Triangular)
+        self.tabwidget_resultados_consulta.setTabShape(QTabWidget.TabShape.Rounded)
         self.tabwidget_resultados_consulta.setElideMode(Qt.TextElideMode.ElideLeft)
         self.tabwidget_resultados_consulta.setUsesScrollButtons(False)
         self.tabwidget_resultados_consulta.setDocumentMode(True)

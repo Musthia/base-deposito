@@ -13,6 +13,7 @@ from ui.editar_usuario_ui import (
 from PySide6.QtCore import Signal
 
 from core.session_manager import SessionManager
+from core.async_api import run_async
 
 from config.app_config import (
     MODO_DESARROLLO
@@ -22,7 +23,7 @@ from utils.user_helpers import get_usuario_attr
 
 class VentanaEditarUsuario(QDialog):
 
-    usuario_actualizado = Signal()
+    usuario_actualizado = Signal(dict)
     
     def __init__(
         self,
@@ -36,39 +37,23 @@ class VentanaEditarUsuario(QDialog):
 
         self.ui.setupUi(self)
 
-        # -----------------------------------
-        # USUARIO
-        # -----------------------------------
-
         self.usuario = usuario
-
-        # -----------------------------------
-        # CONFIGURAR UI
-        # -----------------------------------
-
-        self.configurar_ui()
-
-        # -----------------------------------
-        # CARGAR DATOS
-        # -----------------------------------
-
-        self.cargar_datos_usuario()        
-
-        # -----------------------------------
-        # CONEXIONES
-        # -----------------------------------
-
-        self.ui.pushButton_cancelar.clicked.connect(
-            self.reject
-        )
 
         self.ui.pushButton_guardar.clicked.connect(
             self.guardar_usuario
         )
 
+        self.ui.pushButton_cancelar.clicked.connect(
+            self.reject
+        )
+
         self.ui.pushButton_reset_pass.clicked.connect(
             self.reset_password
         )
+
+        self.configurar_ui()
+
+        self.cargar_datos_usuario()        
 
     def reset_password(self):
 
@@ -193,39 +178,54 @@ class VentanaEditarUsuario(QDialog):
         if password:
             data["password"] = password
 
-        resultado = client.actualizar_usuario(
-            get_usuario_attr(self.usuario, "id"),
-            data
-        )
+        self.ui.pushButton_guardar.setEnabled(False)
+        self.ui.pushButton_guardar.setText("Guardando...")
 
-        # -----------------------------------
-        # RESPUESTA
-        # -----------------------------------
+        def _on_success(resultado):
+            self.ui.pushButton_guardar.setEnabled(True)
+            self.ui.pushButton_guardar.setText("Guardar cambios")
 
-        if resultado["success"]:
+            if resultado["success"]:
 
-            logging.debug(
-                f"Usuario actualizado: "
-                f"{usuario_texto}"
-            )
+                logging.debug(
+                    f"Usuario actualizado: "
+                    f"{usuario_texto}"
+                )
 
-            QMessageBox.information(
-                self,
-                "Usuario",
-                resultado["mensaje"]
-            )
+                QMessageBox.information(
+                    self,
+                    "Usuario",
+                    resultado["mensaje"]
+                )
 
-            self.usuario_actualizado.emit()
+                self.usuario_actualizado.emit(data)
 
-            self.accept()
+                self.accept()
 
-        else:
+            else:
 
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    resultado["mensaje"]
+                )
+
+        def _on_error(msg):
+            self.ui.pushButton_guardar.setEnabled(True)
+            self.ui.pushButton_guardar.setText("Guardar cambios")
             QMessageBox.critical(
                 self,
                 "Error",
-                resultado["mensaje"]
+                msg
             )
+
+        run_async(
+            client.actualizar_usuario,
+            get_usuario_attr(self.usuario, "id"),
+            data,
+            on_success=_on_success,
+            on_error=_on_error,
+        )
 
     # -----------------------------------
     # CARGAR DATOS

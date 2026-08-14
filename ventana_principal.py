@@ -1,4 +1,5 @@
 from core.session_manager import SessionManager
+from core.async_api import run_async
 
 # =========================
 # UI principal (Qt Designer)
@@ -578,20 +579,20 @@ class VentanaPrincipal(QMainWindow):
 
         tabla = "Datcorr_database"
 
-        try:
+        self._set_consultar_enabled(False)
+        self._set_estado_consulta("Cargando...")
 
-            data = SessionManager.get_db_client().consultar_datos(
-                base=base, table=tabla, limit=0
-            )
+        def _on_success(data):
+            self._set_consultar_enabled(True)
+            self._set_estado_consulta("")
 
             if not data.get("success"):
                 raise Exception(data.get("mensaje", "Error al consultar"))
-            
+
             columnas = data.get("columnas", [])
             resultados = data.get("registros", [])
             total = data.get("total", len(resultados))
 
-            # omitir la primera columna (id_Datcorr_database) en la vista
             self.crear_o_actualizar_pestana(
                 base=base,
                 columnas=columnas[1:],
@@ -606,15 +607,25 @@ class VentanaPrincipal(QMainWindow):
                 f"{len(resultados)} registros"
             )
 
-        except Exception as e:
-
-            logging.exception(e)
-
+        def _on_error(msg):
+            self._set_consultar_enabled(True)
+            self._set_estado_consulta("")
+            logging.exception("[CONSULTA] Error")
             QMessageBox.critical(
                 self,
                 "Error",
-                str(e)
+                msg
             )
+
+        run_async(
+            SessionManager.get_db_client().consultar_datos,
+            on_success=_on_success,
+            on_error=_on_error,
+            base=base,
+            table=tabla,
+            limit=50,
+            page=1,
+        )
 
     def on_pushButton_carga_datos_clicked(self):
         from PySide6.QtWidgets import QMessageBox
@@ -657,6 +668,12 @@ class VentanaPrincipal(QMainWindow):
     def enfocar_entry_busqueda(self):
         if self.ui.combo_bases.currentText():
             self.ui.entry_consultar.setFocus()
+
+    def _set_consultar_enabled(self, enabled: bool):
+        self.ui.pushButton_consulta_bases.setEnabled(enabled)
+
+    def _set_estado_consulta(self, texto: str):
+        self.statusBar().showMessage(texto)
 
     def cargar_bases_en_combo(self):
 
@@ -719,11 +736,12 @@ class VentanaPrincipal(QMainWindow):
 
         self.base_actual = base
 
-        try:
+        self._set_consultar_enabled(False)
+        self._set_estado_consulta("Buscando...")
 
-            data = SessionManager.get_db_client().buscar_datos(
-                base=base, q=criterio
-            )
+        def _on_success(data):
+            self._set_consultar_enabled(True)
+            self._set_estado_consulta("")
 
             if not data.get("success"):
                 raise Exception(data.get("mensaje", "Error al buscar"))
@@ -748,8 +766,25 @@ class VentanaPrincipal(QMainWindow):
                 modo="BUSQUEDA"
             )
 
-        except Exception:
-            logging.exception("[BUSCAR] Error inesperado")
+        def _on_error(msg):
+            self._set_consultar_enabled(True)
+            self._set_estado_consulta("")
+            logging.exception("[BUSCAR] Error")
+            QMessageBox.critical(
+                self,
+                "Error",
+                msg
+            )
+
+        run_async(
+            SessionManager.get_db_client().buscar_datos,
+            on_success=_on_success,
+            on_error=_on_error,
+            base=base,
+            q=criterio,
+            limit=50,
+            page=1,
+        )
             
     def _crear_fila_modelo(self, fila_bd):
         id_registro = fila_bd[0]
@@ -1175,6 +1210,8 @@ class VentanaEdicionRegistro(QDialog):
 
         layout.addRow(btn_guardar)
 
+        self.btn_guardar = btn_guardar
+
     def _normalizar_valor(self, texto):
         if texto is None:
             return None
@@ -1199,16 +1236,20 @@ class VentanaEdicionRegistro(QDialog):
             self.accept()
             return
 
-        try:
+        self.btn_guardar.setEnabled(False)
+        self.btn_guardar.setText("Guardando...")
 
-            result = SessionManager.get_db_client().actualizar(
-                base=self.base,
-                record_id=self.id_registro,
-                data=datos_actualizados
-            )
+        def _on_success(result):
+            self.btn_guardar.setEnabled(True)
+            self.btn_guardar.setText("Guardar cambios")
 
             if not result.get("success"):
-                raise Exception(result.get("mensaje", "Error al actualizar"))
+                QMessageBox.critical(
+                    self,
+                    "ERROR",
+                    result.get("mensaje", "Error al actualizar")
+                )
+                return
 
             self.datos_actualizados.emit(
                 self.base,
@@ -1218,15 +1259,25 @@ class VentanaEdicionRegistro(QDialog):
 
             self.accept()
 
-        except Exception as e:
-
-            logging.exception(e)
-
+        def _on_error(msg):
+            self.btn_guardar.setEnabled(True)
+            self.btn_guardar.setText("Guardar cambios")
             QMessageBox.critical(
                 self,
                 "ERROR",
-                str(e)
+                msg
             )
+
+        from core.async_api import run_async
+
+        run_async(
+            SessionManager.get_db_client().actualizar,
+            on_success=_on_success,
+            on_error=_on_error,
+            base=self.base,
+            record_id=self.id_registro,
+            data=datos_actualizados,
+        )
 
 class ResaltadoCoincidenciaDelegate(QStyledItemDelegate):
     def __init__(self, criterio="", colores_por_columna=None, parent=None):

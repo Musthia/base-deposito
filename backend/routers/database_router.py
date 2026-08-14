@@ -1,3 +1,6 @@
+import logging
+import threading
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from typing import Optional
 from sqlalchemy import text
@@ -51,15 +54,21 @@ MAPA_BASE_SCHEMA = {
 
 
 def _auditar(usuario, accion, tabla, registro_id=None, detalle=""):
-    with postgres_engine.begin() as conn:
-        conn.execute(
-            text("""
-                INSERT INTO public.auditoria (usuario, accion, tabla, registro_id, detalle, fecha)
-                VALUES (:usuario, :accion, :tabla, :registro_id, :detalle, NOW())
-            """),
-            {"usuario": usuario, "accion": accion, "tabla": tabla,
-             "registro_id": registro_id, "detalle": detalle},
-        )
+    def _worker():
+        try:
+            with postgres_engine.begin() as conn:
+                conn.execute(
+                    text("""
+                        INSERT INTO public.auditoria (usuario, accion, tabla, registro_id, detalle, fecha)
+                        VALUES (:usuario, :accion, :tabla, :registro_id, :detalle, NOW())
+                    """),
+                    {"usuario": usuario, "accion": accion, "tabla": tabla,
+                     "registro_id": registro_id, "detalle": detalle},
+                )
+        except Exception:
+            logging.exception("Error en auditoria asincrona")
+
+    threading.Thread(target=_worker, daemon=True).start()
 
 
 def _nombre_usuario(request: Request) -> str:

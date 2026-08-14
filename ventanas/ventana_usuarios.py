@@ -10,6 +10,7 @@ from PySide6.QtGui import QStandardItemModel, QStandardItem
 from ui.ventana_usuario import Ui_VentanaUsuarios
 
 from core.session_manager import SessionManager
+from core.async_api import run_async
 
 from ventanas.ventana_alta_usuario import VentanaAltaUsuario
 
@@ -107,8 +108,12 @@ class VentanaUsuarios(QDialog):
             self
         )
 
+        def _on_usuario_actualizado(datos_actualizados):
+            usuario_id = get_usuario_attr(self.usuario_seleccionado, "id")
+            self._actualizar_fila_usuario(usuario_id, datos_extra=datos_actualizados)
+
         dialogo.usuario_actualizado.connect(
-            self.cargar_usuarios
+            _on_usuario_actualizado
         )
         
         dialogo.exec()
@@ -173,10 +178,15 @@ class VentanaUsuarios(QDialog):
             self.model.rowCount()
         )
 
-        try:
+        def _on_success(resultado):
+            if not resultado.get("success"):
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    resultado.get("mensaje", "Error al listar usuarios")
+                )
+                return
 
-            client = SessionManager.get_usuarios_client()
-            resultado = client.listar_usuarios(limit=500)
             usuarios = resultado.get("usuarios", [])
 
             for usuario in usuarios:
@@ -235,17 +245,21 @@ class VentanaUsuarios(QDialog):
                 f"{len(usuarios)}"
             )
 
-        except Exception:
-
-            logging.exception(
-                "Error cargando usuarios"
-            )
-
+        def _on_error(msg):
+            logging.exception("Error cargando usuarios")
             QMessageBox.critical(
                 self,
                 "Error",
                 "No se pudieron cargar usuarios."
             )
+
+        client = SessionManager.get_usuarios_client()
+        run_async(
+            client.listar_usuarios,
+            on_success=_on_success,
+            on_error=_on_error,
+            limit=500,
+        )
 
     def seleccionar_usuario(self, index):
 
@@ -260,20 +274,19 @@ class VentanaUsuarios(QDialog):
         self.usuario_seleccionado_id = int(
             item_id.text()
         )
+
+        usuario = {
+            "id": self.usuario_seleccionado_id,
+            "nombre": (self.model.item(fila, 1).text() if self.model.item(fila, 1) else ""),
+            "apellido": (self.model.item(fila, 2).text() if self.model.item(fila, 2) else ""),
+            "usuario": (self.model.item(fila, 3).text() if self.model.item(fila, 3) else ""),
+            "email": (self.model.item(fila, 4).text() if self.model.item(fila, 4) else ""),
+            "rol": (self.model.item(fila, 5).text() if self.model.item(fila, 5) else ""),
+            "nivel_seguridad": int(self.model.item(fila, 6).text() or 0),
+            "activo": (self.model.item(fila, 7).text() == "Sí"),
+        }
     
-        client = SessionManager.get_usuarios_client()
-        resultado = client.obtener_usuario(
-            self.usuario_seleccionado_id
-        )
-        self.usuario_seleccionado = resultado
-    
-        if not self.usuario_seleccionado:
-        
-            logging.warning(
-                "Usuario no encontrado."
-            )
-    
-            return
+        self.usuario_seleccionado = usuario
     
         logging.debug(
             f"Usuario seleccionado: "
@@ -298,30 +311,76 @@ class VentanaUsuarios(QDialog):
         )
 
         client = SessionManager.get_usuarios_client()
-        resultado = client.activar_usuario(
-            get_usuario_attr(
-                self.usuario_seleccionado,
-                "id"
-            )
-        )
+        usuario_id = get_usuario_attr(self.usuario_seleccionado, "id")
 
-        if resultado["success"]:
+        def _on_success(resultado):
+            if resultado["success"]:
 
-            QMessageBox.information(
-                self,
-                "Usuario",
-                resultado["mensaje"]
-            )
+                QMessageBox.information(
+                    self,
+                    "Usuario",
+                    resultado["mensaje"]
+                )
 
-            self.cargar_usuarios()
+                self._actualizar_fila_usuario(usuario_id, activo=True)
 
-        else:
+            else:
 
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    resultado["mensaje"]
+                )
+
+        def _on_error(msg):
             QMessageBox.critical(
                 self,
                 "Error",
-                resultado["mensaje"]
+                msg
             )
+
+        run_async(
+            client.activar_usuario,
+            usuario_id,
+            on_success=_on_success,
+            on_error=_on_error,
+        )
+
+    def _actualizar_fila_usuario(self, usuario_id, activo=None, datos_extra=None):
+
+        mapa_columna = {
+            "id": 0,
+            "nombre": 1,
+            "apellido": 2,
+            "usuario": 3,
+            "email": 4,
+            "rol": 5,
+            "nivel_seguridad": 6,
+            "activo": 7,
+        }
+
+        for fila in range(self.model.rowCount()):
+
+            item_id = self.model.item(fila, 0)
+
+            if item_id and int(item_id.text()) == usuario_id:
+
+                if activo is not None:
+                    self.model.setItem(
+                        fila, 7,
+                        QStandardItem("Sí" if activo else "No")
+                    )
+
+                if datos_extra:
+                    for campo, valor in datos_extra.items():
+                        col = mapa_columna.get(campo)
+                        if col is not None:
+                            self.model.setItem(
+                                fila, col,
+                                QStandardItem(str(valor))
+                            )
+
+                break
 
     def desactivar_usuario_seleccionado(self):
 
@@ -340,11 +399,7 @@ class VentanaUsuarios(QDialog):
             f"{get_usuario_attr(self.usuario_seleccionado,'usuario')}"
         )
 
-        from core.session_manager import SessionManager
-
-        usuario_actual = (
-            SessionManager.obtener_usuario()
-        )
+        usuario_actual = SessionManager.obtener_usuario()
 
         if not usuario_actual:
 
@@ -382,30 +437,40 @@ class VentanaUsuarios(QDialog):
             return
 
         client = SessionManager.get_usuarios_client()
-        resultado = client.desactivar_usuario(
-            get_usuario_attr(
-                self.usuario_seleccionado,
-                "id"
-            )
-        )
+        usuario_id = get_usuario_attr(self.usuario_seleccionado, "id")
 
-        if resultado["success"]:
+        def _on_success(resultado):
+            if resultado["success"]:
 
-            QMessageBox.information(
-                self,
-                "Usuario",
-                resultado["mensaje"]
-            )
+                QMessageBox.information(
+                    self,
+                    "Usuario",
+                    resultado["mensaje"]
+                )
 
-            self.cargar_usuarios()
+                self._actualizar_fila_usuario(usuario_id, activo=False)
 
-        else:
+            else:
 
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    resultado["mensaje"]
+                )
+
+        def _on_error(msg):
             QMessageBox.critical(
                 self,
                 "Error",
-                resultado["mensaje"]
+                msg
             )
+
+        run_async(
+            client.desactivar_usuario,
+            usuario_id,
+            on_success=_on_success,
+            on_error=_on_error,
+        )
     
 logging.basicConfig(
     level=logging.DEBUG,

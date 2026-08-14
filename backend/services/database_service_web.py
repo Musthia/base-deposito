@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from sqlalchemy import text, inspect
 from typing import List, Tuple, Optional
@@ -17,6 +18,19 @@ MAPA_BASE_SCHEMA = {
 }
 
 BASES_POSTGRES = list(MAPA_BASE_SCHEMA.keys())
+
+TIPOS_TEXTO = {"character varying", "text", "character", "varchar", "name"}
+
+
+def _columnas_texto(schema: str, tabla: str, conn) -> List[str]:
+    inspector = inspect(conn)
+    columnas_info = inspector.get_columns(schema=schema, table_name=tabla)
+    return [
+        col["name"]
+        for col in columnas_info
+        if col["name"].lower() != "id_datcorr_database"
+        and (col.get("type") is not None and str(col.get("type")).lower() in TIPOS_TEXTO)
+    ][:10]
 
 
 def listar_bases() -> list:
@@ -68,28 +82,25 @@ def consultar_base(
 def buscar_en_base(
     base: str, criterio: str, tabla: str = "Datcorr_database",
     page: int = 1, limit: int = 50,
+    searchable_columns: Optional[List[str]] = None,
 ) -> Tuple[List[str], List[list], int]:
     _validar_base(base)
     schema = _schema_para_base(base)
     offset = (page - 1) * limit
     with postgres_engine.connect() as conn:
-        col_sql = text(
-            "SELECT column_name, data_type FROM information_schema.columns "
-            "WHERE table_schema = :schema AND table_name = :table"
-        )
-        col_result = conn.execute(col_sql, {"schema": schema, "table": tabla})
-        columnas_info = col_result.fetchall()
-        columnas = [row[0] for row in columnas_info if not row[0].lower().startswith("id_datcorr")]
+        if searchable_columns is None:
+            columnas = _columnas_texto(schema, tabla, conn)
+        else:
+            columnas = searchable_columns[:10]
+
         if not columnas:
             return [], [], 0
+
         where_clause = " OR ".join(
-            'CAST("{}" AS TEXT) ILIKE :patron'.format(c) for c in columnas
+            f'CAST("{c}" AS TEXT) ILIKE :patron' for c in columnas
         )
-        id_col = next(
-            (row[0] for row in columnas_info if row[0].lower().startswith("id_datcorr")),
-            "id_Datcorr_database"
-        )
-        cols_select = ", ".join('"{}"'.format(c) for c in columnas)
+        id_col = "id_Datcorr_database"
+        cols_select = ", ".join(f'"{c}"' for c in columnas)
 
         total = conn.execute(
             text(f'SELECT COUNT(*) FROM "{schema}"."{tabla}" WHERE {where_clause}'),

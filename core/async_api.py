@@ -11,6 +11,9 @@ class AsyncApiSignals(QObject):
     error = Signal(str)
 
 
+_workers_activos = set()
+
+
 class AsyncApiWorker(QRunnable):
 
     def __init__(self, fn, *args, **kwargs):
@@ -35,7 +38,14 @@ _thread_pool = QThreadPool.globalInstance()
 
 def run_async(fn, on_success, on_error, *args, **kwargs):
     worker = AsyncApiWorker(fn, *args, **kwargs)
+
+    def _done(*_):
+        _workers_activos.discard(worker)
+
+    _workers_activos.add(worker)
     worker.signals.finished.connect(on_success)
+    worker.signals.finished.connect(_done)
     if on_error:
         worker.signals.error.connect(on_error)
+        worker.signals.error.connect(_done)
     _thread_pool.start(worker)
